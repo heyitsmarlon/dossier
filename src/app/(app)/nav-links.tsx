@@ -13,7 +13,7 @@ export function NavLinks({ counts }: { counts?: Record<string, number> } = {}) {
   const pathname = usePathname();
   const collapsed = useSidebarCollapsed();
   return (
-    <nav aria-label="Main" className="flex flex-1 flex-col gap-1">
+    <nav aria-label="Hauptnavigation" className="flex flex-1 flex-col gap-1">
       {NAV.map(({ label, items }, index) => (
         <div
           key={label ?? index}
@@ -55,7 +55,7 @@ export function NavLinks({ counts }: { counts?: Record<string, number> } = {}) {
                     )}
                   >
                     {counts[href]}
-                    <span className="sr-only"> waiting</span>
+                    <span className="sr-only"> wartend</span>
                   </span>
                 ) : null}
               </Link>

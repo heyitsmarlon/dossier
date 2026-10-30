@@ -27,7 +27,7 @@ export type CalendarData = {
 };
 
 const interviewTitle = (application: { company: string; role: string; title: string }) =>
-  `Interview · ${[application.role || application.title, application.company].filter(Boolean).join(" · ") || "application"}`;
+  `Gespräch · ${[application.role || application.title, application.company].filter(Boolean).join(" · ") || "Bewerbung"}`;
 
 export async function loadCalendar(days: readonly Day[]): Promise<CalendarData> {
   const [hours, connection, settings] = await Promise.all([workingHours(), googleConnection(), loadSettings()]);
@@ -67,7 +67,7 @@ export async function loadCalendar(days: readonly Day[]): Promise<CalendarData> 
     if (applicationId) shown.add(applicationId);
     const base = {
       id: event.id,
-      title: event.title || "(No title)",
+      title: event.title || "(Ohne Titel)",
       kind: applicationId ? ("interview" as const) : ("event" as const),
       href: applicationId ? `/applications/${applicationId}` : event.link || null,
       external: !applicationId && Boolean(event.link),

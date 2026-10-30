@@ -37,22 +37,26 @@ const outcomeColor = (stage: FunnelStage, outcome: FunnelOutcome) => (outcome ==
 
 /** What the chart calls the ones still open at a stage, and how the tooltip says it. */
 const OPEN: Partial<Record<FunnelStage, { short: string; long: (count: number) => string }>> = {
-  SENT: { short: "waiting", long: () => "waiting to hear back" },
-  SCREENING: { short: "in screening", long: () => "still in screening" },
-  INTERVIEW: { short: "interviewing", long: () => "still interviewing" },
-  OFFER: { short: "deciding", long: (count) => (count === 1 ? "offer you're deciding on" : "offers you're deciding on") },
+  SENT: { short: "wartend", long: () => "warten auf Rückmeldung" },
+  SCREENING: { short: "in Vorauswahl", long: () => "noch in der Vorauswahl" },
+  INTERVIEW: { short: "im Gespräch", long: () => "noch im Gespräch" },
+  OFFER: { short: "Entscheidung", long: (count) => (count === 1 ? "Angebot, über das du entscheidest" : "Angebote, über die du entscheidest") },
 };
 /** Where a closed application stopped, for the tooltip: "1 rejected at screening". */
 const AT: Partial<Record<FunnelStage, string>> = {
-  SENT: "after sending",
-  SCREENING: "at screening",
-  INTERVIEW: "after interviewing",
-  OFFER: "at the offer",
+  SENT: "nach dem Senden",
+  SCREENING: "in der Vorauswahl",
+  INTERVIEW: "nach dem Gespräch",
+  OFFER: "beim Angebot",
 };
 
-const outcomeLabel = (stage: FunnelStage, outcome: FunnelOutcome) => (outcome === "open" ? (OPEN[stage]?.short ?? "open") : outcome);
+/** The closed outcomes in words. */
+const OUTCOME_WORDS: Record<string, string> = { rejected: "abgelehnt", declined: "abgesagt", archived: "archiviert" };
+const outcomeWord = (outcome: FunnelOutcome) => OUTCOME_WORDS[outcome] ?? outcome;
+
+const outcomeLabel = (stage: FunnelStage, outcome: FunnelOutcome) => (outcome === "open" ? (OPEN[stage]?.short ?? "offen") : outcomeWord(outcome));
 const outcomeSentence = (stage: FunnelStage, outcome: FunnelOutcome, count: number) =>
-  outcome === "open" ? (OPEN[stage]?.long(count) ?? "still open") : `${outcome} ${AT[stage] ?? ""}`.trim();
+  outcome === "open" ? (OPEN[stage]?.long(count) ?? "noch offen") : `${outcomeWord(outcome)} ${AT[stage] ?? ""}`.trim();
 
 /** A band from one node's right edge to another's left edge, `size` pixels thick, as an SVG path. */
 function band(x0: number, y0: number, x1: number, y1: number, size: number): string {
@@ -143,9 +147,9 @@ export function FunnelChart({ funnel }: { funnel: readonly FunnelStep[] }) {
 
   const note = (index: number) => {
     const step = funnel[index];
-    if (index === 0) return "Everything you've sent";
-    if (step.count === 0) return "None yet";
-    return `${step.conversion}% of ${stageLabel(funnel[index - 1].stage).toLowerCase()}`;
+    if (index === 0) return "Alles, was du gesendet hast";
+    if (step.count === 0) return "Noch keine";
+    return `${step.conversion}% von ${stageLabel(funnel[index - 1].stage)}`;
   };
 
   const labels = (
@@ -198,7 +202,7 @@ export function FunnelChart({ funnel }: { funnel: readonly FunnelStep[] }) {
         color: outcomeColor(stop.stage, stop.outcome),
         value: stop.count,
         text: outcomeSentence(stop.stage, stop.outcome, stop.count),
-        detail: `${stop.percent}% of ${stageLabel(stop.stage).toLowerCase()}`,
+        detail: `${stop.percent}% von ${stageLabel(stop.stage)}`,
       };
     }
     const index = funnel.findIndex((step) => `stage-${step.stage}` === hovered);
@@ -209,9 +213,9 @@ export function FunnelChart({ funnel }: { funnel: readonly FunnelStep[] }) {
     return {
       color: stageColor(step.stage),
       value: step.count,
-      text: index === 0 ? "sent" : `reached ${stageLabel(step.stage).toLowerCase()}`,
+      text: index === 0 ? "gesendet" : `bis ${stageLabel(step.stage)}`,
       detail: next
-        ? `${next.count} went on to ${stageLabel(next.stage).toLowerCase()}${stopped > 0 ? `, ${stopped} stopped here` : ""}`
+        ? `${next.count} weiter zu ${stageLabel(next.stage)}${stopped > 0 ? `, ${stopped} hier gestoppt` : ""}`
         : note(index),
     };
   })();
@@ -306,16 +310,16 @@ export function FunnelChart({ funnel }: { funnel: readonly FunnelStep[] }) {
       </div>
 
       <details className="text-meta text-muted">
-        <summary className="w-fit cursor-pointer hover:text-ink">Show the numbers</summary>
+        <summary className="w-fit cursor-pointer hover:text-ink">Zahlen anzeigen</summary>
         <div className="relative overflow-x-auto">
           <table className="mt-3 w-full max-w-[640px] text-left tabular-nums">
-            <caption className="sr-only">How far your sent applications got, and where the ones that stopped at each stage are now</caption>
+            <caption className="sr-only">Wie weit deine gesendeten Bewerbungen gekommen sind, und wo die stehen, die in einer Stufe gestoppt haben</caption>
             <thead>
               <tr>
                 <th scope="col" className="py-1 font-medium text-ink">
-                  Stage
+                  Stufe
                 </th>
-                {["Reached", "Of the stage before", "Still open", "Rejected", "Declined", "Archived"].map((heading) => (
+                {["Erreicht", "Von der Stufe davor", "Noch offen", "Abgelehnt", "Abgesagt", "Archiviert"].map((heading) => (
                   <th key={heading} scope="col" className="py-1 pl-4 text-right font-medium text-ink">
                     {heading}
                   </th>

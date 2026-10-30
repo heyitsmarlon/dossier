@@ -98,14 +98,14 @@ export function EntryList<T extends { id: string }>({
     }
 
     const { title } = summary(item);
-    toast(`Removed “${title}”.`, {
+    toast(`„${title}“ entfernt.`, {
       action: {
-        label: "Undo",
+        label: "Rückgängig",
         onClick: async () => {
           const restored = await track(restore(item));
           if (!restored.ok) return toast(restored.error);
           putBack(restored.data);
-          toast(`Put back “${title}”.`);
+          toast(`„${title}“ wiederhergestellt.`);
         },
       },
     });
@@ -117,7 +117,7 @@ export function EntryList<T extends { id: string }>({
     const next = arrayMove(items, from, to);
     setItems(() => next);
     setMode("manual");
-    setAnnouncement(`“${summary(items[from]).title}” moved to position ${to + 1} of ${items.length}.`);
+    setAnnouncement(`„${summary(items[from]).title}“ auf Position ${to + 1} von ${items.length} verschoben.`);
     const result = await track(ordering.save(next.map((item) => item.id)));
     if (!result.ok) {
       setItems(() => before.items);
@@ -133,7 +133,7 @@ export function EntryList<T extends { id: string }>({
     const position = new Map(result.data.map((id, index) => [id, index]));
     setItems((current) => current.toSorted((a, b) => (position.get(a.id) ?? Infinity) - (position.get(b.id) ?? Infinity)));
     setMode("date");
-    setAnnouncement("Sorted by date, newest first.");
+    setAnnouncement("Nach Datum sortiert, neueste zuerst.");
   }
 
   const sensors = useSensors(
@@ -178,16 +178,16 @@ export function EntryList<T extends { id: string }>({
       {ordering && items.length > 1 && (
         <div className="flex min-h-8 flex-wrap items-center justify-between gap-x-4 gap-y-1 text-meta text-muted">
           {!ordering.sortByDate ? (
-            <span>In your own order. Drag an entry or use its arrows to move it.</span>
+            <span>In deiner eigenen Reihenfolge. Zieh einen Eintrag oder nutze seine Pfeile, um ihn zu verschieben.</span>
           ) : mode === "manual" ? (
             <>
-              <span>In your own order.</span>
+              <span>In deiner eigenen Reihenfolge.</span>
               <Button variant="text" size="sm" onClick={() => void sortByDate()}>
-                Sort by date
+                Nach Datum sortieren
               </Button>
             </>
           ) : (
-            <span>Newest first. Drag an entry or use its arrows to set your own order.</span>
+            <span>Neueste zuerst. Zieh einen Eintrag oder nutze seine Pfeile für eine eigene Reihenfolge.</span>
           )}
         </div>
       )}
@@ -200,10 +200,10 @@ export function EntryList<T extends { id: string }>({
           onDragEnd={onDragEnd}
           accessibility={{
             announcements: {
-              onDragStart: ({ active }) => `Picked up “${summary(items[indexOf(active.id)]).title}”.`,
-              onDragOver: ({ over }) => (over ? `Over position ${indexOf(over.id) + 1} of ${items.length}.` : "Not over the list."),
-              onDragEnd: ({ over }) => (over ? `Dropped at position ${indexOf(over.id) + 1} of ${items.length}.` : "Dropped back where it was."),
-              onDragCancel: () => "Moving cancelled.",
+              onDragStart: ({ active }) => `„${summary(items[indexOf(active.id)]).title}“ aufgenommen.`,
+              onDragOver: ({ over }) => (over ? `Über Position ${indexOf(over.id) + 1} von ${items.length}.` : "Nicht über der Liste."),
+              onDragEnd: ({ over }) => (over ? `Auf Position ${indexOf(over.id) + 1} von ${items.length} abgelegt.` : "Zurück an den alten Platz gelegt."),
+              onDragCancel: () => "Verschieben abgebrochen.",
             },
           }}
         >

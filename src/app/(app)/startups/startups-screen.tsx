@@ -30,6 +30,8 @@ import {
 
 import { lookUpStartupAddresses, refreshStartupsNow, removeStartupForGood, saveStartupNotes, setStartupStatus } from "./actions";
 
+const EMAIL_LABEL_WORDS: Record<string, string> = { Hiring: "Bewerbungen", Founders: "Gründer", General: "Allgemein", Person: "Person" };
+
 export type StartupsScreenProps = {
   filter: StartupFilter;
   list: { startups: StartupView[]; total: number; counts: Record<StartupStatusName, number> };
@@ -46,10 +48,10 @@ export type StartupsScreenProps = {
 };
 
 const VIEWS: { status: StartupStatusName; label: string }[] = [
-  { status: "NEW", label: "To look at" },
-  { status: "SAVED", label: "Saved" },
-  { status: "CONTACTED", label: "Contacted" },
-  { status: "DISMISSED", label: "Dismissed" },
+  { status: "NEW", label: "Anzusehen" },
+  { status: "SAVED", label: "Gemerkt" },
+  { status: "CONTACTED", label: "Kontaktiert" },
+  { status: "DISMISSED", label: "Verworfen" },
 ];
 
 /**
@@ -66,9 +68,9 @@ export function StartupsScreen({ filter, list, lastRefresh, refreshJobId, city, 
   const job = useJob<StartupsRefresh>(jobId, 0, (update) => {
     if (update.status !== "DONE" && update.status !== "FAILED") return;
     setJobId(null);
-    if (update.status === "FAILED") return toast(update.error ?? "The refresh didn't finish. Try again.");
+    if (update.status === "FAILED") return toast(update.error ?? "Die Aktualisierung wurde nicht abgeschlossen. Versuch es noch einmal.");
     const added = update.result?.added ?? 0;
-    toast(added > 0 ? `Found ${added} new ${added === 1 ? "startup" : "startups"}.` : "No new startups this time.");
+    toast(added > 0 ? `${added} ${added === 1 ? "neues Startup" : "neue Startups"} gefunden.` : "Diesmal keine neuen Startups.");
     router.refresh();
   });
   const refreshing = Boolean(jobId) && (!job || job.status === "QUEUED" || job.status === "RUNNING");
@@ -85,10 +87,10 @@ export function StartupsScreen({ filter, list, lastRefresh, refreshJobId, city, 
     <>
       <PageHeader
         title="Startups"
-        description="Startups that are hiring, from YC startups' job posts and Hacker News' “Who is hiring?”, ranked against your profile, with the address each one publishes for applications. You write to each one yourself."
+        description="Startups, die einstellen, aus den Stellenanzeigen von YC-Startups und dem „Who is hiring?“-Thread auf Hacker News, nach deinem Profil gereiht, mit der Adresse, die jedes für Bewerbungen veröffentlicht. Du schreibst jedes selbst an."
         actions={
           <Button aria-disabled={refreshing || starting || undefined} onClick={() => !refreshing && !starting && refresh()}>
-            {refreshing ? "Refreshing…" : "Refresh"}
+            {refreshing ? "Aktualisiere…" : "Aktualisieren"}
           </Button>
         }
       />
@@ -103,8 +105,8 @@ export function StartupsScreen({ filter, list, lastRefresh, refreshJobId, city, 
             ) : (
               <>
                 <p className="text-meta text-muted">
-                  {list.total > list.startups.length ? `The best ${list.startups.length} of ${list.total}` : `${list.total} ${list.total === 1 ? "startup" : "startups"}`}
-                  {filter.sort === "match" ? ", best match first." : ", newest first."}
+                  {list.total > list.startups.length ? `Die besten ${list.startups.length} von ${list.total}` : `${list.total} ${list.total === 1 ? "Startup" : "Startups"}`}
+                  {filter.sort === "match" ? ", beste Treffer zuerst." : ", neueste zuerst."}
                 </p>
                 <ul className="flex flex-col gap-3">
                   {list.startups.map((startup) => (
@@ -126,7 +128,7 @@ function RefreshStatus({ lastRefresh, refreshing, step, today }: { lastRefresh: 
   if (refreshing) {
     return (
       <p role="status" className="rounded-card border border-line-card bg-card px-4 py-3 text-meta text-muted">
-        {step ?? "Starting…"} This takes a minute or two.
+        {step ?? "Startet…"} Das dauert ein, zwei Minuten.
       </p>
     );
   }
@@ -134,12 +136,12 @@ function RefreshStatus({ lastRefresh, refreshing, step, today }: { lastRefresh: 
     return (
       <div role="note" className="flex flex-col gap-2 rounded-panel border border-line-card bg-card px-6 py-5 text-sm text-pretty">
         <p>
-          Press <strong>Refresh</strong> to look for startups. Dossier reads YC startups&apos; job posts and this month&apos;s “Who is hiring?” thread on
-          Hacker News, keeps the ones that hire where you live or remotely, and looks on the best matches&apos; own sites for the address they publish for
-          applications, following their robots.txt.
+          Drück <strong>Aktualisieren</strong>, um nach Startups zu suchen. Dossier liest die Stellenanzeigen von YC-Startups und den „Who is hiring?“-Thread dieses Monats auf
+          Hacker News, behält die, die an deinem Wohnort oder remote einstellen, und sucht auf den Websites der besten Treffer nach der Adresse, die sie für
+          Bewerbungen veröffentlichen, unter Beachtung ihrer robots.txt.
         </p>
         <p className="text-muted">
-          After that it refreshes once a day while you use this screen. Nothing is sent to anyone: you decide whom to write to.
+          Danach aktualisiert es einmal am Tag, solange du diese Seite nutzt. Nichts wird an irgendwen geschickt: Du entscheidest, wem du schreibst.
         </p>
       </div>
     );
@@ -148,7 +150,7 @@ function RefreshStatus({ lastRefresh, refreshing, step, today }: { lastRefresh: 
   return (
     <div className="flex flex-col gap-2 text-meta text-muted">
       <p>
-        Last refreshed {formatDateTime(new Date(lastRefresh.at), undefined, new Date(today))}:{" "}
+        Zuletzt aktualisiert {formatDateTime(new Date(lastRefresh.at), undefined, new Date(today))}:{" "}
         {lastRefresh.sources
           .filter((source) => !source.error)
           .map((source) => `${STARTUP_SOURCE_INFO[source.source].name} ${source.found}`)
@@ -157,7 +159,7 @@ function RefreshStatus({ lastRefresh, refreshing, step, today }: { lastRefresh: 
       </p>
       {failed.length > 0 && (
         <p role="note" className="rounded-card bg-warning-surface px-4 py-2.5 text-warning">
-          {failed.map((source) => source.error).join("; ")}. {failed.length < lastRefresh.sources.length ? "The other one worked. " : ""}The next refresh tries again.
+          {failed.map((source) => source.error).join("; ")}. {failed.length < lastRefresh.sources.length ? "Die andere hat funktioniert. " : ""}Die nächste Aktualisierung versucht es erneut.
         </p>
       )}
     </div>
@@ -166,7 +168,7 @@ function RefreshStatus({ lastRefresh, refreshing, step, today }: { lastRefresh: 
 
 function ViewTabs({ filter, counts }: { filter: StartupFilter; counts: Record<StartupStatusName, number> }) {
   return (
-    <nav aria-label="Startups views" className="flex flex-wrap gap-1.5">
+    <nav aria-label="Ansichten der Startups" className="flex flex-wrap gap-1.5">
       {VIEWS.map((view) => (
         <Link
           key={view.status}
@@ -196,37 +198,37 @@ function Filters({ filter, city, country, onChange }: { filter: StartupFilter; c
   return (
     <form
       role="search"
-      aria-label="Filter startups"
+      aria-label="Startups filtern"
       onSubmit={submit}
       className="grid grid-cols-1 items-end gap-4 rounded-panel border border-line-card bg-card p-6 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]"
     >
-      <Input label="Search" value={q} placeholder="e.g. android, fintech, Berlin" onChange={(event) => setQ(event.target.value)} onBlur={() => q.trim() !== filter.q && onChange({ q: q.trim() })} />
-      <Select label="Where" value={filter.place} onChange={(event) => onChange({ place: event.target.value as StartupFilter["place"] })}>
-        <option value="any">Anywhere</option>
+      <Input label="Suche" value={q} placeholder="z. B. android, fintech, Berlin" onChange={(event) => setQ(event.target.value)} onBlur={() => q.trim() !== filter.q && onChange({ q: q.trim() })} />
+      <Select label="Wo" value={filter.place} onChange={(event) => onChange({ place: event.target.value as StartupFilter["place"] })}>
+        <option value="any">Überall</option>
         {city && <option value="city">{city}</option>}
         {country && <option value="country">{country}</option>}
-        <option value="remote">Remote{country ? `, open to ${country}` : ""}</option>
+        <option value="remote">Remote{country ? `, offen für ${country}` : ""}</option>
       </Select>
-      <Select label="Source" value={filter.source} onChange={(event) => onChange({ source: event.target.value as StartupFilter["source"] })}>
-        <option value="">Both sources</option>
+      <Select label="Quelle" value={filter.source} onChange={(event) => onChange({ source: event.target.value as StartupFilter["source"] })}>
+        <option value="">Beide Quellen</option>
         {STARTUP_SOURCES.map((source) => (
           <option key={source} value={source}>
             {STARTUP_SOURCE_INFO[source].name}
           </option>
         ))}
       </Select>
-      <Select label="Match" value={String(filter.minScore)} onChange={(event) => onChange({ minScore: Number(event.target.value) })}>
-        <option value="0">Any</option>
-        <option value="50">50 and up</option>
-        <option value="70">70 and up</option>
-        <option value="85">85 and up</option>
+      <Select label="Treffer" value={String(filter.minScore)} onChange={(event) => onChange({ minScore: Number(event.target.value) })}>
+        <option value="0">Alle</option>
+        <option value="50">ab 50</option>
+        <option value="70">ab 70</option>
+        <option value="85">ab 85</option>
       </Select>
-      <Select label="Sort" value={filter.sort} onChange={(event) => onChange({ sort: event.target.value as StartupFilter["sort"] })}>
-        <option value="match">Best match</option>
-        <option value="newest">Newest</option>
+      <Select label="Sortierung" value={filter.sort} onChange={(event) => onChange({ sort: event.target.value as StartupFilter["sort"] })}>
+        <option value="match">Beste Treffer</option>
+        <option value="newest">Neueste</option>
       </Select>
       <div className="sm:col-span-2 lg:col-span-5">
-        <Checkbox label="Only ones with an address to write to" checked={filter.withEmail} onChange={(event) => onChange({ withEmail: event.target.checked })} />
+        <Checkbox label="Nur mit Adresse zum Anschreiben" checked={filter.withEmail} onChange={(event) => onChange({ withEmail: event.target.checked })} />
       </div>
     </form>
   );
@@ -236,7 +238,7 @@ function Empty({ filter }: { filter: StartupFilter }) {
   const filtered = filter.q || filter.place !== "any" || filter.source || filter.minScore > 0 || filter.withEmail;
   return (
     <p className="rounded-panel border border-dashed border-line-strong px-7 py-10 text-center text-sm text-muted">
-      {filtered ? "None match these filters. Try fewer." : filter.status === "NEW" ? "Nothing new to look at. The next refresh may bring more." : "None here yet."}
+      {filtered ? "Keine passen zu diesen Filtern. Versuch es mit weniger." : filter.status === "NEW" ? "Nichts Neues anzusehen. Die nächste Aktualisierung bringt vielleicht mehr." : "Noch keine hier."}
     </p>
   );
 }
@@ -264,7 +266,7 @@ function StartupCard({ startup: initial, headline, aiReady, today }: { startup: 
     if (!result.ok) return;
     toast(message, {
       action: {
-        label: "Undo",
+        label: "Rückgängig",
         onClick: () => void setStartupStatus({ id: startup.id, status: before }).then((undone) => toastResult(undone).ok && router.refresh()),
       },
     });
@@ -279,9 +281,9 @@ function StartupCard({ startup: initial, headline, aiReady, today }: { startup: 
     if (!result.ok) return;
     const added = result.data.emails.length - startup.emails.length;
     setStartup(result.data);
-    if (result.data.noApplicationsFrom) toast("Their site says they don't take unsolicited applications.");
-    else if (added > 0) toast(`Found ${added} ${added === 1 ? "address" : "addresses"} on their site.`);
-    else toast(people ? "Their site doesn't publish anyone's own address." : "Their site doesn't publish an address for applications. Try their careers page.");
+    if (result.data.noApplicationsFrom) toast("Laut ihrer Website nehmen sie keine Initiativbewerbungen an.");
+    else if (added > 0) toast(`${added} ${added === 1 ? "Adresse" : "Adressen"} auf ihrer Website gefunden.`);
+    else toast(people ? "Ihre Website nennt keine persönlichen Adressen." : "Ihre Website nennt keine Adresse für Bewerbungen. Versuch es auf ihrer Karriereseite.");
   };
 
   const remove = async () => {
@@ -306,7 +308,7 @@ function StartupCard({ startup: initial, headline, aiReady, today }: { startup: 
       </div>
 
       {startup.roles.length > 0 && (
-        <ul aria-label="Roles" className="flex flex-wrap gap-1.5">
+        <ul aria-label="Stellen" className="flex flex-wrap gap-1.5">
           {startup.roles.map((role) => (
             <li key={role} className="rounded-full border border-line-field bg-input px-2.5 py-1 text-xs">
               {role}
@@ -319,7 +321,7 @@ function StartupCard({ startup: initial, headline, aiReady, today }: { startup: 
 
       {blocked && (
         <p role="note" className="rounded-card bg-warning-surface px-4 py-2.5 text-meta text-warning">
-          Their site says they don&apos;t take unsolicited applications: {startup.noApplicationsFrom}. Apply through a posted job instead.
+          Laut ihrer Website nehmen sie keine Initiativbewerbungen an: {startup.noApplicationsFrom}. Bewirb dich stattdessen auf eine ausgeschriebene Stelle.
         </p>
       )}
 
@@ -328,45 +330,45 @@ function StartupCard({ startup: initial, headline, aiReady, today }: { startup: 
       <div className="flex flex-wrap items-center gap-2">
         {startup.applicationId ? (
           <Link href={`/applications/${startup.applicationId}`} className={buttonClassName("secondary", "sm")}>
-            Open the application
+            Bewerbung öffnen
           </Link>
         ) : !blocked && aiReady ? (
           <Link href={`/new?startup=${encodeURIComponent(startup.id)}`} className={buttonClassName("primary", "sm")}>
-            Write to them
+            Anschreiben
           </Link>
         ) : !blocked ? (
           <Link href="/settings?section=ai" className="text-meta text-muted underline underline-offset-2 hover:text-ink">
-            Choose an AI provider to write an application
+            Wähle einen KI-Anbieter, um eine Bewerbung zu schreiben
           </Link>
         ) : null}
         {startup.website && !blocked && (
           <Button size="sm" variant="secondary" aria-disabled={busy !== null || undefined} onClick={() => void lookUp(false)}>
-            {busy === "emails" ? "Looking…" : startup.emailsCheckedAt ? "Look on their site again" : "Find addresses on their site"}
+            {busy === "emails" ? "Suche…" : startup.emailsCheckedAt ? "Erneut auf ihrer Website suchen" : "Adressen auf ihrer Website finden"}
           </Button>
         )}
         {startup.website && !blocked && startup.emailsCheckedAt && (
           <Button size="sm" variant="text" aria-disabled={busy !== null || undefined} onClick={() => void lookUp(true)}>
-            {busy === "people" ? "Looking…" : "Look for people's addresses"}
+            {busy === "people" ? "Suche…" : "Nach persönlichen Adressen suchen"}
           </Button>
         )}
         <span className="ml-auto flex flex-wrap items-center gap-3">
           {startup.status !== "SAVED" && startup.status !== "CONTACTED" && startup.status !== "DISMISSED" && (
-            <Button size="sm" variant="secondary" aria-disabled={busy !== null || undefined} onClick={() => void move("SAVED", `Saved ${startup.company}.`)}>
-              Save
+            <Button size="sm" variant="secondary" aria-disabled={busy !== null || undefined} onClick={() => void move("SAVED", `${startup.company} gemerkt.`)}>
+              Merken
             </Button>
           )}
           {startup.status !== "CONTACTED" && startup.status !== "DISMISSED" && (
-            <Button size="sm" variant="text" aria-disabled={busy !== null || undefined} onClick={() => void move("CONTACTED", `Marked ${startup.company} as contacted.`)}>
-              Mark as contacted
+            <Button size="sm" variant="text" aria-disabled={busy !== null || undefined} onClick={() => void move("CONTACTED", `${startup.company} als kontaktiert markiert.`)}>
+              Als kontaktiert markieren
             </Button>
           )}
           {startup.status === "DISMISSED" || startup.status === "CONTACTED" ? (
-            <Button size="sm" variant="text" onClick={() => void move("NEW", `${startup.company} is back in To look at.`)}>
-              Move back
+            <Button size="sm" variant="text" onClick={() => void move("NEW", `${startup.company} ist zurück unter „Anzusehen“.`)}>
+              Zurückverschieben
             </Button>
           ) : (
-            <Button size="sm" variant="danger-text" onClick={() => void move("DISMISSED", `Dismissed ${startup.company}.`)}>
-              Dismiss
+            <Button size="sm" variant="danger-text" onClick={() => void move("DISMISSED", `${startup.company} verworfen.`)}>
+              Verwerfen
             </Button>
           )}
         </span>
@@ -380,10 +382,10 @@ function StartupCard({ startup: initial, headline, aiReady, today }: { startup: 
         ))}
         <span className="ml-auto flex items-center gap-4">
           <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="text-muted underline underline-offset-2 hover:text-ink">
-            {open ? "Hide details" : "Details and notes"}
+            {open ? "Details ausblenden" : "Details und Notizen"}
           </button>
           <Button size="sm" variant="danger-text" onClick={() => setRemoving(true)}>
-            Remove for good
+            Endgültig entfernen
           </Button>
         </span>
       </div>
@@ -396,9 +398,9 @@ function StartupCard({ startup: initial, headline, aiReady, today }: { startup: 
       <ConfirmDialog
         open={removing}
         onOpenChange={setRemoving}
-        title={`Remove ${startup.company} for good?`}
-        description="Dossier deletes what it keeps about this startup, its addresses and your notes, and refreshes leave it out from now on. An application you started stays."
-        confirmLabel="Remove for good"
+        title={`${startup.company} endgültig entfernen?`}
+        description="Dossier löscht, was es über dieses Startup gespeichert hat, seine Adressen und deine Notizen, und Aktualisierungen lassen es künftig aus. Eine begonnene Bewerbung bleibt."
+        confirmLabel="Endgültig entfernen"
         onConfirm={() => void remove()}
       />
     </article>
@@ -412,38 +414,38 @@ function Notes({ id, initial }: { id: string; initial: string }) {
     if (notes === saved) return;
     if (toastResult(await saveStartupNotes({ id, notes })).ok) setSaved(notes);
   };
-  return <Textarea label="Notes" rows={3} value={notes} maxLength={5_000} onChange={(event) => setNotes(event.target.value)} onBlur={() => void save()} />;
+  return <Textarea label="Notizen" rows={3} value={notes} maxLength={5_000} onChange={(event) => setNotes(event.target.value)} onBlur={() => void save()} />;
 }
 
 function Emails({ emails, company, headline, peopleChecked }: { emails: StartupEmail[]; company: string; headline: string; peopleChecked: boolean }) {
   if (emails.length === 0) return null;
   const copy = (email: string) =>
     void navigator.clipboard.writeText(email).then(
-      () => toast(`Copied ${email}.`),
-      () => toast("Couldn't copy it. Select the address instead."),
+      () => toast(`${email} kopiert.`),
+      () => toast("Kopieren hat nicht geklappt. Markiere die Adresse stattdessen."),
     );
   return (
     <div className="flex flex-col gap-1.5">
-      <ul aria-label="Addresses they publish" className="flex flex-col gap-1.5">
+      <ul aria-label="Veröffentlichte Adressen" className="flex flex-col gap-1.5">
         {emails.map((entry) => (
           <li key={entry.email} className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-            <span className="w-20 text-meta text-muted">{entry.label}</span>
+            <span className="w-20 text-meta text-muted">{EMAIL_LABEL_WORDS[entry.label] ?? entry.label}</span>
             <a href={mailto(entry.email, company, headline)} className="font-medium underline underline-offset-2">
               {entry.email}
             </a>
             <button type="button" onClick={() => copy(entry.email)} className="text-meta text-muted underline underline-offset-2 hover:text-ink">
-              Copy
+              Kopieren
             </button>
             {/^https?:\/\//.test(entry.from) && (
               <a href={entry.from} target="_blank" rel="noopener noreferrer" className="text-meta text-muted hover:text-ink">
-                where it&apos;s published ↗
+                Fundstelle ↗
               </a>
             )}
           </li>
         ))}
       </ul>
       {peopleChecked && emails.some((entry) => entry.onRequest) && (
-        <p className="text-meta text-muted">People&apos;s own addresses are dropped after 14 days unless you write to this startup.</p>
+        <p className="text-meta text-muted">Persönliche Adressen werden nach 14 Tagen verworfen, außer du schreibst dieses Startup an.</p>
       )}
     </div>
   );

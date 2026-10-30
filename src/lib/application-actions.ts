@@ -10,7 +10,7 @@ import { prisma } from "@/lib/prisma";
 // Archiving and deleting an application (E9-5, LST-8), from its page, a
 // card or a table row.
 
-const GONE = "That application no longer exists.";
+const GONE = "Diese Bewerbung gibt es nicht mehr.";
 
 // The list, the dashboard and the application all show it.
 const refreshEverything = () => revalidatePath("/", "layout");

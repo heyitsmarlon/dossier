@@ -2,9 +2,9 @@
 // by the jobs that report them and the page that shows them.
 
 export const READ_POSTING_STEPS = [
-  "Reading the posting",
-  "Picking out the role, company and requirements",
-  "Comparing it with your profile",
+  "Lese die Anzeige",
+  "Ermittle Stelle, Firma und Anforderungen",
+  "Gleiche sie mit deinem Profil ab",
 ] as const;
 
-export const WRITE_DOCUMENTS_STEPS = ["Tailoring your resume", "Writing your cover letter", "Saving the application"] as const;
+export const WRITE_DOCUMENTS_STEPS = ["Schneide deinen Lebenslauf zu", "Schreibe dein Anschreiben", "Speichere die Bewerbung"] as const;

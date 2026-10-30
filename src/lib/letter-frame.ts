@@ -15,7 +15,7 @@ export const FRAME_UNITS = ["sender", "date", "recipient", "greeting", "signatur
 export type FrameUnitId = (typeof FRAME_UNITS)[number];
 export type Frame = Record<FrameUnitId, string>;
 
-export const FRAME_LABELS: Frame = { sender: "Sender", date: "Date", recipient: "Recipient", greeting: "Greeting", signature: "Signature" };
+export const FRAME_LABELS: Frame = { sender: "Absender", date: "Datum", recipient: "Empfänger", greeting: "Anrede", signature: "Unterschrift" };
 
 /** Parts with contact details: never sent to an AI model. */
 export const PRIVATE_FRAME_UNITS: ReadonlySet<string> = new Set<FrameUnitId>(["sender", "signature"]);
@@ -44,7 +44,7 @@ type FrameContext = {
 
 /** The sender, signature, recipient, greeting and date from the profile and the application, in the labels' language. */
 export function defaultFrame({ basics, company, location, date, dateFormat, labels = ENGLISH_LABELS }: FrameContext): Frame {
-  const name = basics.name.trim() || "Your name";
+  const name = basics.name.trim() || "Dein Name";
   const to = company.trim();
   return {
     sender: [name, contactItems(basics, date, labels).join(SENDER_SEPARATOR)].filter(Boolean).join("\n"),

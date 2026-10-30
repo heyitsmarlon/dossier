@@ -41,8 +41,8 @@ async function withStates(postings: FoundPosting[]): Promise<ShownPosting[]> {
 /** "today at 14:32", "yesterday at 09:05" or "on Thu 1 Oct at 18:20". */
 function ranAtLabel(date: Date, timeZone?: string, now = new Date()): string {
   const days = daysBetween(date, now, timeZone);
-  const day = days === 0 ? "today" : days === 1 ? "yesterday" : `on ${formatDay(date, timeZone, now)}`;
-  return `${day} at ${formatTime(date, timeZone)}`;
+  const day = days === 0 ? "heute" : days === 1 ? "gestern" : `am ${formatDay(date, timeZone, now)}`;
+  return `${day} um ${formatTime(date, timeZone)}`;
 }
 
 /** Runs a search on the chosen source and keeps it with its first page. */
@@ -75,7 +75,7 @@ export async function loadSearch(id?: string, { timeZone, now = new Date() }: { 
 /** "Show more": the next page from the search's own source, added to the kept search. */
 export async function showMoreFor(id: string): Promise<{ ok: true; postings: ShownPosting[]; next: string | null } | SearchProblem> {
   const search = await prisma.postingSearch.findUnique({ where: { id } });
-  if (!search) return { ok: false, problem: "changed", message: "That search is no longer kept. Search again." };
+  if (!search) return { ok: false, problem: "changed", message: "Diese Suche ist nicht mehr gespeichert. Such noch einmal." };
   if (!search.next) return { ok: true, postings: [], next: null };
   const answer = await askSource(queryOf(search.query), { source: search.source, next: search.next });
   if (!answer.ok) return answer;
@@ -96,7 +96,7 @@ export async function listSearches({ timeZone, now = new Date() }: { timeZone?: 
   const days: PastSearchDay[] = [];
   for (const search of searches) {
     const ago = daysBetween(search.createdAt, now, timeZone);
-    const day = ago === 0 ? "Today" : ago === 1 ? "Yesterday" : formatDay(search.createdAt, timeZone, now);
+    const day = ago === 0 ? "Heute" : ago === 1 ? "Gestern" : formatDay(search.createdAt, timeZone, now);
     if (days.at(-1)?.day !== day) days.push({ day, searches: [] });
     days.at(-1)!.searches.push({ id: search.id, source: search.source, query: queryOf(search.query), found: search.found, time: formatTime(search.createdAt, timeZone) });
   }

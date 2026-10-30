@@ -12,7 +12,7 @@ export function metaLine(application: {
     application.location.trim(),
     application.mode.trim(),
     application.salary.trim(),
-    application.deadline ? `Apply by ${formatCalendarDate(application.deadline)}` : "",
-    `Created ${formatDate(application.createdAt)}`,
+    application.deadline ? `Bewerben bis ${formatCalendarDate(application.deadline)}` : "",
+    `Angelegt am ${formatDate(application.createdAt)}`,
   ].filter(Boolean);
 }

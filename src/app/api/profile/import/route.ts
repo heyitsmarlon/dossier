@@ -17,7 +17,7 @@ export const POST = route(async (request) => {
     return NextResponse.json({ error: RESUME_MESSAGES.tooBig }, { status: 413 });
   }
   if (!(await isAiConfigured())) {
-    return NextResponse.json({ error: "Choose an AI provider in Settings first: it's what reads the resume." }, { status: 409 });
+    return NextResponse.json({ error: "Wähle zuerst einen KI-Anbieter in den Einstellungen: Er liest den Lebenslauf." }, { status: 409 });
   }
   const read = await resumeText(new Uint8Array(await request.arrayBuffer()));
   if (!read.ok) return NextResponse.json({ error: read.error }, { status: 400 });

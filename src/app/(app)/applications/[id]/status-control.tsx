@@ -75,7 +75,7 @@ export function StatusControl({
             setInterview("ask");
           }}
         >
-          <DropdownMenuLabel>Move this application to</DropdownMenuLabel>
+          <DropdownMenuLabel>Bewerbung verschieben nach</DropdownMenuLabel>
           <DropdownMenuRadioGroup value={shown} onValueChange={(value) => move(value as ApplicationStatus)}>
             {STATUSES.map((entry) => (
               <DropdownMenuRadioItem key={entry.value} value={entry.value}>
@@ -96,7 +96,7 @@ export function StatusControl({
           onOpenChange={(open) => setInterview(open ? "edit" : null)}
         />
       )}
-      {shown === ApplicationStatus.DRAFT && <Button onClick={() => move(ApplicationStatus.SENT)}>Mark as sent</Button>}
+      {shown === ApplicationStatus.DRAFT && <Button onClick={() => move(ApplicationStatus.SENT)}>Als gesendet markieren</Button>}
     </>
   );
 }

@@ -39,7 +39,7 @@ export function PeriodFilter({
     <>
       <div className="flex flex-wrap items-center gap-3 px-10 pb-5">
         <span id="period-label" className="text-meta text-muted">
-          Showing
+          Zeitraum
         </span>
         <SegmentedControl
           aria-labelledby="period-label"

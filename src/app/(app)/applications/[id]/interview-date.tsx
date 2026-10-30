@@ -56,21 +56,21 @@ export function InterviewDate({
   return (
     <Popover.Root open={open} onOpenChange={onOpenChange}>
       <Popover.Trigger
-        aria-label={shown ? `Next interview: ${formatDateTime(shown, zone)}. Change` : "Add the interview date"}
+        aria-label={shown ? `Nächstes Gespräch: ${formatDateTime(shown, zone)}. Ändern` : "Gesprächstermin hinzufügen"}
         className="flex items-center gap-2 rounded-full border border-line-control bg-card px-3.5 py-[9px] text-sm hover:border-line-strong data-[state=open]:border-primary"
       >
         {shown ? (
           <>
-            <span className="text-muted">Interview</span>{" "}
+            <span className="text-muted">Gespräch</span>{" "}
             <span className="font-medium">{formatDateTime(shown, zone)}</span>
           </>
         ) : (
-          <span className="font-medium">+ Interview date</span>
+          <span className="font-medium">+ Gesprächstermin</span>
         )}
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          aria-label={asking ? "When's the interview?" : "Next interview"}
+          aria-label={asking ? "Wann ist das Gespräch?" : "Nächstes Gespräch"}
           align="end"
           sideOffset={8}
           collisionPadding={16}
@@ -105,21 +105,21 @@ function InterviewForm({
       }}
     >
       <div className="flex flex-col gap-1">
-        <h2 className="text-[15px] font-medium">{asking ? "When's the interview?" : "Next interview"}</h2>
-        <p className="text-meta text-muted">{asking ? "Optional. " : ""}It shows on your dashboard, flagged the day before.</p>
+        <h2 className="text-[15px] font-medium">{asking ? "Wann ist das Gespräch?" : "Nächstes Gespräch"}</h2>
+        <p className="text-meta text-muted">{asking ? "Optional. " : ""}Es erscheint auf deiner Übersicht, mit Hinweis am Vortag.</p>
       </div>
-      <Input type="datetime-local" label="Date and time" value={value} onChange={(event) => setValue(event.target.value)} required />
+      <Input type="datetime-local" label="Datum und Uhrzeit" value={value} onChange={(event) => setValue(event.target.value)} required />
       <div className="flex items-center gap-2">
         {initial && (
           <Button variant="danger-text" size="sm" onClick={() => onSave(null)}>
-            Remove
+            Entfernen
           </Button>
         )}
         <Button variant="secondary" size="sm" className="ml-auto" onClick={onCancel}>
-          {asking ? "Skip" : "Cancel"}
+          {asking ? "Überspringen" : "Abbrechen"}
         </Button>
         <Button type="submit" size="sm">
-          Save
+          Speichern
         </Button>
       </div>
     </form>

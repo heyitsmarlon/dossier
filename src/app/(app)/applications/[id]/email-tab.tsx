@@ -59,13 +59,13 @@ export function EmailTab({
     return (
       <div className="flex flex-1 flex-col items-center overflow-auto bg-canvas px-10 pt-11 pb-16">
         <div className="flex w-full max-w-[560px] flex-col items-start gap-3 rounded-panel border border-line-card bg-card px-7 py-7">
-          <h2 className="font-serif text-section">An email to send it with</h2>
+          <h2 className="font-serif text-section">Eine E-Mail zum Mitschicken</h2>
           <p className="text-sm text-muted">
-            I&apos;ll write a short email to go with your resume and cover letter, to whoever the posting says to send applications
-            to. Copy it into your mail app or open it there, and attach the PDFs.
+            Ich schreibe eine kurze E-Mail zu Lebenslauf und Anschreiben, an die Adresse, die die Anzeige für Bewerbungen nennt.
+            Kopier sie in deine Mail-App oder öffne sie dort, und häng die PDFs an.
           </p>
           <Button className="mt-1" aria-disabled={writing || undefined} onClick={() => !writing && onWrite()}>
-            {writing ? "Writing the email…" : "Write the email"}
+            {writing ? "E-Mail wird geschrieben…" : "E-Mail schreiben"}
           </Button>
         </div>
       </div>
@@ -74,7 +74,7 @@ export function EmailTab({
 
   const { to, subject, body } = emailParts(units);
   const copy = async (text: string, what: string) =>
-    toast((await copyText(text)) ? `Copied the ${what}.` : "That didn't copy. Select the text and copy it yourself.");
+    toast((await copyText(text)) ? `${what} kopiert.` : "Kopieren hat nicht geklappt. Markiere den Text und kopiere ihn selbst.");
 
   return (
     <div className="flex flex-1 flex-col items-center gap-4 overflow-auto bg-canvas px-10 pt-11 pb-16">
@@ -88,19 +88,19 @@ export function EmailTab({
       {notice && <div className="w-full max-w-[680px]">{notice}</div>}
 
       <article
-        aria-label="Email"
+        aria-label="E-Mail"
         aria-busy={writing || undefined}
         // The parts' highlight and toolbar are measured in page units, which are pixels here.
         style={{ "--u": "1px" } as CSSProperties}
         className={cn("w-full max-w-[680px] rounded-panel border border-line-card bg-card motion-safe:transition-opacity", writing && "opacity-50")}
       >
-        <Field label="To" onCopy={to ? () => void copy(to, "recipient") : undefined}>
+        <Field label="An" onCopy={to ? () => void copy(to, "Empfänger") : undefined}>
           {renderUnit({
             id: "to",
-            children: to || <span className="text-muted">The posting doesn&apos;t give an address. Edit to add one.</span>,
+            children: to || <span className="text-muted">Die Anzeige nennt keine Adresse. Zum Ergänzen bearbeiten.</span>,
           })}
         </Field>
-        <Field label="Subject" onCopy={subject ? () => void copy(subject, "subject") : undefined}>
+        <Field label="Betreff" onCopy={subject ? () => void copy(subject, "Betreff") : undefined}>
           {renderUnit({ id: "subject", children: subject })}
         </Field>
         <div className="px-7 pt-6 pb-7">
@@ -109,13 +109,13 @@ export function EmailTab({
 
         {(attachments.resume || attachments.letter) && (
           <div className="flex flex-col gap-2.5 border-t border-line px-7 pt-4 pb-5">
-            <h3 className="text-meta text-muted">Attach</h3>
+            <h3 className="text-meta text-muted">Anhängen</h3>
             <ul className="flex flex-col gap-2">
               {attachments.resume && (
-                <Attachment name={attachments.resume} href={`/api/pdf?doc=resume&application=${applicationId}`} what="tailored resume" />
+                <Attachment name={attachments.resume} href={`/api/pdf?doc=resume&application=${applicationId}`} what="Zugeschnittener Lebenslauf" />
               )}
               {attachments.letter && (
-                <Attachment name={attachments.letter} href={`/api/pdf?doc=letter&application=${applicationId}`} what="cover letter" />
+                <Attachment name={attachments.letter} href={`/api/pdf?doc=letter&application=${applicationId}`} what="Anschreiben" />
               )}
             </ul>
           </div>
@@ -133,30 +133,30 @@ export function EmailTab({
             sentBefore={gmail.sentBefore}
           />
         )}
-        <Button variant={gmail?.sender.from ? "secondary" : "primary"} onClick={() => void copy(body, "message")}>
-          Copy message
+        <Button variant={gmail?.sender.from ? "secondary" : "primary"} onClick={() => void copy(body, "Nachricht")}>
+          Nachricht kopieren
         </Button>
         {/* Mail apps can't take attachments from a link: the PDFs are attached by hand. */}
         <a href={mailtoHref({ to, subject, body })} className={buttonClassName("secondary", "md")}>
-          Open in mail app
+          In Mail-App öffnen
         </a>
         <Button variant="text" className="ml-auto" aria-disabled={writing || undefined} onClick={() => !writing && onWrite()}>
-          {writing ? "Rewriting…" : "Rewrite"}
+          {writing ? "Wird neu geschrieben…" : "Neu schreiben"}
         </Button>
       </div>
     </div>
   );
 }
 
-/** A header line of the email, "To" or "Subject", with its Copy button. */
+/** A header line of the email, "An" or "Betreff", with its Copy button. */
 function Field({ label, onCopy, children }: { label: string; onCopy?: () => void; children: ReactNode }) {
   return (
     <div className="flex items-baseline gap-4 border-b border-line px-7 py-3.5">
       <span className="w-14 shrink-0 text-meta text-muted">{label}</span>
       <div className="min-w-0 flex-1 text-field break-words">{children}</div>
       {onCopy && (
-        <Button variant="text" size="sm" className="py-0!" aria-label={`Copy the ${label === "To" ? "recipient" : label.toLowerCase()}`} onClick={onCopy}>
-          Copy
+        <Button variant="text" size="sm" className="py-0!" aria-label={`${label === "An" ? "Empfänger" : label} kopieren`} onClick={onCopy}>
+          Kopieren
         </Button>
       )}
     </div>
@@ -173,8 +173,8 @@ function Attachment({ name, href, what }: { name: string; href: string; what: st
         </span>
         <span className="truncate text-control">{name}</span>
       </span>
-      <DownloadPdfButton variant="secondary" size="sm" href={href} progress={`Rendering your ${what} as a PDF…`}>
-        Download <span className="sr-only">{name}</span>
+      <DownloadPdfButton variant="secondary" size="sm" href={href} progress={`${what} wird als PDF erstellt…`}>
+        Herunterladen <span className="sr-only">{name}</span>
       </DownloadPdfButton>
     </li>
   );

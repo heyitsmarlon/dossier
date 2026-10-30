@@ -19,7 +19,7 @@ export function StrengthMeter({ profile }: { profile: ProfileData }) {
     <div className="flex flex-col gap-2">
       <div className="flex justify-between text-meta">
         <span id={labelId} className="text-muted">
-          Profile strength
+          Profilstärke
         </span>
         <span className="font-medium tabular-nums">{percent}%</span>
       </div>

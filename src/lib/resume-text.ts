@@ -13,11 +13,11 @@ export const MAX_RESUME_CHARACTERS = 30_000;
 const MIN_CHARACTERS = 80;
 
 export const RESUME_MESSAGES = {
-  tooBig: "That file is over 5 MB. A resume is usually much smaller: export it again without images.",
-  wrongType: "Choose a PDF, a Word (.docx) or a Markdown (.md) file.",
-  unreadable: "That file couldn't be read. Try exporting it from the program you wrote it in, as PDF or .docx.",
-  noText: "There's no text in this file to read, so it's probably a scan. Export your resume from the program you wrote it in instead.",
-  tooShort: "There's hardly any text in that file. Choose the one with your whole resume.",
+  tooBig: "Diese Datei ist größer als 5 MB. Ein Lebenslauf ist meist viel kleiner: Exportiere ihn noch einmal ohne Bilder.",
+  wrongType: "Wähle eine PDF-, Word- (.docx) oder Markdown-Datei (.md).",
+  unreadable: "Diese Datei konnte nicht gelesen werden. Exportiere sie aus dem Programm, in dem du sie geschrieben hast, als PDF oder .docx.",
+  noText: "In dieser Datei ist kein lesbarer Text, vermutlich ist es ein Scan. Exportiere deinen Lebenslauf stattdessen aus dem Programm, in dem du ihn geschrieben hast.",
+  tooShort: "In dieser Datei steht kaum Text. Wähle die mit deinem ganzen Lebenslauf.",
 };
 
 export type ResumeText = { ok: true; text: string } | { ok: false; error: string };

@@ -78,7 +78,7 @@ export type SyncResult = {
  */
 export async function syncInbox({ signal }: { signal?: AbortSignal } = {}): Promise<SyncResult> {
   const [account, settings] = await Promise.all([loadGoogleAccount(), loadSettings()]);
-  if (!account) throw new GoogleError("not-connected", "Connect your Google account in Settings → Google first.");
+  if (!account) throw new GoogleError("not-connected", "Verbinde zuerst dein Google-Konto unter Einstellungen → Google.");
   try {
     const result = await runSync(account.historyId, account.email, settings.gmailScope, signal);
     const { unread } = result.counts;
@@ -87,7 +87,7 @@ export async function syncInbox({ signal }: { signal?: AbortSignal } = {}): Prom
     return result.counts;
   } catch (error) {
     logServerError("inbox check", error instanceof GoogleError && error.detail ? new GoogleError(error.problem, `${error.message} (${error.detail})`) : error);
-    const message = error instanceof GoogleError ? error.message : "The inbox check failed. It tries again on its own.";
+    const message = error instanceof GoogleError ? error.message : "Die Prüfung des Posteingangs ist fehlgeschlagen. Sie versucht es selbst erneut.";
     await prisma.googleAccount.updateMany({ where: { id: account.id }, data: { syncProblem: message } }).catch(() => {});
     throw error;
   }
@@ -203,7 +203,7 @@ export async function readReply(emailId: string, signal?: AbortSignal, { tentati
       sentAt: email.sentAt,
       // Never the server's own zone: in a container that's UTC, which read "13:00" two hours off.
       timeZone: settings.workTimeZone ?? (await lastKnownTimeZone()),
-      application: email.application ? [email.application.role, email.application.company].filter(Boolean).join(" at ") : null,
+      application: email.application ? [email.application.role, email.application.company].filter(Boolean).join(" bei ") : null,
     },
     { ...options, signal },
   );

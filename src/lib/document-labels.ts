@@ -1,6 +1,6 @@
 import { LanguageLevel } from "@/generated/prisma/enums";
 import { knownLanguage } from "@/lib/document-language";
-import { LANGUAGE_LEVELS } from "@/lib/profile";
+import { ENGLISH_LANGUAGE_LEVELS } from "@/lib/profile";
 
 // The words a document adds around the profile's own: section headings,
 // "Present", language levels, "Age 34", and a cover letter's recipient and
@@ -70,7 +70,7 @@ const WORDS: Record<string, Words> = {
     credentialId: "Credential ID",
     age: (years) => `Age ${years}`,
     // As the profile editor names them.
-    levels: Object.fromEntries(LANGUAGE_LEVELS.map(({ value, label }) => [value, label])) as Record<LanguageLevel, string>,
+    levels: Object.fromEntries(ENGLISH_LANGUAGE_LEVELS.map(({ value, label }) => [value, label])) as Record<LanguageLevel, string>,
     hiringTeam: "Hiring team",
     greeting: (company) => (company ? `Dear ${company} team,` : "Dear hiring team,"),
   },

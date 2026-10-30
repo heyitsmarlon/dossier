@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { statusInfo } from "./status";
 import { applyStatusChange, undoStatusChange } from "./status-changes";
 
-const NOT_FOUND = "That application no longer exists.";
+const NOT_FOUND = "Diese Bewerbung gibt es nicht mehr.";
 
 // Status figures show on the dashboard, the applications list and each
 // application, so every change refreshes all pages (DSH-6).
@@ -49,11 +49,11 @@ export const undoStatus = action(
     const result = await undoStatusChange(prisma, eventId);
     if (result.outcome === "not-found") throw new ActionError(NOT_FOUND);
     if (result.outcome === "superseded") {
-      throw new ActionError("The status has changed again since, so this change can't be undone.");
+      throw new ActionError("Der Status hat sich seitdem wieder geändert, daher lässt sich das nicht rückgängig machen.");
     }
 
     refreshEverything();
-    toast(`Moved back to ${statusInfo(result.status).label.toLowerCase()}.`);
+    toast(`Zurück nach ${statusInfo(result.status).label} verschoben.`);
     return { status: result.status };
   },
 );

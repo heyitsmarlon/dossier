@@ -19,7 +19,7 @@ export async function changeStatus(id: string, to: ApplicationStatus): Promise<b
   const { eventId } = result.data;
   if (eventId && result.toast) {
     toast(result.toast, {
-      action: { label: "Undo", onClick: () => void undoStatus({ eventId }).then(toastResult) },
+      action: { label: "Rückgängig", onClick: () => void undoStatus({ eventId }).then(toastResult) },
     });
   }
   return true;
@@ -29,5 +29,5 @@ export async function changeStatus(id: string, to: ApplicationStatus): Promise<b
 export function toastWithUndo(message: string | undefined, eventId: string | null): void {
   if (!message) return;
   if (!eventId) return toast(message);
-  toast(message, { action: { label: "Undo", onClick: () => void undoStatus({ eventId }).then(toastResult) } });
+  toast(message, { action: { label: "Rückgängig", onClick: () => void undoStatus({ eventId }).then(toastResult) } });
 }

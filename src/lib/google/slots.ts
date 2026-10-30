@@ -102,7 +102,7 @@ export function freeSlots(
 }
 
 /** "Tue 21 Oct, 10:00–10:45" in `timeZone`. */
-export function formatSlot({ start, end }: Interval, timeZone: string, locale = "en-GB"): string {
+export function formatSlot({ start, end }: Interval, timeZone: string, locale = "de-DE"): string {
   const day = new Intl.DateTimeFormat(locale, { timeZone, weekday: "short", day: "numeric", month: "short" }).format(start);
   const time = (date: Date) => new Intl.DateTimeFormat(locale, { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(date);
   return `${day}, ${time(start)}–${time(end)}`;

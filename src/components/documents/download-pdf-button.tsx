@@ -31,7 +31,7 @@ export function DownloadPdfButton({
   held = true,
   variant = "primary",
   size = "md",
-  progress = "Rendering your PDF on the server. It'll download in a moment.",
+  progress = "Dein PDF wird auf dem Server erstellt. Der Download startet gleich.",
   children,
 }: {
   href: string;
@@ -82,7 +82,7 @@ export function DownloadPdfButton({
       }}
       className={buttonClassName(variant, size, variant === "primary" ? "hover:text-on-primary" : undefined)}
     >
-      {busy ? "Rendering…" : children}
+      {busy ? "Wird erstellt…" : children}
     </a>
   );
 }

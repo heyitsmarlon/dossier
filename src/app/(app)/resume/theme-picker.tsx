@@ -32,7 +32,7 @@ function NameSuffix({ active }: { active: boolean }) {
   return (
     <>
       {" "}
-      <span className="sr-only">{`theme${active ? ", in use" : ""}`}</span>
+      <span className="sr-only">{`Design${active ? ", in Verwendung" : ""}`}</span>
     </>
   );
 }
@@ -46,7 +46,7 @@ export function ThemePicker({ themes, activeId, userName, onSelect, onCustomize,
 
   return (
     <div className="flex flex-col gap-3.5">
-      <h2 className="text-label text-muted">Built-in</h2>
+      <h2 className="text-label text-muted">Mitgeliefert</h2>
       <div className="grid grid-cols-2 gap-3.5">
         {builtIn.map((theme) => (
           <ThemeThumbnail
@@ -59,7 +59,7 @@ export function ThemePicker({ themes, activeId, userName, onSelect, onCustomize,
         ))}
       </div>
 
-      <h2 className="mt-2.5 text-label text-muted">Your themes</h2>
+      <h2 className="mt-2.5 text-label text-muted">Deine Designs</h2>
       {custom.length > 0 && (
         <div className="flex flex-col gap-1.5">
           {custom.map((theme) => {
@@ -82,7 +82,7 @@ export function ThemePicker({ themes, activeId, userName, onSelect, onCustomize,
                 </span>
                 {active && (
                   <span aria-hidden className="text-xs text-muted">
-                    In use
+                    In Verwendung
                   </span>
                 )}
               </button>
@@ -95,8 +95,8 @@ export function ThemePicker({ themes, activeId, userName, onSelect, onCustomize,
         onClick={onCustomize}
         className="flex flex-col gap-[3px] rounded-[10px] border border-dashed border-line-strong p-3.5 text-left text-control hover:border-line-strong"
       >
-        <span className="font-medium">+ Make your own theme</span>
-        <span className="text-meta text-muted">Start from the current one and change fonts, color and layout.</span>
+        <span className="font-medium">+ Eigenes Design erstellen</span>
+        <span className="text-meta text-muted">Starte mit dem aktuellen und ändere Schriften, Farbe und Layout.</span>
       </button>
 
       {actions && active && (
@@ -105,20 +105,20 @@ export function ThemePicker({ themes, activeId, userName, onSelect, onCustomize,
             In use: <span className="text-ink">{active.name}</span>
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
-            <Button variant="text" size="sm" aria-label={`Duplicate ${active.name}`} onClick={actions.duplicate}>
-              Duplicate
+            <Button variant="text" size="sm" aria-label={`${active.name} duplizieren`} onClick={actions.duplicate}>
+              Duplizieren
             </Button>
-            <Button variant="text" size="sm" aria-label={`Export ${active.name}`} onClick={actions.exportFile}>
-              Export
+            <Button variant="text" size="sm" aria-label={`${active.name} exportieren`} onClick={actions.exportFile}>
+              Exportieren
             </Button>
             {!active.builtIn && (
-              <Button variant="danger-text" size="sm" aria-label={`Delete ${active.name}…`} onClick={actions.remove}>
-                Delete…
+              <Button variant="danger-text" size="sm" aria-label={`${active.name} löschen…`} onClick={actions.remove}>
+                Löschen…
               </Button>
             )}
           </div>
           <Button variant="text" size="sm" className="self-start" onClick={() => fileInput.current?.click()}>
-            Import a theme…
+            Design importieren…
           </Button>
           <input
             ref={fileInput}
@@ -223,7 +223,7 @@ function ThemeThumbnail({
         </span>
         {active && (
           <span aria-hidden className="text-xs text-muted">
-            In use
+            In Verwendung
           </span>
         )}
       </span>

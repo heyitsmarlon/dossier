@@ -8,9 +8,9 @@ import { cn } from "@/lib/cn";
 /** "Saved just now", "Saved 2 min ago", or "Saved at 14:05" after an hour. */
 export function savedLabel(savedAt: Date, now: Date): string {
   const minutes = Math.floor((now.getTime() - savedAt.getTime()) / 60_000);
-  if (minutes < 1) return "Saved just now";
-  if (minutes < 60) return `Saved ${minutes} min ago`;
-  return `Saved at ${savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  if (minutes < 1) return "Gerade gespeichert";
+  if (minutes < 60) return `Vor ${minutes} Min. gespeichert`;
+  return `Gespeichert um ${savedAt.toLocaleTimeString("de-DE", { hour: "numeric", minute: "2-digit" })}`;
 }
 
 /** The current time, updated every `interval` ms. */
@@ -39,17 +39,17 @@ export function SavedIndicator({
   const now = useNow(30_000);
   const visible =
     status === "saving"
-      ? "Saving…"
+      ? "Speichert…"
       : status === "error"
-        ? "Couldn't save"
+        ? "Speichern fehlgeschlagen"
         : savedAt
           ? savedLabel(savedAt, now > savedAt ? now : savedAt)
-          : "All changes saved";
+          : "Alle Änderungen gespeichert";
   const announced =
     status === "saved"
-      ? "All changes saved."
+      ? "Alle Änderungen gespeichert."
       : status === "error"
-        ? "Couldn't save your changes."
+        ? "Deine Änderungen konnten nicht gespeichert werden."
         : "";
 
   return (

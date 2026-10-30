@@ -75,7 +75,7 @@ export const PAPER_SIZES: Record<
   { label: string; widthMm: number; heightMm: number; pageHeight: number }
 > = {
   [PaperSize.A4]: { label: "A4", widthMm: 210, heightMm: 297, pageHeight: 905 },
-  [PaperSize.LETTER]: { label: "US Letter", widthMm: 215.9, heightMm: 279.4, pageHeight: 828 },
+  [PaperSize.LETTER]: { label: "US-Letter", widthMm: 215.9, heightMm: 279.4, pageHeight: 828 },
 };
 
 /**
@@ -106,18 +106,18 @@ export const THEME_FONTS: Record<ThemeFont, { label: string; family: string; ser
  * colour can be picked too.
  */
 export const ACCENTS = [
-  { value: "#1d1c1a", name: "Ink" },
-  { value: "#4a5563", name: "Slate" },
-  { value: "#1f3a5f", name: "Navy" },
-  { value: "#2f5d8a", name: "Blue" },
-  { value: "#1f6f6b", name: "Teal" },
-  { value: "#2d6a4f", name: "Green" },
-  { value: "#9a6b1f", name: "Ochre" },
-  { value: "#a14a1f", name: "Rust" },
-  { value: "#7a3b2e", name: "Brick" },
-  { value: "#7b2337", name: "Burgundy" },
-  { value: "#a3405f", name: "Rose" },
-  { value: "#6b4f8a", name: "Plum" },
+  { value: "#1d1c1a", name: "Tinte" },
+  { value: "#4a5563", name: "Schiefer" },
+  { value: "#1f3a5f", name: "Marine" },
+  { value: "#2f5d8a", name: "Blau" },
+  { value: "#1f6f6b", name: "Petrol" },
+  { value: "#2d6a4f", name: "Grün" },
+  { value: "#9a6b1f", name: "Ocker" },
+  { value: "#a14a1f", name: "Rost" },
+  { value: "#7a3b2e", name: "Ziegel" },
+  { value: "#7b2337", name: "Bordeaux" },
+  { value: "#a3405f", name: "Rosé" },
+  { value: "#6b4f8a", name: "Pflaume" },
 ] as const;
 
 /** The document ink, for text on light accents. */
@@ -165,11 +165,11 @@ export const HEADING_STYLES: Record<
     marker?: "bar" | "band";
   }
 > = {
-  [HeadingStyle.RULE]: { label: "Underlined", size: 12, weight: 600, uppercase: false, tracking: "0", rule: true, padding: 3 },
-  [HeadingStyle.CAPS]: { label: "Small caps", size: 9.5, weight: 600, uppercase: true, tracking: ".14em", rule: false, padding: 0 },
-  [HeadingStyle.PLAIN]: { label: "Plain", size: 15, weight: 500, uppercase: false, tracking: "-.005em", rule: false, padding: 0 },
-  [HeadingStyle.BAR]: { label: "Accent bar", size: 9.5, weight: 700, uppercase: true, tracking: ".14em", rule: false, padding: 0, marker: "bar" },
-  [HeadingStyle.BAND]: { label: "Tinted band", size: 9.5, weight: 600, uppercase: true, tracking: ".14em", rule: false, padding: 0, marker: "band" },
+  [HeadingStyle.RULE]: { label: "Unterstrichen", size: 12, weight: 600, uppercase: false, tracking: "0", rule: true, padding: 3 },
+  [HeadingStyle.CAPS]: { label: "Kapitälchen", size: 9.5, weight: 600, uppercase: true, tracking: ".14em", rule: false, padding: 0 },
+  [HeadingStyle.PLAIN]: { label: "Schlicht", size: 15, weight: 500, uppercase: false, tracking: "-.005em", rule: false, padding: 0 },
+  [HeadingStyle.BAR]: { label: "Akzentbalken", size: 9.5, weight: 700, uppercase: true, tracking: ".14em", rule: false, padding: 0, marker: "bar" },
+  [HeadingStyle.BAND]: { label: "Farbband", size: 9.5, weight: 600, uppercase: true, tracking: ".14em", rule: false, padding: 0, marker: "band" },
 };
 
 /** Spacing: page padding, gaps between sections and items, body text size and line height. */
@@ -177,9 +177,9 @@ export const DENSITIES: Record<
   Density,
   { label: string; paddingY: number; paddingX: number; gap: number; fontSize: number; lineHeight: number; itemGap: number }
 > = {
-  [Density.COMPACT]: { label: "Compact", paddingY: 38, paddingX: 42, gap: 14, fontSize: 9.5, lineHeight: 1.42, itemGap: 7 },
-  [Density.REGULAR]: { label: "Regular", paddingY: 50, paddingX: 54, gap: 20, fontSize: 10.5, lineHeight: 1.5, itemGap: 10 },
-  [Density.AIRY]: { label: "Airy", paddingY: 62, paddingX: 64, gap: 26, fontSize: 10.5, lineHeight: 1.65, itemGap: 13 },
+  [Density.COMPACT]: { label: "Kompakt", paddingY: 38, paddingX: 42, gap: 14, fontSize: 9.5, lineHeight: 1.42, itemGap: 7 },
+  [Density.REGULAR]: { label: "Normal", paddingY: 50, paddingX: 54, gap: 20, fontSize: 10.5, lineHeight: 1.5, itemGap: 10 },
+  [Density.AIRY]: { label: "Luftig", paddingY: 62, paddingX: 64, gap: 26, fontSize: 10.5, lineHeight: 1.65, itemGap: 13 },
 };
 
 export type DensityMetrics = (typeof DENSITIES)[Density];
@@ -213,10 +213,10 @@ export function squeeze(density: DensityMetrics, level: number): DensityMetrics 
 }
 
 export const LAYOUTS: Record<ThemeLayout, { label: string }> = {
-  [ThemeLayout.SINGLE]: { label: "Single column" },
-  [ThemeLayout.SIDE_HEADINGS]: { label: "Side headings" },
-  [ThemeLayout.SPLIT]: { label: "Sidebar left" },
-  [ThemeLayout.SPLIT_END]: { label: "Sidebar right" },
+  [ThemeLayout.SINGLE]: { label: "Einspaltig" },
+  [ThemeLayout.SIDE_HEADINGS]: { label: "Überschriften seitlich" },
+  [ThemeLayout.SPLIT]: { label: "Seitenleiste links" },
+  [ThemeLayout.SPLIT_END]: { label: "Seitenleiste rechts" },
 };
 
 /** Whether a layout has a sidebar. */
@@ -229,23 +229,23 @@ export const hasSidebar = (layout: ThemeLayout) => layout === ThemeLayout.SPLIT 
 export const withoutSidebar = (layout: ThemeLayout) => (hasSidebar(layout) ? ThemeLayout.SINGLE : layout);
 
 export const ALIGNMENTS: Record<ThemeAlign, { label: string }> = {
-  [ThemeAlign.LEFT]: { label: "Left" },
-  [ThemeAlign.CENTER]: { label: "Centered" },
+  [ThemeAlign.LEFT]: { label: "Links" },
+  [ThemeAlign.CENTER]: { label: "Zentriert" },
 };
 
 export const HEADER_STYLES: Record<HeaderStyle, { label: string }> = {
-  [HeaderStyle.PLAIN]: { label: "Plain" },
+  [HeaderStyle.PLAIN]: { label: "Schlicht" },
   [HeaderStyle.BANNER]: { label: "Banner" },
 };
 
 export const SIDEBAR_STYLES: Record<SidebarStyle, { label: string }> = {
-  [SidebarStyle.PLAIN]: { label: "Plain" },
-  [SidebarStyle.TINTED]: { label: "Tinted" },
+  [SidebarStyle.PLAIN]: { label: "Schlicht" },
+  [SidebarStyle.TINTED]: { label: "Eingefärbt" },
 };
 
 export const DATE_STYLES: Record<DateStyle, { label: string }> = {
-  [DateStyle.INLINE]: { label: "Beside the title" },
-  [DateStyle.TIMELINE]: { label: "Timeline" },
+  [DateStyle.INLINE]: { label: "Neben dem Titel" },
+  [DateStyle.TIMELINE]: { label: "Zeitleiste" },
 };
 
 /**
@@ -253,17 +253,17 @@ export const DATE_STYLES: Record<DateStyle, { label: string }> = {
  * sidebar. The photo is cropped 3:4; the square shapes show its middle.
  */
 export const PHOTO_SHAPES: Record<PhotoShape, { label: string; header: { width: number; height: number }; sidebar: { width: number; height: number } }> = {
-  [PhotoShape.CIRCLE]: { label: "Circle", header: { width: 80, height: 80 }, sidebar: { width: 104, height: 104 } },
-  [PhotoShape.ROUNDED]: { label: "Rounded square", header: { width: 80, height: 80 }, sidebar: { width: 104, height: 104 } },
-  [PhotoShape.SQUARE]: { label: "Square", header: { width: 80, height: 80 }, sidebar: { width: 104, height: 104 } },
-  [PhotoShape.PORTRAIT]: { label: "Portrait", header: { width: 72, height: 96 }, sidebar: { width: 96, height: 128 } },
+  [PhotoShape.CIRCLE]: { label: "Kreis", header: { width: 80, height: 80 }, sidebar: { width: 104, height: 104 } },
+  [PhotoShape.ROUNDED]: { label: "Abgerundetes Quadrat", header: { width: 80, height: 80 }, sidebar: { width: 104, height: 104 } },
+  [PhotoShape.SQUARE]: { label: "Quadrat", header: { width: 80, height: 80 }, sidebar: { width: 104, height: 104 } },
+  [PhotoShape.PORTRAIT]: { label: "Hochformat", header: { width: 72, height: 96 }, sidebar: { width: 96, height: 128 } },
 };
 
 export const PHOTO_POSITIONS: Record<PhotoPosition, { label: string }> = {
-  [PhotoPosition.HEADER_END]: { label: "End of the header" },
-  [PhotoPosition.HEADER_START]: { label: "Start of the header" },
-  [PhotoPosition.ABOVE_NAME]: { label: "Above the name" },
-  [PhotoPosition.SIDEBAR]: { label: "Top of the sidebar" },
+  [PhotoPosition.HEADER_END]: { label: "Ende des Kopfbereichs" },
+  [PhotoPosition.HEADER_START]: { label: "Anfang des Kopfbereichs" },
+  [PhotoPosition.ABOVE_NAME]: { label: "Über dem Namen" },
+  [PhotoPosition.SIDEBAR]: { label: "Oben in der Seitenleiste" },
 };
 
 /** The sidebar layout's column width and the gap next to it. */

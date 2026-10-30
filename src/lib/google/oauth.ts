@@ -162,16 +162,16 @@ async function postToken(body: Record<string, string>, signal?: AbortSignal): Pr
       cache: "no-store",
     });
   } catch {
-    throw new GoogleError("unavailable", "Couldn't reach Google. Check the server's connection and try again.");
+    throw new GoogleError("unavailable", "Google war nicht erreichbar. Prüf die Verbindung des Servers und versuch es noch einmal.");
   }
   const json = (await response.json().catch(() => null)) as { error?: string } | null;
   if (!response.ok) {
     // invalid_grant: the refresh token was revoked, expired or the password changed.
-    if (json?.error === "invalid_grant") throw new GoogleError("revoked", "Google no longer accepts Dossier's access. Connect your Google account again.");
-    throw new GoogleError("rejected", "Google refused the sign-in. Check the client ID and secret in Settings → Google.");
+    if (json?.error === "invalid_grant") throw new GoogleError("revoked", "Google akzeptiert den Zugriff von Dossier nicht mehr. Verbinde dein Google-Konto neu.");
+    throw new GoogleError("rejected", "Google hat die Anmeldung abgelehnt. Prüf Client-ID und Secret unter Einstellungen → Google.");
   }
   const parsed = tokenSchema.safeParse(json);
-  if (!parsed.success) throw new GoogleError("unavailable", "Google sent an answer Dossier doesn't understand.");
+  if (!parsed.success) throw new GoogleError("unavailable", "Google hat eine Antwort geschickt, die Dossier nicht versteht.");
   return parsed.data;
 }
 
@@ -215,4 +215,4 @@ export function emailFromIdToken(idToken: string | undefined): string | null {
   }
 }
 
-export const NOT_CONFIGURED = "Google isn't set up yet. Enter the OAuth client ID and secret in Settings → Google.";
+export const NOT_CONFIGURED = "Google ist noch nicht eingerichtet. Trag OAuth-Client-ID und Secret unter Einstellungen → Google ein.";

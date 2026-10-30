@@ -20,26 +20,26 @@ export type ViewedVersion = { document: DocumentKind; id: string; units: Unit[];
 /** "29 Sep, 14:05", in the browser's time zone, dated as elsewhere in the app. */
 export function versionTime(iso: string): string {
   const date = new Date(iso);
-  return `${formatShortDate(date)}, ${date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`;
+  return `${formatShortDate(date)}, ${date.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}`;
 }
 
 /** What made a version, in words. */
 export function versionLabel({ cause, detail }: Pick<Version, "cause" | "detail">): string {
   switch (cause) {
     case "WRITTEN":
-      return "Written by the AI";
+      return "Von der KI geschrieben";
     case "TRIMMED":
-      return "Trimmed to fit the page limit";
+      return "Gekürzt für das Seitenlimit";
     case "REGENERATED":
-      return detail ? `Rewrote “${detail}”` : "Rewrote a part";
+      return detail ? `„${detail}“ neu geschrieben` : "Einen Teil neu geschrieben";
     case "REFINED":
-      return detail ? `Changed from the chat: “${detail}”` : "Changed from the chat";
+      return detail ? `Im Chat geändert: „${detail}“` : "Im Chat geändert";
     case "UNDONE":
-      return "Undid an AI change";
+      return "KI-Änderung rückgängig gemacht";
     case "BEFORE_RESTORE":
-      return "As it was before a restore";
+      return "Stand vor einer Wiederherstellung";
     case "RESTORED":
-      return detail ? `Brought back the version from ${versionTime(detail)}` : "Brought back an earlier version";
+      return detail ? `Fassung vom ${versionTime(detail)} wiederhergestellt` : "Frühere Fassung wiederhergestellt";
   }
 }
 
@@ -84,7 +84,7 @@ export function VersionHistory({
     onView({ document: result.data.document, id: version.id, units: result.data.units, label: versionLabel(version), when: versionTime(version.createdAt) });
   };
 
-  const name = DOCUMENT_LABELS[document ?? "RESUME"].toLowerCase();
+  const name = DOCUMENT_LABELS[document ?? "RESUME"];
   return (
     <Dialog.Root open={document !== null} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -92,38 +92,38 @@ export function VersionHistory({
         <Dialog.Content className="fixed top-0 right-0 z-50 flex h-full w-[min(400px,100vw)] flex-col gap-4 overflow-auto border-l border-line-popover bg-card p-6 shadow-menu">
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <Dialog.Title className="font-serif text-[22px] leading-tight">History of the {name}</Dialog.Title>
+              <Dialog.Title className="font-serif text-[22px] leading-tight">Verlauf: {name}</Dialog.Title>
               <Dialog.Description className="text-sm text-muted">
-                A version is saved with each AI change and before each restore. Your own edits are in the current version.
+                Bei jeder KI-Änderung und vor jeder Wiederherstellung wird eine Fassung gespeichert. Deine eigenen Änderungen stecken in der aktuellen Fassung.
               </Dialog.Description>
             </div>
-            <Dialog.Close className="rounded-control px-2 py-1 text-sm text-muted hover:bg-hover hover:text-ink">Close</Dialog.Close>
+            <Dialog.Close className="rounded-control px-2 py-1 text-sm text-muted hover:bg-hover hover:text-ink">Schließen</Dialog.Close>
           </div>
           {versions === null ? (
             <p role="status" className="text-sm text-muted">
-              Loading the history…
+              Lade den Verlauf…
             </p>
           ) : versions.length === 0 ? (
-            <p className="text-sm text-muted">No versions yet. The next AI change saves the first one.</p>
+            <p className="text-sm text-muted">Noch keine Fassungen. Die nächste KI-Änderung speichert die erste.</p>
           ) : (
-            <ol aria-label="Versions" className="flex flex-col">
+            <ol aria-label="Fassungen" className="flex flex-col">
               {versions.map((version, index) => (
                 <li key={version.id} className="flex items-start justify-between gap-3 border-t border-line py-3">
                   <span className="flex min-w-0 flex-col gap-0.5">
                     <span className="text-sm break-words">{versionLabel(version)}</span>
                     <span className="text-meta text-muted tabular-nums">
                       {versionTime(version.createdAt)}
-                      {index === 0 && " · the newest"}
+                      {index === 0 && " · die neueste"}
                     </span>
                   </span>
                   <Button
                     variant="secondary"
                     size="sm"
-                    aria-label={`Look at the version from ${versionTime(version.createdAt)}`}
+                    aria-label={`Fassung vom ${versionTime(version.createdAt)} ansehen`}
                     aria-disabled={opening !== null || undefined}
                     onClick={() => void (opening ? undefined : view(version))}
                   >
-                    {opening === version.id ? "Opening…" : "Look"}
+                    {opening === version.id ? "Öffnet…" : "Ansehen"}
                   </Button>
                 </li>
               ))}

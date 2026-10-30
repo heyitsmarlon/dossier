@@ -39,7 +39,7 @@ export const writeEmailJob = defineJob({
     previous: unitsSchema.nullable(),
   }),
   async run({ applicationId }, { step, signal }) {
-    await step("Writing the email");
+    await step("Schreibe die E-Mail");
     const application = await prisma.application.findUniqueOrThrow({ where: { id: applicationId }, include: { documents: true, startup: { select: { emails: true } } } });
     const unitsOf = (kind: DocumentKind): Unit[] | null => {
       const parsed = unitsSchema.safeParse(application.documents.find((document) => document.kind === kind)?.units);

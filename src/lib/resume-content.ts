@@ -222,7 +222,7 @@ export function resumeContent(
   });
 
   const content: ResumeContent = {
-    name: basics.name.trim() || "Your name",
+    name: basics.name.trim() || "Dein Name",
     headline: basics.headline.trim(),
     photo: profile.photo && (showPhoto ?? profile.photo.onResumes) ? profile.photo.src : null,
     contacts: contactItems(basics, today, labels),

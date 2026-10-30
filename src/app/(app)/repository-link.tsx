@@ -7,7 +7,7 @@ import { REPOSITORY_URL } from "@/lib/releases";
 
 import { useSidebarCollapsed } from "./sidebar-frame";
 
-const LABEL = "Star on GitHub";
+const LABEL = "Auf GitHub mit Stern markieren";
 
 /** The sidebar's link to Dossier's repository, for credits and support. */
 export function RepositoryLink() {
@@ -25,7 +25,7 @@ export function RepositoryLink() {
     >
       <Star size={16} aria-hidden="true" className="shrink-0" />
       <span className={cn(collapsed && "sr-only")}>{LABEL}</span>{" "}
-      <span className="sr-only">(opens in a new tab)</span>
+      <span className="sr-only">(öffnet in neuem Tab)</span>
       {!collapsed && <ArrowUpRight size={14} aria-hidden="true" className="ml-auto shrink-0" />}
     </a>
   );

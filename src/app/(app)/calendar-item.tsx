@@ -8,9 +8,9 @@ import { formatTime } from "@/lib/dates";
 /** An interview's dot is dark, another event's faint: the same marks as on the month. */
 export const itemDot = (item: CalendarItem) => (item.kind === "interview" ? "bg-primary" : "bg-faint");
 
-/** "13:00–13:45", or "All day". */
+/** "13:00–13:45", or "Ganztägig". */
 export const itemTime = (item: CalendarItem, timeZone: string) =>
-  item.allDay ? "All day" : `${formatTime(item.start, timeZone)}–${formatTime(item.end, timeZone)}`;
+  item.allDay ? "Ganztägig" : `${formatTime(item.start, timeZone)}–${formatTime(item.end, timeZone)}`;
 
 /** The item as a link to its application, or to Google Calendar in a new tab, or as text. */
 export function ItemLink({ item, className, children }: { item: CalendarItem; className?: string; children: ReactNode }) {
@@ -26,7 +26,7 @@ export function ItemLink({ item, className, children }: { item: CalendarItem; cl
   return (
     <a href={item.href} target="_blank" rel="noopener noreferrer" className={classes}>
       {children}
-      <span className="sr-only"> (opens Google Calendar in a new tab)</span>
+      <span className="sr-only"> (öffnet Google Kalender in neuem Tab)</span>
     </a>
   );
 }

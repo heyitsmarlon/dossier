@@ -8,7 +8,7 @@ import { getJob } from "@/lib/jobs/runner";
 import { downloadsDir, zipPdfsJob } from "@/lib/jobs/zip-pdfs";
 import { route } from "@/lib/route";
 
-const GONE = "That download isn't here any more. Start a new one from Settings → Your data.";
+const GONE = "Dieser Download ist nicht mehr da. Starte einen neuen unter Einstellungen → Deine Daten.";
 
 /** Hands over a finished "Download all PDFs" zip (E10-5) once, then removes it from the server. */
 export const GET = route<RouteContext<"/api/downloads/[id]">>(async (_request, { params }) => {

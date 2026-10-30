@@ -9,7 +9,7 @@ import { userTimeZone } from "@/lib/time-zone";
 
 import { InboxScreen } from "./inbox-screen";
 
-export const metadata: Metadata = { title: "Inbox" };
+export const metadata: Metadata = { title: "Posteingang" };
 
 /**
  * Employers' replies from Gmail (E15-3): the ones waiting for an answer,
@@ -39,7 +39,7 @@ export default async function InboxPage() {
       timeZone={timeZone}
       applications={applications.map((application) => ({
         id: application.id,
-        label: [application.company, application.role || application.title].filter(Boolean).join(", ") || "Untitled application",
+        label: [application.company, application.role || application.title].filter(Boolean).join(", ") || "Bewerbung ohne Titel",
       }))}
     />
   );

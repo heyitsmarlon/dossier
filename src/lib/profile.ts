@@ -3,6 +3,17 @@ import type { ProfilePhoto } from "@/lib/photo";
 
 /** Proficiency levels in the order the language select lists them (PRD PRO-4). */
 export const LANGUAGE_LEVELS: readonly { value: LanguageLevel; label: string }[] = [
+  { value: LanguageLevel.NATIVE, label: "Muttersprache" },
+  { value: LanguageLevel.C2, label: "Verhandlungssicher (C2)" },
+  { value: LanguageLevel.C1, label: "Fließend (C1)" },
+  { value: LanguageLevel.B2, label: "Sehr gut (B2)" },
+  { value: LanguageLevel.B1, label: "Gut (B1)" },
+  { value: LanguageLevel.A2, label: "Grundkenntnisse (A2)" },
+  { value: LanguageLevel.A1, label: "Anfänger (A1)" },
+];
+
+/** The levels' English names, for English documents and the demo profile; the app itself shows LANGUAGE_LEVELS. */
+export const ENGLISH_LANGUAGE_LEVELS: readonly { value: LanguageLevel; label: string }[] = [
   { value: LanguageLevel.NATIVE, label: "Native" },
   { value: LanguageLevel.C2, label: "Fluent (C2)" },
   { value: LanguageLevel.C1, label: "Advanced (C1)" },
@@ -50,6 +61,9 @@ export function formatMonthYear(
     timeZone: "UTC",
   }).format(Date.UTC(year, (month ?? 1) - 1, 1));
 }
+
+/** How the app's own screens write dates: German month names, "heute" for an ongoing entry. */
+export const UI_DATE_OPTIONS: DateFormatOptions = { locale: "de-DE", present: "heute" };
 
 /** "Mar 2021 – Present", "2013 – 2015", "Sep 2015 – May 2018", or a single date. */
 export function formatDateRange(span: DateSpan, options: DateFormatOptions = {}): string {
@@ -250,12 +264,12 @@ export function profileStrength(profile: {
   );
   const hint =
     percent === 100
-      ? "All set. The optional sections are there if they help."
+      ? "Alles da. Die optionalen Bereiche sind da, falls sie helfen."
       : percent >= 90
-        ? "Looking great. The AI has plenty to work with."
+        ? "Sieht super aus. Die KI hat reichlich Material."
         : percent >= 50
-          ? "Nice progress. A bit more detail makes tailoring sharper."
-          : "A good start. Experience matters most.";
+          ? "Guter Fortschritt. Etwas mehr Detail macht den Zuschnitt schärfer."
+          : "Ein guter Anfang. Berufserfahrung zählt am meisten.";
   return { percent, hint };
 }
 

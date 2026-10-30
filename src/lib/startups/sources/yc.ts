@@ -59,7 +59,7 @@ export function startupFromJob(item: Item): FoundStartup | null {
     stage: batch ? `YC ${batch}` : "",
     roles: role && !/^in\s/i.test(role) ? [role.slice(0, 160)] : [],
     emails: [],
-    links: [...(url ? [{ label: "Job post", url }] : []), { label: "On Hacker News", url: hnItemLink(item.id) }],
+    links: [...(url ? [{ label: "Stellenanzeige", url }] : []), { label: "Auf Hacker News", url: hnItemLink(item.id) }],
     postedAt: item.time ? new Date(item.time * 1000).toISOString() : null,
   };
 }
@@ -67,7 +67,7 @@ export function startupFromJob(item: Item): FoundStartup | null {
 /** The YC job posts on Hacker News now. */
 export async function fetchYcStartups(signal?: AbortSignal): Promise<FoundStartup[]> {
   const ids = z.array(z.number()).safeParse(await getJson(`${API}/jobstories.json`, { signal }));
-  if (!ids.success) throw new SourceError("changed its format");
+  if (!ids.success) throw new SourceError("hat sein Format geändert");
   const items: (Item | null)[] = [];
   const wanted = ids.data.slice(0, 100);
   for (let index = 0; index < wanted.length; index += CONCURRENCY) {
@@ -78,6 +78,6 @@ export async function fetchYcStartups(signal?: AbortSignal): Promise<FoundStartu
       items.push(parsed?.success ? parsed.data : null);
     }
   }
-  if (wanted.length > 0 && items.every((item) => item === null)) throw new SourceError("didn't answer for any of its job posts");
+  if (wanted.length > 0 && items.every((item) => item === null)) throw new SourceError("hat für keine seiner Stellenanzeigen geantwortet");
   return items.flatMap((item) => (item ? (startupFromJob(item) ?? []) : []));
 }

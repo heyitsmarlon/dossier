@@ -12,7 +12,7 @@ export type StepperProps = {
 export function Stepper({
   steps,
   current,
-  "aria-label": ariaLabel = "Progress",
+  "aria-label": ariaLabel = "Fortschritt",
   className,
 }: StepperProps) {
   return (
@@ -40,7 +40,7 @@ export function Stepper({
               {state === "done" ? "✓" : index + 1}
             </span>
             {label}
-            {state === "done" && <span className="sr-only"> (done)</span>}
+            {state === "done" && <span className="sr-only"> (erledigt)</span>}
           </li>
         );
       })}

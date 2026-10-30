@@ -1,0 +1,89 @@
+# Dossier (deutsche Oberfläche) lokal auf deinem Rechner, ohne Server.
+# Baut das Image direkt aus diesem Repo, also mit der deutschen Oberfläche und
+# nativ für deinen Prozessor (auch Apple Silicon, ohne Emulation).
+#
+# Einmalig einrichten:   ./lokal-einrichten.sh
+# Starten:               docker compose -f compose.local.yml up -d
+# Stoppen:               docker compose -f compose.local.yml stop
+# Danach im Browser:     http://localhost:3000
+#
+# Mit COMPOSE_PROFILES=ai in .env läuft zusätzlich Ollama für ein lokales Modell.
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dossier
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: dossier
+    volumes:
+      # Postgres 18+ keeps data in a versioned subdirectory, so mount the parent.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dossier -d dossier"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: dossier-de:local
+    build:
+      context: .
+      target: production
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://dossier:${POSTGRES_PASSWORD}@db:5432/dossier
+      DOSSIER_PASSWORD: ${DOSSIER_PASSWORD:?Set DOSSIER_PASSWORD in .env to a hash from hash-password}
+      DOSSIER_SECRET: ${DOSSIER_SECRET:?Set DOSSIER_SECRET in .env}
+      DOSSIER_BACKUP_RETENTION_DAYS: ${DOSSIER_BACKUP_RETENTION_DAYS:-}
+      # Your time zone, e.g. Europe/Berlin: nightly backups run at 03:00 in it.
+      TZ: ${TZ:-Europe/Berlin}
+      DOSSIER_AI_PROVIDER: ${DOSSIER_AI_PROVIDER:-}
+      DOSSIER_AI_URL: ${DOSSIER_AI_URL:-}
+      DOSSIER_AI_MODEL: ${DOSSIER_AI_MODEL:-}
+      DOSSIER_AI_KEY: ${DOSSIER_AI_KEY:-}
+      DOSSIER_AI_TIMEOUT_SECONDS: ${DOSSIER_AI_TIMEOUT_SECONDS:-}
+      # The daily usage ping: unset, Dossier asks after sign-in; on or off answers in advance (see Privacy in the wiki).
+      DOSSIER_TELEMETRY: ${DOSSIER_TELEMETRY:-}
+      # Defaults for Settings → Job search.
+      DOSSIER_JOBS_SOURCE: ${DOSSIER_JOBS_SOURCE:-}
+      DOSSIER_JSEARCH_KEY: ${DOSSIER_JSEARCH_KEY:-}
+      DOSSIER_JSEARCH_HOST: ${DOSSIER_JSEARCH_HOST:-}
+      DOSSIER_ADZUNA_APP_ID: ${DOSSIER_ADZUNA_APP_ID:-}
+      DOSSIER_ADZUNA_KEY: ${DOSSIER_ADZUNA_KEY:-}
+      DOSSIER_FREEHIRE_URL: ${DOSSIER_FREEHIRE_URL:-}
+      DOSSIER_JOBS_ARBEITSAGENTUR: ${DOSSIER_JOBS_ARBEITSAGENTUR:-}
+      # Gmail and Calendar: a Google OAuth client (or enter it in Settings → Google).
+      DOSSIER_GOOGLE_CLIENT_ID: ${DOSSIER_GOOGLE_CLIENT_ID:-}
+      DOSSIER_GOOGLE_CLIENT_SECRET: ${DOSSIER_GOOGLE_CLIENT_SECRET:-}
+      # The address Dossier is reached at, for Google's redirect.
+      DOSSIER_PUBLIC_URL: ${DOSSIER_PUBLIC_URL:-}
+    # Only on the server itself: put a reverse proxy with HTTPS in front.
+    ports:
+      - "127.0.0.1:${DOSSIER_PORT:-3000}:3000"
+    volumes:
+      - data:/data
+    # Room for Chromium, which prints the PDFs.
+    mem_limit: 1g
+    # Lets http://host.docker.internal reach Ollama (:11434) or LM Studio
+    # (:1234) on the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # A local model, with COMPOSE_PROFILES=ai in .env: `docker compose up -d`,
+  # then pull one (see "Choosing an AI provider" in the wiki). Dossier reaches it at http://ollama:11434.
+  ollama:
+    profiles: [ai]
+    image: ollama/ollama:0.40.10
+    restart: unless-stopped
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  pgdata:
+  data:
+  ollama:

@@ -12,7 +12,7 @@ const CODES = (
   "um us uy uz va vc ve vg vi vn vu wf ws xk ye yt za zm zw"
 ).split(" ");
 
-const englishNames = new Intl.DisplayNames(["en"], { type: "region", fallback: "code" });
+const englishNames = new Intl.DisplayNames(["de"], { type: "region", fallback: "code" });
 
 /** "Germany" for "de"; the code itself when it isn't one. */
 export function countryName(code: string): string {
@@ -27,7 +27,7 @@ export type Country = { code: string; name: string };
  * server and pass it down: a browser's ICU data can name a few differently.
  */
 export const COUNTRIES: readonly Country[] = CODES.map((code) => ({ code, name: countryName(code) })).sort((a, b) =>
-  a.name.localeCompare(b.name, "en"),
+  a.name.localeCompare(b.name, "de"),
 );
 
 // Names people write that the locales below don't give.

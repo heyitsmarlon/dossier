@@ -22,7 +22,7 @@ export const refineJobKey = (applicationId: string) => `refine:${applicationId}`
 const unitRef = z.object({ document: z.enum(DocumentKind), unitId: z.string().min(1) });
 
 /** "A, B and C" */
-const listOf = (names: string[]) => (names.length <= 1 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`);
+const listOf = (names: string[]) => (names.length <= 1 ? names.join("") : `${names.slice(0, -1).join(", ")} und ${names.at(-1)}`);
 
 /**
  * Answers a message in the Refine with AI panel (E8-5, APP-7, APP-9): the
@@ -49,7 +49,7 @@ export const refineJob = defineJob({
     edited: z.array(unitRef),
   }),
   async run({ applicationId, messageId, request, target, viewing }, { step, signal }) {
-    await step("Thinking");
+    await step("Denke nach");
     const application = await prisma.application.findUniqueOrThrow({
       where: { id: applicationId },
       include: { documents: true, messages: { orderBy: { createdAt: "asc" } } },
@@ -99,7 +99,7 @@ export const refineJob = defineJob({
         const unit = documents[edit.document]?.find((entry) => entry.id === edit.unitId);
         if (!unit) continue;
         if (unit.text !== edit.previousText) {
-          leftAlone.push(`the ${unitName(unit)}`);
+          leftAlone.push(`„${unitName(unit)}“`);
           continue;
         }
         unit.text = edit.text;

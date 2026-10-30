@@ -7,7 +7,7 @@ import { SelectControl } from "@/components/ui/select";
 import { cn } from "@/lib/cn";
 
 const MONTHS = Array.from({ length: 12 }, (_, index) =>
-  new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" }).format(Date.UTC(2000, index, 1)),
+  new Intl.DateTimeFormat("de-DE", { month: "long", timeZone: "UTC" }).format(Date.UTC(2000, index, 1)),
 );
 const MIN_YEAR = 1900;
 const MAX_YEAR = 2100;
@@ -58,7 +58,7 @@ export function MonthYearField({
           wrapperClassName="flex-1"
           className={cn(controlBaseClassName, "w-full min-w-0 py-2.5")}
         >
-          <option value="">Month</option>
+          <option value="">Monat</option>
           {MONTHS.map((name, index) => (
             <option key={name} value={index + 1}>
               {name}
@@ -70,7 +70,7 @@ export function MonthYearField({
           inputMode="numeric"
           autoComplete="off"
           maxLength={4}
-          placeholder="Year"
+          placeholder="Jahr"
           value={yearText}
           onChange={(event) => {
             setYearText(event.target.value);
@@ -84,7 +84,7 @@ export function MonthYearField({
       </div>
       {invalid && (
         <p id={errorId} role="alert" className="text-label text-error">
-          Enter a four-digit year, like 2021.
+          Gib eine vierstellige Jahreszahl ein, z. B. 2021.
         </p>
       )}
     </fieldset>

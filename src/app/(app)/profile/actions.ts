@@ -89,7 +89,7 @@ export const removePhoto = action(z.object({}), async () => {
 });
 
 const id = z.string().min(1);
-const skillName = z.string().trim().min(1, "Type a skill first.").max(100);
+const skillName = z.string().trim().min(1, "Gib zuerst eine Fähigkeit ein.").max(100);
 
 /** Adds a skill (PRO-3). An existing one, in any case, is returned instead of a duplicate. */
 /** A skill group's name (#280): it leads a line on resumes ("Tools: Figma · Ahrefs"), so no ":" or "·". */
@@ -149,7 +149,7 @@ const level = z.enum(LanguageLevel);
  * case, updates its level instead of adding a duplicate.
  */
 export const addLanguage = action(
-  z.object({ name: z.string().trim().min(1, "Type a language first.").max(100), level }),
+  z.object({ name: z.string().trim().min(1, "Gib zuerst eine Sprache ein.").max(100), level }),
   async ({ name, level }) => {
     const existing = await prisma.language.findUnique({ where: { name } });
     const language = existing
@@ -663,7 +663,7 @@ export const reorderPublications = action(z.object({ ids: z.array(id) }), async 
   await prisma.$transaction(async (tx) => {
     const known = new Set((await tx.publication.findMany({ select: { id: true } })).map((entry) => entry.id));
     if (ids.length !== known.size || new Set(ids).size !== ids.length || !ids.every((entryId) => known.has(entryId))) {
-      throw new ActionError("The list changed in the meantime. Reload the page and try again.");
+      throw new ActionError("Die Liste hat sich zwischenzeitlich geändert. Lade die Seite neu und versuch es noch einmal.");
     }
     for (const [sort, entryId] of ids.entries()) await tx.publication.update({ where: { id: entryId }, data: { sort } });
   });
@@ -700,7 +700,7 @@ export const reorderEntries = action(z.object({ section, ids: z.array(id) }), as
     const table = entries(tx, section);
     const known = new Set((await table.list()).map((entry) => entry.id));
     if (ids.length !== known.size || new Set(ids).size !== ids.length || !ids.every((entryId) => known.has(entryId))) {
-      throw new ActionError("The list changed in the meantime. Reload the page and try again.");
+      throw new ActionError("Die Liste hat sich zwischenzeitlich geändert. Lade die Seite neu und versuch es noch einmal.");
     }
     for (const [sort, entryId] of ids.entries()) await table.setSort(entryId, sort);
     await saveSettings({ [ORDER_SETTING[section]]: "manual" }, tx);
@@ -727,7 +727,7 @@ export const applyProfileImport = action(
   async ({ jobId, mode }, { toast }) => {
     const job = await prisma.job.findUnique({ where: { id: jobId }, select: { type: true, status: true, result: true } });
     if (job?.type !== importProfileJob.type || job.status !== JobStatus.DONE) {
-      throw new ActionError("That resume isn't read yet, or it's no longer there. Choose the file again.");
+      throw new ActionError("Dieser Lebenslauf ist noch nicht eingelesen oder nicht mehr da. Wähle die Datei erneut.");
     }
     const { profile } = importProfileJob.result.parse(job.result);
     await applyImportedProfile(prisma, profile, mode);

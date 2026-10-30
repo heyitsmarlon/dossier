@@ -89,7 +89,7 @@ export function UnitFrame({
       {flagged && <CheckThis facts={unit.unverified!} />}
       {busy ? (
         <span className={cn(styles.status, "rounded-[6px] border border-line-popover bg-card px-2 py-1 font-sans text-[11.5px] leading-[1.2] text-muted")}>
-          Rewriting…
+          Wird neu geschrieben…
         </span>
       ) : (
         !editing && (
@@ -100,21 +100,21 @@ export function UnitFrame({
             )}
           >
             <button type="button" className={toolButton} onClick={onEdit}>
-              Edit
+              Bearbeiten
             </button>
             {onRegenerate && (
               <button type="button" className={toolButton} onClick={onRegenerate}>
-                Regenerate
+                Neu schreiben
               </button>
             )}
             {onAskAi && (
               <button type="button" className={toolButton} onClick={onAskAi}>
-                Ask AI
+                KI fragen
               </button>
             )}
             {onLeaveOut && (
               <button type="button" className={toolButton} onClick={onLeaveOut}>
-                Leave out
+                Weglassen
               </button>
             )}
           </div>
@@ -142,7 +142,7 @@ function UnitEditor({
   return (
     <div className={cn(styles.editor, "mt-1 flex flex-col gap-2 font-sans")} dir="auto">
       <textarea
-        aria-label={`Edit ${unit.label}`}
+        aria-label={`${unit.label} bearbeiten`}
         aria-describedby={isBulletUnit(unit.id) ? `${unit.id}-hint` : undefined}
         // Opened on request, so the text box takes focus.
         autoFocus
@@ -164,14 +164,14 @@ function UnitEditor({
       <div className="flex items-center justify-end gap-1.5">
         {isBulletUnit(unit.id) && (
           <span id={`${unit.id}-hint`} className="mr-auto text-xs text-muted">
-            One bullet per line
+            Ein Stichpunkt pro Zeile
           </span>
         )}
         <Button variant="secondary" size="sm" className="min-h-[calc(var(--px)*30)] bg-input" onClick={onCancel} disabled={saving}>
-          Cancel
+          Abbrechen
         </Button>
         <Button size="sm" className="min-h-[calc(var(--px)*30)]" onClick={() => onSave(value)} disabled={saving}>
-          {saving ? "Saving…" : "Save"}
+          {saving ? "Speichert…" : "Speichern"}
         </Button>
       </div>
     </div>
@@ -184,8 +184,8 @@ function CheckThis({ facts }: { facts: string[] }) {
   return (
     <Popover.Root>
       <Popover.Trigger
-        aria-label={`Check this: ${quoted}`}
-        title="Check this"
+        aria-label={`Bitte prüfen: ${quoted}`}
+        title="Bitte prüfen"
         className={cn(
           styles.check,
           "grid size-4 place-items-center rounded-full border border-warning-line bg-warning-surface font-sans text-[11px] leading-none font-bold text-warning",
@@ -201,10 +201,10 @@ function CheckThis({ facts }: { facts: string[] }) {
           collisionPadding={16}
           className="z-30 flex max-w-[280px] flex-col gap-1 rounded-card border border-line-popover bg-card px-3.5 py-3 text-meta shadow-menu"
         >
-          <p className="font-medium">Check this</p>
+          <p className="font-medium">Bitte prüfen</p>
           <p className="text-muted">
-            I couldn&apos;t find {quoted} in your profile or the posting. If {facts.length === 1 ? "it isn't" : "they aren't"}{" "}
-            right, edit this part before you send it.
+            Ich habe {quoted} weder in deinem Profil noch in der Anzeige gefunden. Falls {facts.length === 1 ? "das nicht stimmt" : "das nicht stimmt"},{" "}
+            bearbeite diesen Teil, bevor du ihn abschickst.
           </p>
         </Popover.Content>
       </Popover.Portal>

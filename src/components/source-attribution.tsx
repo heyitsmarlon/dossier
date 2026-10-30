@@ -31,7 +31,7 @@ export function SourceAttribution({ source, url, placeholder, className }: { sou
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className={cn(badge, "text-muted hover:border-muted hover:text-ink", className)}>
       {text}{" "}
-      <span className="sr-only">(opens in a new tab)</span>
+      <span className="sr-only">(öffnet in neuem Tab)</span>
     </a>
   );
 }

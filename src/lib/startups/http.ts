@@ -43,9 +43,9 @@ export async function getText(url: string, { signal }: { signal?: AbortSignal } 
     });
   } catch {
     if (signal?.aborted) throw new SourceError("was stopped");
-    throw new SourceError(timeout.aborted ? "took too long to answer" : "couldn't be reached");
+    throw new SourceError(timeout.aborted ? "hat zu lange gebraucht" : "war nicht erreichbar");
   }
-  if (!response.ok) throw new SourceError(`answered with an error (${response.status})`);
+  if (!response.ok) throw new SourceError(`hat mit einem Fehler geantwortet (${response.status})`);
   const length = Number(response.headers.get("content-length") ?? 0);
   if (length > MAX_BYTES) throw new SourceError("sent too much");
   const text = await response.text();
@@ -58,7 +58,7 @@ export async function getJson(url: string, options: { signal?: AbortSignal } = {
   try {
     return JSON.parse(text) as unknown;
   } catch {
-    throw new SourceError("didn't answer with JSON");
+    throw new SourceError("hat nicht mit JSON geantwortet");
   }
 }
 

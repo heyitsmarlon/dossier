@@ -67,9 +67,9 @@ export type WeekActivity = {
 
 /** The dashboard's time filter (E9-8, DSH-7). */
 export const DASHBOARD_PERIODS = [
-  { value: "30d", label: "Last 30 days", days: 30 },
-  { value: "90d", label: "Last 90 days", days: 90 },
-  { value: "all", label: "All time", days: null },
+  { value: "30d", label: "Letzte 30 Tage", days: 30 },
+  { value: "90d", label: "Letzte 90 Tage", days: 90 },
+  { value: "all", label: "Gesamt", days: null },
 ] as const;
 export type DashboardPeriod = (typeof DASHBOARD_PERIODS)[number]["value"];
 
@@ -230,17 +230,17 @@ function worthALook(
 
   const offers = inStatus(ApplicationStatus.OFFER)
     .sort(latestFirst)
-    .map((application) => item(application, "An offer is waiting on your decision.", "Review"));
+    .map((application) => item(application, "Ein Angebot wartet auf deine Entscheidung.", "Review"));
 
   const drafts = inStatus(ApplicationStatus.DRAFT)
     .sort((a, b) => (a.deadline?.getTime() ?? Infinity) - (b.deadline?.getTime() ?? Infinity) || latestFirst(a, b))
     .map((application) => {
       const { deadline } = application;
-      if (!deadline) return item(application, "Still a draft. Ready when you are.", "Finish");
+      if (!deadline) return item(application, "Noch ein Entwurf. Bereit, wenn du es bist.", "Finish");
       const date = formatShortCalendarDate(deadline, now);
       return item(
         application,
-        deadline.getTime() < today ? `Still a draft, and the deadline was ${date}.` : `Still a draft, and applications close ${date}.`,
+        deadline.getTime() < today ? `Noch ein Entwurf, und die Frist war am ${date}.` : `Noch ein Entwurf, Bewerbungsschluss ist am ${date}.`,
         "Finish",
       );
     });
@@ -253,7 +253,7 @@ function worthALook(
     )
     .sort((a, b) => silence(b) - silence(a))
     .map((application) =>
-      item(application, `No news for ${silence(application)} days. A short, friendly follow-up could help.`, "Open"),
+      item(application, `Seit ${silence(application)} Tagen keine Neuigkeiten. Ein kurzes, freundliches Nachfassen könnte helfen.`, "Open"),
     );
 
   // Interviews by their date (E9-9, decided 29 September 2026).
@@ -266,27 +266,27 @@ function worthALook(
       const date = application.nextInterviewAt!;
       const days = daysBetween(now, date, timeZone);
       const time = formatTime(date, timeZone);
-      const when = days === 0 ? `today at ${time}` : days === 1 ? `tomorrow at ${time}` : `on ${formatDateTime(date, timeZone, now)}`;
-      return { ...item(application, `Interview ${when}. Worth re-reading your tailored letter first.`, "Open"), soon: days <= 1 };
+      const when = days === 0 ? `heute um ${time}` : days === 1 ? `morgen um ${time}` : `am ${formatDateTime(date, timeZone, now)}`;
+      return { ...item(application, `Gespräch ${when}. Lies vorher am besten noch einmal dein Anschreiben.`, "Open"), soon: days <= 1 };
     });
   const past = interviewing
     .filter((application) => application.nextInterviewAt && at(application) < now.getTime())
     .sort((a, b) => at(b) - at(a))
     .map((application) => {
       const date = application.nextInterviewAt!;
-      const when = daysBetween(date, now, timeZone) === 0 ? "earlier today" : `on ${formatDay(date, timeZone, now)}`;
-      return item(application, `Your interview was ${when}. How did it go? Move it on, or add the next round's date.`, "Open");
+      const when = daysBetween(date, now, timeZone) === 0 ? "heute" : `am ${formatDay(date, timeZone, now)}`;
+      return item(application, `Dein Gespräch war ${when}. Wie lief es? Schieb die Bewerbung weiter oder trag den nächsten Termin ein.`, "Open");
     });
   const undated = interviewing
     .filter((application) => !application.nextInterviewAt)
     .sort(latestFirst)
-    .map((application) => item(application, "You're interviewing. Add the next interview's date and it shows up here.", "Open"));
+    .map((application) => item(application, "Du bist in Gesprächen. Trag den nächsten Termin ein, dann erscheint er hier.", "Open"));
 
   // Replies waiting for an answer come first, in place of the application's other item (E15-3).
   const answering = applications.flatMap((application) => {
     const waiting = replies?.get(application.id);
     if (!waiting) return [];
-    const reason = waiting.count === 1 ? `A reply is waiting: ${waiting.summary}` : `${waiting.count} replies are waiting. ${waiting.summary}`;
+    const reason = waiting.count === 1 ? `Eine Antwort wartet: ${waiting.summary}` : `${waiting.count} Antworten warten. ${waiting.summary}`;
     return [{ ...item(application, reason, "Answer"), tab: "conversation" as const }];
   });
   const answered = new Set(answering.map((entry) => entry.id));

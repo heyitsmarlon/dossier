@@ -47,8 +47,8 @@ export type JobView<R = unknown> = {
 };
 
 export const JOB_MESSAGES = {
-  failed: "Something went wrong while working on this. Try again.",
-  interrupted: "Dossier restarted before this finished. Try again.",
+  failed: "Dabei ist etwas schiefgegangen. Versuch es noch einmal.",
+  interrupted: "Dossier wurde neu gestartet, bevor das fertig war. Versuch es noch einmal.",
   cancelled: "Cancelled.",
 } as const;
 

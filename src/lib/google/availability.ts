@@ -42,7 +42,7 @@ export async function proposeSlots(now = new Date()): Promise<{ slots: Interval[
  */
 export async function scheduleInterview(applicationId: string, start: Date): Promise<CalendarSync> {
   const { count } = await prisma.application.updateMany({ where: { id: applicationId }, data: { nextInterviewAt: start } });
-  if (count === 0) throw new GoogleError("unavailable", "That application no longer exists.");
+  if (count === 0) throw new GoogleError("unavailable", "Diese Bewerbung gibt es nicht mehr.");
   return syncInterviewToCalendar(applicationId);
 }
 
@@ -60,8 +60,8 @@ const eventFor = (application: { id: string; company: string; role: string; titl
   const what = [application.role || application.title, application.company].filter(Boolean).join(" · ");
   return {
     applicationId: application.id,
-    summary: `Interview · ${what || "application"}`,
-    description: `Added by Dossier for your application${application.company ? ` to ${application.company}` : ""}.`,
+    summary: `Vorstellungsgespräch · ${what || "Bewerbung"}`,
+    description: `Von Dossier für deine Bewerbung${application.company ? ` bei ${application.company}` : ""} eingetragen.`,
   };
 };
 

@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps<"/applications/[id]
   const { id } = await params;
   await pullCalendar(id);
   const application = await loadApplication(id);
-  return { title: application.title.trim() || "Untitled application" };
+  return { title: application.title.trim() || "Bewerbung ohne Titel" };
 }
 
 /** One application (PRD §6.5): its status, tailored documents, email, posting and notes. */

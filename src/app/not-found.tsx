@@ -9,14 +9,14 @@ export default function NotFound() {
     <main className="flex min-h-screen justify-center">
       <ScreenMessage
         standalone
-        title="There's no page here"
+        title="Diese Seite gibt es nicht"
         actions={
           <Link href="/" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-            Go to the dashboard
+            Zur Übersicht
           </Link>
         }
       >
-        <p>The link may be old or mistyped. Everything you saved is where you left it.</p>
+        <p>Der Link ist vielleicht veraltet oder vertippt. Alles Gespeicherte ist, wo du es gelassen hast.</p>
       </ScreenMessage>
     </main>
   );

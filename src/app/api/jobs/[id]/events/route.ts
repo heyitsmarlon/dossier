@@ -12,7 +12,7 @@ const HEARTBEAT_MS = 15_000;
  */
 export const GET = route<RouteContext<"/api/jobs/[id]/events">>(async (request, { params }) => {
   const { id } = await params;
-  if (!(await getJob(id))) return NextResponse.json({ error: "That job doesn't exist." }, { status: 404 });
+  if (!(await getJob(id))) return NextResponse.json({ error: "Diese Aufgabe gibt es nicht." }, { status: 404 });
   const encoder = new TextEncoder();
   let stop = () => {};
 

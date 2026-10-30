@@ -17,13 +17,13 @@ const GENERIC = /^(agile|scrum|kanban|git|github|gitlab|jira|confluence|slack|ci
 
 /** Kinds of work, recognised in the profile and in a startup's text. */
 const FIELDS: { name: string; profile: RegExp; startup: RegExp }[] = [
-  { name: "mobile", profile: /\b(android|ios|kotlin|swift|jetpack compose|react native|flutter|mobile)\b/i, startup: /\b(android|ios|mobile|kotlin|swift|react native|flutter|mobile app)\b/i },
-  { name: "frontend", profile: /\b(react|next\.?js|vue|angular|svelte|typescript|frontend|front-end)\b/i, startup: /\b(frontend|front-end|react|next\.?js|vue|angular|svelte|web app)\b/i },
-  { name: "backend", profile: /\b(node\.?js|express|django|rails|spring|golang|rust|postgres|mongodb|backend|back-end|graphql)\b/i, startup: /\b(backend|back-end|node\.?js|api|platform engineer|distributed systems|golang|rust)\b/i },
-  { name: "infrastructure", profile: /\b(devops|sre|kubernetes|terraform|aws|gcp|azure|infrastructure)\b/i, startup: /\b(devops|sre|site reliability|kubernetes|infrastructure|platform)\b/i },
-  { name: "data and AI", profile: /\b(python|machine learning|ml|pytorch|tensorflow|data science|llm|nlp)\b/i, startup: /\b(machine learning|ml engineer|ai engineer|data scientist|llm|nlp)\b/i },
-  { name: "design", profile: /\b(figma|ux|ui design|product design|designer)\b/i, startup: /\b(designer|product design|ux|ui\/ux)\b/i },
-  { name: "product", profile: /\b(product manager|product management|product owner)\b/i, startup: /\b(product manager|head of product|product lead)\b/i },
+  { name: "Mobile", profile: /\b(android|ios|kotlin|swift|jetpack compose|react native|flutter|mobile)\b/i, startup: /\b(android|ios|mobile|kotlin|swift|react native|flutter|mobile app)\b/i },
+  { name: "Frontend", profile: /\b(react|next\.?js|vue|angular|svelte|typescript|frontend|front-end)\b/i, startup: /\b(frontend|front-end|react|next\.?js|vue|angular|svelte|web app)\b/i },
+  { name: "Backend", profile: /\b(node\.?js|express|django|rails|spring|golang|rust|postgres|mongodb|backend|back-end|graphql)\b/i, startup: /\b(backend|back-end|node\.?js|api|platform engineer|distributed systems|golang|rust)\b/i },
+  { name: "Infrastruktur", profile: /\b(devops|sre|kubernetes|terraform|aws|gcp|azure|infrastructure)\b/i, startup: /\b(devops|sre|site reliability|kubernetes|infrastructure|platform)\b/i },
+  { name: "Daten und KI", profile: /\b(python|machine learning|ml|pytorch|tensorflow|data science|llm|nlp)\b/i, startup: /\b(machine learning|ml engineer|ai engineer|data scientist|llm|nlp)\b/i },
+  { name: "Design", profile: /\b(figma|ux|ui design|product design|designer)\b/i, startup: /\b(designer|product design|ux|ui\/ux)\b/i },
+  { name: "Produkt", profile: /\b(product manager|product management|product owner)\b/i, startup: /\b(product manager|head of product|product lead)\b/i },
 ];
 
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -34,7 +34,7 @@ function skillPattern(skill: string): RegExp {
   return new RegExp(`(^|[^a-z0-9+#])${spelled}($|[^a-z0-9+#])`, "i");
 }
 
-const list = (items: string[]) => (items.length <= 1 ? (items[0] ?? "") : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`);
+const list = (items: string[]) => (items.length <= 1 ? (items[0] ?? "") : `${items.slice(0, -1).join(", ")} und ${items.at(-1)}`);
 
 /** Where a startup says it hires: its location, and the title or the post's first line. */
 export const whereText = (startup: Pick<FoundStartup, "source" | "location" | "summary" | "details">) =>
@@ -57,14 +57,14 @@ export function matchStartup(
   const skills = profile.skills.map((skill) => skill.name.trim()).filter((name) => name.length > 1 && !GENERIC.test(name));
   const hits = skills.filter((skill) => skillPattern(skill).test(text));
   score += Math.min(40, hits.slice(0, 2).length * 12 + hits.slice(2).length * 5);
-  if (hits.length > 0) reasons.push(`Mentions ${list(hits.slice(0, 4))} from your skills`);
+  if (hits.length > 0) reasons.push(`Nennt ${list(hits.slice(0, 4))} aus deinen Fähigkeiten`);
 
   // The kind of work the profile does.
   const profileText = [profile.basics.headline, profile.basics.summary, ...profile.experience.map((role) => role.role), ...skills].join(" ");
   const field = FIELDS.find((entry) => entry.profile.test(profileText) && entry.startup.test(text));
   if (field) {
     score += 15;
-    reasons.push(`Hires for ${field.name} work, like yours`);
+    reasons.push(`Stellt im Bereich ${field.name} ein, wie deiner`);
   } else if (/\b(engineer|developer|engineering)\b/i.test(text)) {
     score += 5;
   }
@@ -80,30 +80,30 @@ export function matchStartup(
   }
   if (where.remote && where.remoteOpen === true) {
     score += 12;
-    reasons.push(place.countryName ? `Remote, open to ${place.countryName}` : "Remote from anywhere");
+    reasons.push(place.countryName ? `Remote, offen für ${place.countryName}` : "Remote von überall");
   } else if (where.remote && where.remoteOpen === null) {
     score += 5;
-    reasons.push("Remote (where from isn't said)");
+    reasons.push("Remote (von wo, ist nicht angegeben)");
   } else if (where.remote && where.remoteOnly) {
-    reasons.push(`Remote only for ${where.remoteOnly}`);
+    reasons.push(`Remote nur für ${where.remoteOnly}`);
   }
 
   // How fresh it is.
   const days = startup.postedAt ? (now.getTime() - Date.parse(startup.postedAt)) / 86_400_000 : Infinity;
   if (days <= 14) {
     score += 10;
-    reasons.push(days < 1 ? "Posted today" : days < 2 ? "Posted yesterday" : `Posted ${Math.round(days)} days ago`);
+    reasons.push(days < 1 ? "Heute veröffentlicht" : days < 2 ? "Gestern veröffentlicht" : `Vor ${Math.round(days)} Tagen veröffentlicht`);
   } else if (days <= 45) {
     score += 5;
   }
 
   if (startup.stage.startsWith("YC ")) {
     score += 5;
-    reasons.push(`A ${startup.stage} startup`);
+    reasons.push(`Ein Startup in Phase ${startup.stage}`);
   }
   if (startup.emails.some((email) => email.label === "Hiring" || email.label === "Founders")) {
     score += 5;
-    reasons.push("Publishes an address for applications");
+    reasons.push("Veröffentlicht eine Adresse für Bewerbungen");
   }
 
   return { score: Math.max(0, Math.min(100, Math.round(score))), reasons };

@@ -24,13 +24,13 @@ export function ArbeitsagenturNote({ accepted, onAccept, className }: { accepted
       <p>
         {ARBEITSAGENTUR_NOTE}{" "}
         <a href={ARBEITSAGENTUR_TERMS_URL} target="_blank" rel="noopener noreferrer" className="font-medium underline underline-offset-2">
-          The BA&apos;s terms of use
-          <span className="sr-only"> (German, opens in a new tab)</span>
+          Nutzungsbedingungen der BA
+          <span className="sr-only"> (öffnet in neuem Tab)</span>
         </a>
       </p>
       {!accepted && (
         <Checkbox
-          label={<span className="font-medium text-ink">I understand, and choose this source myself</span>}
+          label={<span className="font-medium text-ink">Verstanden, ich wähle diese Quelle selbst</span>}
           checked={saving}
           disabled={saving}
           onChange={(event) => {

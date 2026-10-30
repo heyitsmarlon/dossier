@@ -6,7 +6,7 @@ import { loadSettings } from "@/lib/settings-data";
 import { ProfileEditor } from "./profile-editor";
 import { sectionFromParam } from "./sections";
 
-export const metadata: Metadata = { title: "Profile" };
+export const metadata: Metadata = { title: "Profil" };
 
 /** The profile editor; the current section is in `?section=` (E4-1). */
 export default async function ProfilePage({ searchParams }: PageProps<"/profile">) {

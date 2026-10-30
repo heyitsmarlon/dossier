@@ -2,9 +2,9 @@
 
 /** Day, short month ("Sep", as en-US has it; en-GB now says "Sept") and optionally the year. */
 function format(date: Date, { year, timeZone }: { year: boolean; timeZone?: string }): string {
-  const parts = new Intl.DateTimeFormat("en-US", { day: "numeric", month: "short", year: "numeric", timeZone }).formatToParts(date);
+  const parts = new Intl.DateTimeFormat("de-DE", { day: "numeric", month: "short", year: "numeric", timeZone }).formatToParts(date);
   const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((entry) => entry.type === type)?.value ?? "";
-  return [part("day"), part("month"), year ? part("year") : ""].filter(Boolean).join(" ");
+  return [`${part("day")}.`, part("month"), year ? part("year") : ""].filter(Boolean).join(" ");
 }
 
 /**
@@ -83,7 +83,7 @@ export function formatTime(date: Date, timeZone?: string): string {
 /** "Thu 8 Oct" in a time zone, with the year when it isn't the same as `now`'s. */
 export function formatDay(date: Date, timeZone?: string, now = new Date()): string {
   const year = new Date(dayIn(date, timeZone)).getUTCFullYear() !== new Date(dayIn(now, timeZone)).getUTCFullYear();
-  const weekday = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone }).format(date);
+  const weekday = new Intl.DateTimeFormat("de-DE", { weekday: "short", timeZone }).format(date);
   return `${weekday} ${format(date, { year, timeZone })}`;
 }
 

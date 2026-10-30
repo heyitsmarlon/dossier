@@ -47,20 +47,20 @@ export function refineSuggestions({
 
   return {
     resume: [
-      ...(hasSummary ? ["Make the summary shorter"] : []),
+      ...(hasSummary ? ["Mach die Zusammenfassung kürzer"] : []),
       strongest ? `Emphasize ${strongest}` : "Emphasize leadership",
       // Something the profile lacks shows how the AI declines to invent it (APP-9).
       gap ? `Mention ${gap}` : "Mention accessibility",
     ],
     letter: [
-      tone === Tone.FORMAL ? "Make it warmer" : "Make it more formal",
+      tone === Tone.FORMAL ? "Mach es herzlicher" : "Mach es förmlicher",
       "Shorter, under 200 words",
-      ...(gap ? [`Handle the ${gap} gap differently`] : []),
+      ...(gap ? [`Geh mit der Lücke „${gap}“ anders um`] : []),
     ],
     email: [
       "Shorter, under 100 words",
-      tone === Tone.FORMAL ? "Make it warmer" : "Make it more formal",
-      strongest ? `Lead with ${strongest}` : "Make the subject line stand out",
+      tone === Tone.FORMAL ? "Mach es herzlicher" : "Mach es förmlicher",
+      strongest ? `Stell ${strongest} an den Anfang` : "Mach den Betreff auffälliger",
     ],
   };
 }

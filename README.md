@@ -17,6 +17,22 @@
   <img alt="PostgreSQL 18" src="https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white">
 </p>
 
+## Deutsche Fassung
+
+Dieser Fork von [AienTech/dossier](https://github.com/AienTech/dossier) hat eine deutsche Oberfläche und läuft lokal per Docker, ohne Server.
+
+**Lokal starten** (Docker Desktop muss laufen):
+
+```
+git clone https://github.com/heyitsmarlon/dossier.git && cd dossier
+./lokal-einrichten.sh                      # einmalig: Passwort festlegen, Image bauen
+docker compose -f compose.local.yml up -d  # starten
+```
+
+Dann [http://localhost:3000](http://localhost:3000) öffnen, mit deinem Passwort anmelden und unter **Einstellungen → KI-Anbieter** ein Modell wählen. Stoppen mit `docker compose -f compose.local.yml stop`; deine Daten bleiben erhalten. Das Image wird aus diesem Repo gebaut, also nativ auch auf Apple Silicon.
+
+Angepasst: alle Texte der Oberfläche, Datums- und Zahlenformate (de-DE), Sprachnamen, Basis-Lebenslauf standardmäßig auf Deutsch. Die Anweisungen an die KI und der Claude-Connector bleiben englisch; die Unterlagen schreibt die KI in der Sprache der Anzeige bzw. der gewählten Sprache. Die Tests im Repo prüfen noch die englischen Originaltexte.
+
 Dossier keeps your career history in one profile and turns it into a clean resume. For every job you apply to, it reads the posting, shows how you match, and drafts a tailored resume and cover letter that only use facts from your profile. You refine them in a chat, download them as PDFs and track each application from draft to offer.
 
 It's for one person on a small server: one password, your data in your own PostgreSQL database (or a single SQLite file), and an AI model of your choice. That can be a local model through Ollama or LM Studio, so your profile and documents stay on your own hardware, or a hosted one (any OpenAI-compatible API, Anthropic or Mistral), which then receives what it writes from. [Privacy](https://github.com/AienTech/dossier/wiki/Privacy) says what goes where.

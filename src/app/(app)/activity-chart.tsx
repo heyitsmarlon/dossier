@@ -12,8 +12,8 @@ import type { WeekActivity } from "@/lib/dashboard";
 // hover, and the numbers as a table for everyone else.
 
 const SERIES = [
-  { key: "created", label: "Started", swatch: "bg-muted" },
-  { key: "sent", label: "Sent", swatch: "bg-status-sent" },
+  { key: "created", label: "Begonnen", swatch: "bg-muted" },
+  { key: "sent", label: "Gesendet", swatch: "bg-status-sent" },
 ] as const;
 
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
@@ -31,14 +31,14 @@ export function ActivityChart({ weeks }: { weeks: WeekActivity[] }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h2 id="activity-heading" className="font-serif text-section">
-            Week by week
+            Woche für Woche
           </h2>
           <p className="text-control text-muted">
-            {weeks.length === 0 ? "Nothing to show yet." : `You started ${plural(started, "application", "applications")} and sent ${sent} in this period.`}
+            {weeks.length === 0 ? "Noch nichts zu zeigen." : `Du hast in diesem Zeitraum ${plural(started, "Bewerbung", "Bewerbungen")} begonnen und ${sent} gesendet.`}
           </p>
         </div>
         {weeks.length > 0 && (
-          <ul aria-label="Legend" className="flex gap-4 text-meta text-muted">
+          <ul aria-label="Legende" className="flex gap-4 text-meta text-muted">
             {SERIES.map((series) => (
               <li key={series.key} className="flex items-center gap-1.5">
                 <span aria-hidden="true" className={`size-2.5 rounded-[2px] ${series.swatch}`} />
@@ -102,19 +102,19 @@ export function ActivityChart({ weeks }: { weeks: WeekActivity[] }) {
           </div>
 
           <details className="text-meta text-muted">
-            <summary className="w-fit cursor-pointer hover:text-ink">Show the numbers</summary>
+            <summary className="w-fit cursor-pointer hover:text-ink">Zahlen anzeigen</summary>
             <table className="mt-3 w-full max-w-[420px] text-left tabular-nums">
-              <caption className="sr-only">Applications started and sent per week</caption>
+              <caption className="sr-only">Begonnene und gesendete Bewerbungen pro Woche</caption>
               <thead>
                 <tr>
                   <th scope="col" className="py-1 font-medium text-ink">
-                    Week of
+                    Woche ab
                   </th>
                   <th scope="col" className="py-1 text-right font-medium text-ink">
-                    Started
+                    Begonnen
                   </th>
                   <th scope="col" className="py-1 text-right font-medium text-ink">
-                    Sent
+                    Gesendet
                   </th>
                 </tr>
               </thead>

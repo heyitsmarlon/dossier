@@ -5,7 +5,7 @@ export function ScoreBadge({ score, size = "md" }: { score: number; size?: "sm" 
   return (
     <span
       role="img"
-      aria-label={`Score ${score} of 100`}
+      aria-label={`Bewertung ${score} von 100`}
       className={cn(
         "grid flex-none place-items-center rounded-full border font-mono tabular-nums",
         size === "md" ? "size-11 text-sm" : "h-6 min-w-6 px-1.5 text-xs",

@@ -134,7 +134,7 @@ export function requestContext(
 export function credentialsFor<S extends JobSource>(config: JobSearchConfig, source: S): SourceCredentials[S] {
   const missing = (keyState: JobKeyState) =>
     keyState === "unreadable"
-      ? new JobSearchError("no-key", `Your saved ${SOURCE_INFO[source].name} key can't be read. Enter it again in Settings → Job search.`)
+      ? new JobSearchError("no-key", `Dein gespeicherter Schlüssel für ${SOURCE_INFO[source].name} ist nicht lesbar. Gib ihn unter Einstellungen → Jobsuche neu ein.`)
       : jobSearchError("no-key", source);
   switch (source) {
     case "JSEARCH": {

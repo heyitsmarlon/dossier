@@ -32,7 +32,7 @@ export async function loadDashboard(options: DashboardOptions = {}, now = new Da
     applications.map((application) => ({
       id: application.id,
       company: application.company.trim(),
-      role: application.role.trim() || application.title.trim() || "Untitled application",
+      role: application.role.trim() || application.title.trim() || "Bewerbung ohne Titel",
       status: application.status,
       furthestStage: application.furthestStage,
       archived: application.archivedAt !== null,

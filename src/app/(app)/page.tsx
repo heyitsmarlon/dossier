@@ -12,7 +12,7 @@ import { userTimeZone } from "@/lib/time-zone";
 import { Dashboard } from "./dashboard";
 import { CalendarSkeleton, DashboardCalendar } from "./dashboard-calendar";
 
-export const metadata: Metadata = { title: "Dashboard" };
+export const metadata: Metadata = { title: "Übersicht" };
 
 /**
  * Where the search stands (PRD §6.7). Read fresh on every visit, so a status

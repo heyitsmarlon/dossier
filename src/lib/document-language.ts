@@ -31,6 +31,18 @@ export const DOCUMENT_LANGUAGES: readonly LanguageInfo[] = [
   { name: "Korean", tag: "ko" },
 ];
 
+/** A language's name in German for the interface ("German" → "Deutsch"); the stored name stays English. */
+export function languageLabel(name: string): string {
+  const tag = DOCUMENT_LANGUAGES.find((language) => language.name === name)?.tag;
+  if (!tag) return name;
+  try {
+    const label = new Intl.DisplayNames(["de"], { type: "language" }).of(tag);
+    return label ? label.charAt(0).toUpperCase() + label.slice(1) : name;
+  } catch {
+    return name;
+  }
+}
+
 /** Languages people may add with "Other language…" that are written right to left. */
 const OTHER_RIGHT_TO_LEFT: readonly LanguageInfo[] = [
   { name: "Farsi", tag: "fa", dir: "rtl" },

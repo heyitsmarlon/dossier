@@ -12,5 +12,5 @@ export function tabFrom(value: string | string[] | undefined): Tab {
 export function aboutWords(paragraphs: string[]): string {
   const words = paragraphs.join(" ").split(/\s+/).filter(Boolean).length;
   const about = words < 20 ? words : Math.round(words / 10) * 10;
-  return `about ${about} ${about === 1 ? "word" : "words"}`;
+  return `etwa ${about} ${about === 1 ? "Wort" : "Wörter"}`;
 }

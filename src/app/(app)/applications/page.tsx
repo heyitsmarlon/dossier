@@ -7,7 +7,7 @@ import { loadSettings } from "@/lib/settings-data";
 
 import { ApplicationsScreen } from "./applications-screen";
 
-export const metadata: Metadata = { title: "Applications" };
+export const metadata: Metadata = { title: "Bewerbungen" };
 
 /** Every application, on a board or in a table, with search and filters (PRD §6.6). */
 export default async function ApplicationsPage({ searchParams }: PageProps<"/applications">) {

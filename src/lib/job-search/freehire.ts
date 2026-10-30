@@ -62,14 +62,14 @@ const responseSchema = z.object({
     .catch(null),
 });
 
-const PERIODS: Record<string, string> = { year: "a year", month: "a month", day: "a day", hour: "an hour" };
+const PERIODS: Record<string, string> = { year: "pro Jahr", month: "pro Monat", day: "pro Tag", hour: "pro Stunde" };
 
 function salaryOf(job: Job): string {
   const enrichment = job.enrichment;
   if (!enrichment) return "";
   const { salary_min: min, salary_max: max } = enrichment;
   if (min == null && max == null) return "";
-  const amount = (value: number) => value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+  const amount = (value: number) => value.toLocaleString("de-DE", { maximumFractionDigits: 0 });
   const range = min != null && max != null && min !== max ? `${amount(min)}–${amount(max)}` : amount((min ?? max)!);
   return [enrichment.salary_currency, range, PERIODS[enrichment.salary_period?.toLowerCase() ?? ""]].filter(Boolean).join(" ");
 }

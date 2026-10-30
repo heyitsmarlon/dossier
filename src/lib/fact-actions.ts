@@ -19,10 +19,10 @@ const MAX_FACTS = 50;
 
 async function checkRoom(applicationId: string | null) {
   if (applicationId && !(await prisma.application.findUnique({ where: { id: applicationId }, select: { id: true } }))) {
-    throw new ActionError("This application doesn't exist any more.");
+    throw new ActionError("Diese Bewerbung gibt es nicht mehr.");
   }
   if ((await prisma.fact.count({ where: { applicationId } })) >= MAX_FACTS) {
-    throw new ActionError(`That's ${MAX_FACTS} facts already. Remove one you no longer need first.`);
+    throw new ActionError(`Das sind schon ${MAX_FACTS} Fakten. Entferne zuerst einen, den du nicht mehr brauchst.`);
   }
 }
 

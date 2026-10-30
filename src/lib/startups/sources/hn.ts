@@ -76,11 +76,11 @@ export function startupFromHnPost(post: z.output<typeof postSchema>, place: Plac
 /** This month's "Who is hiring?" posts that suit someone in `place`. */
 export async function fetchHnStartups(place: Place, signal?: AbortSignal): Promise<FoundStartup[]> {
   const search = searchSchema.safeParse(await getJson(SEARCH_URL, { signal }));
-  if (!search.success) throw new SourceError("changed its format");
+  if (!search.success) throw new SourceError("hat sein Format geändert");
   const thread = search.data.hits.find((hit) => /^ask hn: who is hiring\?/i.test(hit.title ?? ""));
-  if (!thread) throw new SourceError("has no hiring thread this month");
+  if (!thread) throw new SourceError("hat diesen Monat keinen Hiring-Thread");
   const answer = threadSchema.safeParse(await getJson(itemUrl(thread.objectID), { signal }));
-  if (!answer.success) throw new SourceError("changed its format");
+  if (!answer.success) throw new SourceError("hat sein Format geändert");
   return answer.data.children.flatMap((child) => {
     const post = postSchema.safeParse(child);
     return post.success ? (startupFromHnPost(post.data, place) ?? []) : [];

@@ -10,7 +10,7 @@ import { getStartup, startupPostingText } from "@/lib/startups/store";
 
 import { NewApplication } from "./new-application";
 
-export const metadata: Metadata = { title: "New application" };
+export const metadata: Metadata = { title: "Neue Bewerbung" };
 
 /** Posting → details and match → tailored documents (PRD §6.4). Nothing is created until the last step. */
 export default async function NewApplicationPage({ searchParams }: PageProps<"/new">) {

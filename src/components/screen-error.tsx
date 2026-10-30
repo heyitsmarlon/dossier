@@ -22,7 +22,7 @@ export function ScreenError({
   retry,
   title,
   children,
-  elsewhere = { href: "/", label: "Go to the dashboard" },
+  elsewhere = { href: "/", label: "Zur Übersicht" },
   standalone,
 }: ErrorPageProps & {
   /** Outside the app's shell: see ScreenMessage. */
@@ -38,14 +38,14 @@ export function ScreenError({
       standalone={standalone}
       actions={
         <>
-          <Button onClick={() => retry()}>Try again</Button>
+          <Button onClick={() => retry()}>Erneut versuchen</Button>
           <Link href={elsewhere.href} className={buttonClassName("secondary")}>
             {elsewhere.label}
           </Link>
         </>
       }
     >
-      <p>Something went wrong on the server. Nothing you saved is lost, and trying again usually sorts it out.</p>
+      <p>Auf dem Server ist etwas schiefgegangen. Nichts Gespeichertes ist verloren, und ein neuer Versuch löst es meistens.</p>
       {children}
       {error.digest && (
         <p className="text-meta">

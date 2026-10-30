@@ -15,7 +15,7 @@ export function FactsSection({ profile, update }: { profile: ProfileData; update
       applicationId={null}
       facts={profile.facts}
       setFacts={(change) => update((current) => ({ ...current, facts: change(current.facts) }))}
-      placeholder="e.g. I'm moving from teaching into UX research. Or: I have an EU work permit and can start in March."
+      placeholder="z. B. Ich wechsle vom Lehramt in die UX-Forschung. Oder: Ich habe eine EU-Arbeitserlaubnis und kann im März anfangen."
     />
   );
 }

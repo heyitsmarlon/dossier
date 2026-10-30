@@ -30,7 +30,7 @@ export type ThemeDraft = Omit<ThemeData, "id" | "builtIn"> & { id: string | null
 
 /** Where the builder starts: a copy named "My theme" of a built-in, or the custom theme itself. */
 export function draftFrom({ builtIn, id, ...theme }: ThemeData): ThemeDraft {
-  return builtIn ? { ...theme, id: null, name: "My theme" } : { ...theme, id };
+  return builtIn ? { ...theme, id: null, name: "Mein Design" } : { ...theme, id };
 }
 
 const options = <T extends string>(labels: Record<T, { label: string }>) =>
@@ -68,17 +68,17 @@ export function ThemeBuilder({ draft, onChange, onSave, onCancel, saving }: Them
       }}
     >
       <Input
-        label="Theme name"
+        label="Name des Designs"
         value={draft.name}
         maxLength={60}
-        placeholder="My theme"
+        placeholder="Mein Design"
         onChange={(event) => set("name")(event.target.value)}
       />
-      <Choices label="Heading font" value={draft.headFont} options={FONT_OPTIONS} onChange={set("headFont")} />
-      <Choices label="Body font" value={draft.bodyFont} options={FONT_OPTIONS} onChange={set("bodyFont")} />
+      <Choices label="Schrift für Überschriften" value={draft.headFont} options={FONT_OPTIONS} onChange={set("headFont")} />
+      <Choices label="Schrift für Text" value={draft.bodyFont} options={FONT_OPTIONS} onChange={set("bodyFont")} />
       <Group
-        label="Accent"
-        hint={readableOnWhite(draft.accent) ? undefined : "This color is light, so text in it is hard to read. A darker one works better."}
+        label="Akzentfarbe"
+        hint={readableOnWhite(draft.accent) ? undefined : "Diese Farbe ist hell, Text darin ist schwer lesbar. Eine dunklere funktioniert besser."}
       >
         {(labelId) => (
           <>
@@ -105,39 +105,39 @@ export function ThemeBuilder({ draft, onChange, onSave, onCancel, saving }: Them
         )}
       </Group>
       <Choices label="Layout" value={draft.layout} options={options(LAYOUTS)} onChange={set("layout")} />
-      {split && <Choices label="Sidebar" value={draft.sidebarStyle} options={options(SIDEBAR_STYLES)} onChange={set("sidebarStyle")} />}
+      {split && <Choices label="Seitenleiste" value={draft.sidebarStyle} options={options(SIDEBAR_STYLES)} onChange={set("sidebarStyle")} />}
       <Choices
-        label="Header"
+        label="Kopfbereich"
         value={split ? "LEFT" : draft.align}
         options={options(ALIGNMENTS)}
         onChange={set("align")}
         disabled={split}
-        hint={split ? "Sidebar layouts always align the header left." : undefined}
+        hint={split ? "Layouts mit Seitenleiste richten den Kopfbereich immer links aus." : undefined}
       />
-      <Choices label="Header style" value={draft.headerStyle} options={options(HEADER_STYLES)} onChange={set("headerStyle")} />
+      <Choices label="Stil des Kopfbereichs" value={draft.headerStyle} options={options(HEADER_STYLES)} onChange={set("headerStyle")} />
       <Choices
-        label="Photo"
+        label="Foto"
         value={draft.photoShape}
         options={options(PHOTO_SHAPES)}
         onChange={set("photoShape")}
-        hint="Your photo from Profile → Basics, while it's shown on resumes."
+        hint="Dein Foto aus Profil → Basisdaten, solange es im Lebenslauf gezeigt wird."
       />
       <Choices
-        label="Photo position"
+        label="Fotoposition"
         // Only sidebar layouts have a sidebar to put it in; the others show it at the end of the header.
         value={!split && draft.photoPosition === PhotoPosition.SIDEBAR ? PhotoPosition.HEADER_END : draft.photoPosition}
         options={options(PHOTO_POSITIONS).filter((option) => split || option.value !== PhotoPosition.SIDEBAR)}
         onChange={set("photoPosition")}
       />
-      <Choices label="Section titles" value={draft.headingStyle} options={options(HEADING_STYLES)} onChange={set("headingStyle")} />
-      <Choices label="Dates" value={draft.dateStyle} options={options(DATE_STYLES)} onChange={set("dateStyle")} />
-      <Choices label="Spacing" value={draft.density} options={options(DENSITIES)} onChange={set("density")} />
+      <Choices label="Abschnittstitel" value={draft.headingStyle} options={options(HEADING_STYLES)} onChange={set("headingStyle")} />
+      <Choices label="Datumsangaben" value={draft.dateStyle} options={options(DATE_STYLES)} onChange={set("dateStyle")} />
+      <Choices label="Abstände" value={draft.density} options={options(DENSITIES)} onChange={set("density")} />
       <div className="flex gap-2 pt-1.5">
         <Button type="submit" className="flex-1" disabled={saving}>
-          {saving ? "Saving…" : "Save theme"}
+          {saving ? "Speichert…" : "Design speichern"}
         </Button>
         <Button type="button" variant="secondary" onClick={onCancel}>
-          Cancel
+          Abbrechen
         </Button>
       </div>
     </form>
@@ -157,14 +157,14 @@ function CustomColor({ value, onChange }: { value: string; onChange: (accent: st
     <div className="flex items-center gap-2">
       <input
         type="color"
-        aria-label="Custom color"
-        title="Custom color"
+        aria-label="Eigene Farbe"
+        title="Eigene Farbe"
         value={value}
         onChange={(event) => onChange(event.target.value.toLowerCase())}
         className="size-[34px] flex-none cursor-pointer rounded-control border border-line-field bg-card p-[3px] hover:border-line-strong"
       />
       <Input
-        aria-label="Hex color"
+        aria-label="Hex-Farbe"
         value={typing ?? value}
         maxLength={7}
         spellCheck={false}

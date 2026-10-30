@@ -33,7 +33,7 @@ const looksLikeUrl = (value: string) => /^https?:\/\/\S+$/i.test(value.trim());
 
 /** What a hosted model is sent (profileForPrompt and the tasks in src/lib/ai/tasks; PRIVACY.md). */
 const SENT_TO_HOSTED =
-  "your profile without contact details, your facts about you, the postings you add and the facts you give for each one, and, when you refine, the drafts and your chat messages. Importing a resume sends its whole text, contact details included. With Gmail connected, it also gets each reply it reads or answers, with earlier mail in the thread. The notes you keep on an application are never sent.";
+  "dein Profil ohne Kontaktdaten, deine Fakten über dich, die Anzeigen, die du hinzufügst, und die Fakten, die du zu jeder angibst, und beim Verfeinern die Entwürfe und deine Chat-Nachrichten. Beim Lebenslauf-Import geht der ganze Text samt Kontaktdaten mit. Mit verbundenem Gmail bekommt er auch jede Antwort, die gelesen oder beantwortet wird, mit früheren Mails im Verlauf. Deine Notizen zu einer Bewerbung werden nie gesendet.";
 
 /**
  * Settings → AI provider (E6-3, SET-1, SET-2). Each field saves on its own:
@@ -131,12 +131,12 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
 
   return (
     <>
-      <SettingsSectionIntro title="AI provider">
-        This is what reads job postings and writes your drafts. A local model keeps everything on your machine.
+      <SettingsSectionIntro title="KI-Anbieter">
+        Er liest Stellenanzeigen und schreibt deine Entwürfe. Ein lokales Modell hält alles auf deinem Rechner.
       </SettingsSectionIntro>
 
       <RadioGroup.Root
-        aria-label="Provider"
+        aria-label="Anbieter"
         value={provider}
         onValueChange={(value) => chooseProvider(value as AiProvider)}
         className="grid grid-cols-1 gap-3 sm:grid-cols-2"
@@ -169,15 +169,15 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
       {!option.local && (
         <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
           {option.vendor
-            ? `${option.vendor} receives what each task needs: ${SENT_TO_HOSTED} How long it's kept and where it's processed depend on your account with ${option.vendor}.`
-            : `This server receives what each task needs: ${SENT_TO_HOSTED} If it isn't on your own network, all this leaves your server, and how long it's kept is up to whoever runs it.`}
+            ? `${option.vendor} bekommt, was jede Aufgabe braucht: ${SENT_TO_HOSTED} Wie lange es gespeichert und wo es verarbeitet wird, hängt von deinem Konto bei ${option.vendor} ab.`
+            : `Dieser Server bekommt, was jede Aufgabe braucht: ${SENT_TO_HOSTED} Steht er nicht in deinem eigenen Netz, verlässt all das deinen Server, und wie lange es gespeichert wird, entscheidet der Betreiber.`}
         </p>
       )}
 
       <Card className="grid grid-cols-1 gap-x-[18px] gap-y-5 sm:grid-cols-2">
         <Input
           className="sm:col-span-2"
-          label="Server address"
+          label="Serveradresse"
           inputClassName="font-mono text-[13.5px]"
           value={baseUrl}
           placeholder={option.urlPlaceholder}
@@ -193,14 +193,14 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
           }}
           hint={
             urlLeft && baseUrl.trim() && !looksLikeUrl(baseUrl)
-              ? "Start the address with http:// or https://."
+              ? "Beginne die Adresse mit http:// oder https://."
               : option.urlHint
           }
         />
 
         <div className="flex flex-col gap-2.5">
           <Select
-            label="Model"
+            label="Modell"
             value={otherModel ? OTHER_MODEL : model}
             onChange={(event) => {
               if (event.target.value === OTHER_MODEL) {
@@ -212,21 +212,21 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
               changed();
               setSaveNow((count) => count + 1);
             }}
-            hint={!modelList.loading && modelList.problem ? `Couldn't list the models: ${modelList.problem}` : undefined}
+            hint={!modelList.loading && modelList.problem ? `Modelle konnten nicht aufgelistet werden: ${modelList.problem}` : undefined}
           >
-            {!model && !otherModel && <option value="">{modelList.loading ? "Loading models…" : "Choose a model"}</option>}
+            {!model && !otherModel && <option value="">{modelList.loading ? "Lade Modelle…" : "Modell wählen"}</option>}
             {models.map((name) => (
               <option key={name} value={name}>
                 {name}
               </option>
             ))}
-            <option value={OTHER_MODEL}>Other model…</option>
+            <option value={OTHER_MODEL}>Anderes Modell…</option>
           </Select>
           {otherModel && (
             <Input
-              label="Model name"
+              label="Modellname"
               value={model}
-              placeholder="e.g. llama3.1:8b"
+              placeholder="z. B. llama3.1:8b"
               spellCheck={false}
               autoFocus
               onChange={(event) => {
@@ -248,10 +248,10 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
               value={keyInput}
               placeholder={
                 keyState === "set"
-                  ? "Saved · type a new key to replace it"
+                  ? "Gespeichert · neuen Schlüssel eingeben, um ihn zu ersetzen"
                   : keyState === "env"
-                    ? "Using DOSSIER_AI_KEY · type one to save it here"
-                    : "Stored encrypted on your server"
+                    ? "Nutzt DOSSIER_AI_KEY · eingeben, um hier einen zu speichern"
+                    : "Verschlüsselt auf deinem Server gespeichert"
               }
               error={keyState === "unreadable" ? API_KEY_UNREADABLE : undefined}
               onChange={(event) => setKeyInput(event.target.value)}
@@ -267,20 +267,20 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
             />
             {(keyState === "set" || keyState === "unreadable") && (
               <Button variant="text" size="sm" className="self-start" onClick={() => void saveKey({ action: "clear" })}>
-                Remove saved key
+                Gespeicherten Schlüssel entfernen
               </Button>
             )}
           </div>
         ) : (
           <div className="flex flex-col gap-[7px]">
-            <span className="text-label text-muted">API key</span>
-            <p className="py-[11px] text-sm text-muted">Not needed for a local model</p>
+            <span className="text-label text-muted">API-Schlüssel</span>
+            <p className="py-[11px] text-sm text-muted">Für ein lokales Modell nicht nötig</p>
           </div>
         )}
 
         <div className="flex flex-wrap items-center gap-3.5 pt-1 sm:col-span-2">
           <Button variant="secondary" onClick={() => void test()} disabled={connection.status === "testing"}>
-            {connection.status === "testing" ? "Testing…" : "Test connection"}
+            {connection.status === "testing" ? "Teste…" : "Verbindung testen"}
           </Button>
           <ConnectionStatus connection={connection} />
         </div>
@@ -292,12 +292,12 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
 function ConnectionStatus({ connection }: { connection: Connection }) {
   const [dot, text, message] =
     connection.status === "connected"
-      ? ["bg-success", "text-success", `Connected · ${connection.model} answered in ${connection.seconds.toLocaleString("en-US")} s`]
+      ? ["bg-success", "text-success", `Verbunden · ${connection.model} hat in ${connection.seconds.toLocaleString("de-DE")} s geantwortet`]
       : connection.status === "failed"
         ? ["bg-error", "text-error", connection.message]
         : connection.status === "testing"
-          ? ["bg-status-offer", "text-muted", "Sending a short test prompt…"]
-          : ["bg-faint", "text-muted", "Not tested since your last change"];
+          ? ["bg-status-offer", "text-muted", "Sende eine kurze Testanfrage…"]
+          : ["bg-faint", "text-muted", "Seit deiner letzten Änderung nicht getestet"];
   return (
     <p role="status" className={cn("flex items-start gap-2 text-control", text)}>
       {/* One line high, so the dot stays by the first line when the message wraps. */}

@@ -12,7 +12,7 @@ import { userTimeZone } from "@/lib/time-zone";
 
 import { JobsScreen } from "./jobs-screen";
 
-export const metadata: Metadata = { title: "Find jobs" };
+export const metadata: Metadata = { title: "Jobs finden" };
 
 /**
  * Find jobs (E14-6). Every search is kept with what it found (E14-10):

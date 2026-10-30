@@ -18,14 +18,14 @@ import { appVersion } from "@/lib/version";
 // server's own network (SSRF), and it's limited in size, time and redirects.
 
 export const FETCH_MESSAGES = {
-  notWeb: "That link doesn't look like a web address.",
-  privateAddress: "Dossier doesn't fetch addresses on your own network. Paste the posting instead.",
-  unreachable: "The job site couldn't be reached. Without internet access, or if the site blocks it, paste the posting instead.",
-  failed: (status: number) => `The job site answered with an error (${status}). Paste the posting instead.`,
-  tooBig: "That page is too big to be a job posting. Paste the posting instead.",
-  notPage: "That link isn't a web page. Paste the posting instead.",
+  notWeb: "Dieser Link sieht nicht nach einer Webadresse aus.",
+  privateAddress: "Dossier ruft keine Adressen in deinem eigenen Netz ab. Füge die Anzeige stattdessen ein.",
+  unreachable: "Die Jobseite war nicht erreichbar. Ohne Internet, oder wenn die Seite blockiert, füge die Anzeige stattdessen ein.",
+  failed: (status: number) => `Die Jobseite hat mit einem Fehler geantwortet (${status}). Füge die Anzeige stattdessen ein.`,
+  tooBig: "Diese Seite ist zu groß für eine Stellenanzeige. Füge die Anzeige stattdessen ein.",
+  notPage: "Dieser Link ist keine Webseite. Füge die Anzeige stattdessen ein.",
   unreadable:
-    "There's no posting text on that page that Dossier can read: the site probably builds it in the browser. Paste the posting instead.",
+    "Auf dieser Seite steht kein Anzeigentext, den Dossier lesen kann: Die Seite baut ihn vermutlich erst im Browser auf. Füge die Anzeige stattdessen ein.",
 };
 
 const TIMEOUT_MS = 10_000;
@@ -291,7 +291,7 @@ function jobPostingText(posting: JobPosting): string {
     remote,
     [posting.employmentType].flat().map(str).filter(Boolean).join(", ").toLowerCase().replaceAll("_", " "),
     salaryOf(posting.baseSalary),
-    deadline && `Apply by ${deadline}`,
+    deadline && `Bewerben bis ${deadline}`,
   ].filter(Boolean);
   const description = htmlText(str(posting.description));
   return [[company, title].filter(Boolean).join(": "), facts.join(" · "), description].filter(Boolean).join("\n\n");

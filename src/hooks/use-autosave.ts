@@ -7,7 +7,7 @@ import { toast } from "@/components/toast";
 export type AutosaveStatus = "idle" | "saving" | "saved" | "error";
 
 const COULD_NOT_SAVE =
-  "Couldn't save your changes. They're still on this page, and saving will try again when you edit or leave the field.";
+  "Deine Änderungen konnten nicht gespeichert werden. Sie sind noch auf dieser Seite, und beim nächsten Bearbeiten oder Verlassen des Feldes wird es erneut versucht.";
 
 type AutosaverOptions<T> = {
   /** Persists a value. A Server Action's `{ ok: false, error }` counts as a failure. */

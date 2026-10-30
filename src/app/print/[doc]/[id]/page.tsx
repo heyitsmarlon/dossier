@@ -6,7 +6,7 @@ import { loadDocuments } from "@/lib/application-documents";
 import { verifyPrintAccess } from "@/lib/pdf/print-access";
 import { printCss } from "@/lib/themes";
 
-export const metadata: Metadata = { title: "Tailored document", robots: { index: false } };
+export const metadata: Metadata = { title: "Zugeschnittenes Dokument", robots: { index: false } };
 
 /**
  * An application's tailored resume (/print/resume/{id}) or cover letter

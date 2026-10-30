@@ -66,25 +66,25 @@ function detailsFrom(extracted: Extracted): ApplicationDetails {
  */
 export async function draftCandidate(candidateId: string, context: JobContext): Promise<string> {
   const candidate = await prisma.agentCandidate.findUnique({ where: { id: candidateId } });
-  if (!candidate) throw new ActionError("That posting is no longer in the agent's queue.");
+  if (!candidate) throw new ActionError("Diese Anzeige ist nicht mehr in der Liste des Agenten.");
   if (candidate.status === AgentCandidateStatus.DRAFTED && candidate.applicationId) return candidate.applicationId;
   const { count } = await prisma.agentCandidate.updateMany({
     where: { id: candidateId, status: AgentCandidateStatus.SCORED },
     data: { status: AgentCandidateStatus.DRAFTING, error: null },
   });
-  if (count === 0) throw new ActionError("That posting is no longer waiting for a draft.");
+  if (count === 0) throw new ActionError("Diese Anzeige wartet nicht mehr auf einen Entwurf.");
 
-  const name = candidate.company || candidate.title || "the posting";
+  const name = candidate.company || candidate.title || "die Anzeige";
   try {
     const found = foundFromCandidate(candidate);
     // The source may have given only a snippet; the whole text writes a better draft.
     const description = (await fullText(found)) ?? candidate.description;
-    if (!description.trim()) throw new ActionError("That posting has no text to write from. Open it and start an application by hand.");
+    if (!description.trim()) throw new ActionError("Diese Anzeige hat keinen Text, aus dem geschrieben werden kann. Öffne sie und starte eine Bewerbung von Hand.");
     const posting = postingText({ ...found, description });
 
-    await context.step(`Reading the posting from ${name}`);
+    await context.step(`Lese die Anzeige von ${name}`);
     const reading = await readPostingJob.run({ posting }, context);
-    await context.step(`Writing the draft for ${name}`);
+    await context.step(`Schreibe den Entwurf für ${name}`);
     const settings = await loadSettings();
     const documents = await writeDocumentsJob.run(
       { readJobId: context.id, posting, extracted: reading.extracted, match: reading.match, tone: settings.defaultTone, note: "", write: "both" },
@@ -110,7 +110,7 @@ export async function draftCandidate(candidateId: string, context: JobContext): 
     return applicationId;
   } catch (error) {
     const known = error instanceof AiError || error instanceof ActionError;
-    const message = context.signal.aborted ? "Cancelled." : known ? error.message : "The draft couldn't be prepared. Try again.";
+    const message = context.signal.aborted ? "Abgebrochen." : known ? error.message : "Der Entwurf konnte nicht vorbereitet werden. Versuch es noch einmal.";
     await prisma.agentCandidate.updateMany({ where: { id: candidateId, status: AgentCandidateStatus.DRAFTING }, data: { status: AgentCandidateStatus.SCORED, error: message } });
     if (!known && !context.signal.aborted) logServerError("job agent draft", error);
     throw error;
@@ -132,7 +132,7 @@ export const agentDraftJob = defineJob({
 export async function approveCandidate(candidateId: string): Promise<string> {
   const candidate = await prisma.agentCandidate.findUnique({ where: { id: candidateId } });
   if (!candidate || candidate.status !== AgentCandidateStatus.DRAFTED || !candidate.applicationId) {
-    throw new ActionError("That draft isn't ready to approve.");
+    throw new ActionError("Dieser Entwurf ist noch nicht bereit zur Übernahme.");
   }
   const applicationId = candidate.applicationId;
   const posting = await storePosting(foundFromCandidate(candidate));
@@ -159,9 +159,9 @@ export type DismissedCandidate = Pick<
  */
 export async function dismissCandidate(candidateId: string): Promise<{ undo: DismissedCandidate | null }> {
   const candidate = await prisma.agentCandidate.findUnique({ where: { id: candidateId } });
-  if (!candidate) throw new ActionError("That posting is no longer in the agent's queue.");
+  if (!candidate) throw new ActionError("Diese Anzeige ist nicht mehr in der Liste des Agenten.");
   if (candidate.status === AgentCandidateStatus.DISMISSED) return { undo: null };
-  if (candidate.status === AgentCandidateStatus.APPROVED) throw new ActionError("That draft was approved: it's in Applications now.");
+  if (candidate.status === AgentCandidateStatus.APPROVED) throw new ActionError("Dieser Entwurf wurde übernommen: Er ist jetzt unter Bewerbungen.");
 
   for (const job of await findUnfinishedJobs(draftJobKey(candidateId))) await cancelJob(job.id);
   const hadDraft = Boolean(candidate.applicationId) || candidate.status !== AgentCandidateStatus.SCORED;

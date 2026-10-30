@@ -49,7 +49,7 @@ export async function runNightlyBackup(now = new Date()): Promise<"written" | "o
     return "written";
   } catch (error) {
     logServerError("nightly backup", error);
-    await saveSettings({ backupProblem: error instanceof Error ? error.message : "The backup couldn't be written." }).catch(() => {});
+    await saveSettings({ backupProblem: error instanceof Error ? error.message : "Das Backup konnte nicht geschrieben werden." }).catch(() => {});
     throw error;
   }
 }
