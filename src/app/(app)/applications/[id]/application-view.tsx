@@ -92,7 +92,7 @@ type Target = { document: DocumentKind; unitId: string; label: string; name: str
 
 const NO_MESSAGES: ChatEntry[] = [];
 
-const NO_AI = "That needs an AI provider. Choose one in Settings → AI provider.";
+const NO_AI = "Dafür brauchst du einen KI-Anbieter. Wähle einen unter Einstellungen → KI-Anbieter.";
 
 const NOTHING_SAVING: Readonly<Record<string, string>> = {};
 
@@ -282,7 +282,7 @@ export function ApplicationView({
   };
 
   const needsAi = () => {
-    toast(NO_AI, { action: { label: "Open Settings", onClick: () => router.push("/settings?section=ai") } });
+    toast(NO_AI, { action: { label: "Einstellungen öffnen", onClick: () => router.push("/settings?section=ai") } });
   };
 
   const stopRewriting = (key: string) =>
@@ -310,9 +310,9 @@ export function ApplicationView({
       // Nothing was changed, so the unit is as it was.
       stopRewriting(key);
       const { jobId, revision } = rewrites[key] ?? { jobId: job.id, revision: 0 };
-      toast(job.error ?? "That didn't work. Try again.", {
+      toast(job.error ?? "Das hat nicht geklappt. Versuch es noch einmal.", {
         action: {
-          label: "Retry",
+          label: "Erneut versuchen",
           onClick: () =>
             void retry({ id: jobId }).then((retried) => {
               if (retried.ok) setRewrites((current) => ({ ...current, [key]: { jobId, revision: revision + 1 } }));
@@ -326,14 +326,14 @@ export function ApplicationView({
     stopRewriting(key);
     const result = job.result;
     if (result.outcome === "changed") {
-      toast(`The ${name} changed while I was rewriting it, so I left your version.`);
+      toast(`„${name}“ hat sich geändert, während ich es neu geschrieben habe. Deine Fassung bleibt.`);
       return;
     }
     startTransition(() => router.refresh());
     flashing.start([key]);
-    toast(`Rewrote the ${name}.`, {
+    toast(`„${name}“ neu geschrieben.`, {
       action: {
-        label: "Undo",
+        label: "Rückgängig",
         onClick: () =>
           startTransition(async () => {
             const undone = await restoreUnit({
@@ -346,7 +346,7 @@ export function ApplicationView({
             });
             if (!undone.ok) return toast(undone.error);
             flashing.start([key]);
-            toast(`Put the ${name} back.`);
+            toast(`„${name}“ wiederhergestellt.`);
           }),
       },
     });
@@ -387,9 +387,9 @@ export function ApplicationView({
   const replyChanged = (job: JobView<RefineResult>) => {
     if (job.status === "FAILED") {
       setReply(null);
-      toast(job.error ?? "That didn't work. Try again.", {
+      toast(job.error ?? "Das hat nicht geklappt. Versuch es noch einmal.", {
         action: {
-          label: "Retry",
+          label: "Erneut versuchen",
           onClick: () =>
             void retry({ id: job.id }).then((retried) => {
               if (retried.ok) setReply((current) => ({ jobId: job.id, revision: (current?.revision ?? 0) + 1 }));
@@ -425,9 +425,9 @@ export function ApplicationView({
   const emailChanged = (job: JobView<WriteEmailResult>) => {
     if (job.status === "FAILED") {
       setEmailJob(null);
-      toast(job.error ?? "That didn't work. Try again.", {
+      toast(job.error ?? "Das hat nicht geklappt. Versuch es noch einmal.", {
         action: {
-          label: "Retry",
+          label: "Erneut versuchen",
           onClick: () =>
             void retry({ id: job.id }).then((retried) => {
               if (retried.ok) setEmailJob((current) => ({ jobId: job.id, revision: (current?.revision ?? 0) + 1 }));
@@ -444,15 +444,15 @@ export function ApplicationView({
     flashing.start(keys);
     // The first email just appears; a rewrite can be undone.
     if (!job.result.previous) return;
-    toast("Rewrote the email.", {
+    toast("E-Mail neu geschrieben.", {
       action: {
-        label: "Undo",
+        label: "Rückgängig",
         onClick: () =>
           startTransition(async () => {
             const undone = await undoEmailRewrite({ id: application.id, jobId: job.id });
             if (!undone.ok) return toast(undone.error);
             flashing.start(keys);
-            toast("Put the email back.");
+            toast("E-Mail wiederhergestellt.");
           }),
       },
     });
@@ -463,7 +463,7 @@ export function ApplicationView({
     startTransition(async () => {
       const result = await addMatchSkill({ id: application.id, index });
       if (!result.ok) return toast(result.error);
-      toast(`Added “${result.data.name}” to your skills. Attach it to a role under Experience to make it count.`);
+      toast(`„${result.data.name}“ zu deinen Fähigkeiten hinzugefügt. Ordne es unter Berufserfahrung einer Stelle zu, damit es zählt.`);
     });
 
   /** "Put back" something left out, to fit the page limit (E10-10) or by hand (#217). */
@@ -471,7 +471,7 @@ export function ApplicationView({
     startTransition(async () => {
       const result = await putBackTrimmed({ id: application.id, index });
       if (!result.ok) return toast(result.error);
-      toast(pageLimit ? "Put back. The resume may run over its page limit now." : "Put back.");
+      toast(pageLimit ? "Wieder drin. Der Lebenslauf überschreitet jetzt eventuell sein Seitenlimit." : "Wieder drin.");
     });
 
   /** "Leave out" on a part of the tailored resume (#217), with Undo on the toast. */
@@ -479,7 +479,7 @@ export function ApplicationView({
     startTransition(async () => {
       const result = await leaveOutUnit({ id: application.id, unitId: unit.id });
       if (!result.ok) return toast(result.error);
-      toast(`Left out: ${unit.label}.`, { action: { label: "Undo", onClick: () => putBack(result.data.index, false) } });
+      toast(`Weggelassen: ${unit.label}.`, { action: { label: "Rückgängig", onClick: () => putBack(result.data.index, false) } });
     });
 
   /** "Undo" under a reply (E8-6): puts back what it changed. */
@@ -556,7 +556,7 @@ export function ApplicationView({
   const letterStored = new Set(letter?.units.map((unit) => unit.id));
   const emailUnits = email && shown(DocumentKind.EMAIL, email);
   const paragraphs = letterUnits?.filter(isParagraph).map((unit) => unit.text) ?? [];
-  const hint = "Hover a section to edit or regenerate it";
+  const hint = "Fahr über einen Abschnitt, um ihn zu bearbeiten oder neu schreiben zu lassen";
 
   const restore = async (version: ViewedVersion) => {
     setRestoring(true);
@@ -570,20 +570,20 @@ export function ApplicationView({
   /** "History" next to a document's label, and the banner over an earlier version. */
   const historyButton = (document: DocumentKind) => (
     <Button variant="text" size="sm" onClick={() => setHistoryOf(document)}>
-      History
+      Verlauf
     </Button>
   );
   const versionBanner = (version: ViewedVersion) => (
     <div role="note" className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-warning-surface px-4 py-2.5 text-meta text-warning">
       <span>
-        You&apos;re looking at the version from {version.when}: {version.label}.
+        Du siehst die Fassung vom {version.when}: {version.label}.
       </span>
       <span className="flex items-center gap-3">
         <Button size="sm" aria-disabled={restoring || undefined} onClick={() => void (restoring ? undefined : restore(version))}>
-          Restore this version
+          Diese Fassung wiederherstellen
         </Button>
         <Button variant="secondary" size="sm" className="bg-input" onClick={() => setViewing(null)}>
-          Back to the current one
+          Zurück zur aktuellen
         </Button>
       </span>
     </div>
@@ -620,10 +620,10 @@ export function ApplicationView({
         meta={meta}
         actions={
           <>
-            {application.archived && <span className="rounded-full bg-track px-3 py-1.5 text-meta text-muted">Archived</span>}
+            {application.archived && <span className="rounded-full bg-track px-3 py-1.5 text-meta text-muted">Archiviert</span>}
             {application.awaitingReview && (
               <Link href="/agent" className="rounded-full bg-warning-surface px-3 py-1.5 text-meta text-warning hover:text-warning">
-                From the job agent · waiting for review
+                Vom Job-Agenten · wartet auf Prüfung
               </Link>
             )}
             <StatusControl id={application.id} status={application.status} interviewAt={application.nextInterviewAt} timeZone={timeZone} />
@@ -632,9 +632,9 @@ export function ApplicationView({
               <DownloadPdfButton
                 variant="secondary"
                 href={`/api/pdf?doc=${tab === "letter" ? "letter" : "resume"}&application=${application.id}`}
-                progress={`Rendering your ${tab === "letter" ? "cover letter" : "tailored resume"} as a PDF…`}
+                progress={`${tab === "letter" ? "Anschreiben" : "Zugeschnittener Lebenslauf"} wird als PDF erstellt…`}
               >
-                Download PDF
+                PDF herunterladen
               </DownloadPdfButton>
             )}
             <ApplicationMenu id={application.id} archived={application.archived} />
@@ -642,17 +642,17 @@ export function ApplicationView({
         }
       >
         {/* Its underline runs the header's full width, under the padding too. */}
-        <TabsList aria-label="Application" className="-mx-10 px-10">
-          <TabsTrigger value="resume">Resume</TabsTrigger>
-          <TabsTrigger value="letter">Cover letter</TabsTrigger>
-          <TabsTrigger value="email">Email</TabsTrigger>
+        <TabsList aria-label="Bewerbung" className="-mx-10 px-10">
+          <TabsTrigger value="resume">Lebenslauf</TabsTrigger>
+          <TabsTrigger value="letter">Anschreiben</TabsTrigger>
+          <TabsTrigger value="email">E-Mail</TabsTrigger>
           {gmail && (gmail.reading || gmail.emails.length > 0) && (
             <TabsTrigger value="conversation">
-              {waiting > 0 ? `Conversation · ${waiting} new` : gmail.emails.length > 0 ? `Conversation · ${gmail.emails.length}` : "Conversation"}
+              {waiting > 0 ? `Unterhaltung · ${waiting} neu` : gmail.emails.length > 0 ? `Unterhaltung · ${gmail.emails.length}` : "Unterhaltung"}
             </TabsTrigger>
           )}
-          <TabsTrigger value="posting">{score ? `Job posting · ${score.hit}/${score.total} match` : "Job posting"}</TabsTrigger>
-          <TabsTrigger value="notes">{notes > 0 ? `Notes · ${notes}` : "Notes"}</TabsTrigger>
+          <TabsTrigger value="posting">{score ? `Stellenanzeige · ${score.hit}/${score.total} passend` : "Stellenanzeige"}</TabsTrigger>
+          <TabsTrigger value="notes">{notes > 0 ? `Notizen · ${notes}` : "Notizen"}</TabsTrigger>
         </TabsList>
       </ApplicationHeader>
 
@@ -672,9 +672,9 @@ export function ApplicationView({
                 <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
                   <span className="flex items-center gap-1">Tailored resume · {themeMenu(resumeTheme)}</span>
                   {hasSidebar(resumeTheme.layout) && (
-                    <PreviewSwitch label="Sidebar layout" checked={followLayout} onCheckedChange={changeLayout} />
+                    <PreviewSwitch label="Layout mit Seitenleiste" checked={followLayout} onCheckedChange={changeLayout} />
                   )}
-                  {profile.photo && <PreviewSwitch label="Photo" checked={showPhoto} onCheckedChange={changePhoto} />}
+                  {profile.photo && <PreviewSwitch label="Foto" checked={showPhoto} onCheckedChange={changePhoto} />}
                   {historyButton(DocumentKind.RESUME)}
                 </span>
               }
@@ -691,7 +691,7 @@ export function ApplicationView({
               />
             </DocumentPreview>
           ) : (
-            <MissingDocument>This application has no tailored resume.</MissingDocument>
+            <MissingDocument>Diese Bewerbung hat keinen zugeschnittenen Lebenslauf.</MissingDocument>
           )}
         </TabsContent>
 
@@ -722,7 +722,7 @@ export function ApplicationView({
               />
             </DocumentPreview>
           ) : (
-            <MissingDocument>This application has no cover letter.</MissingDocument>
+            <MissingDocument>Diese Bewerbung hat kein Anschreiben.</MissingDocument>
           )}
         </TabsContent>
 
@@ -732,7 +732,7 @@ export function ApplicationView({
             units={viewed(DocumentKind.EMAIL)?.units ?? emailUnits}
             renderUnit={viewed(DocumentKind.EMAIL) || !emailUnits ? plainUnit : unitsOf(DocumentKind.EMAIL, emailUnits)}
             history={historyButton(DocumentKind.EMAIL)}
-            hint={viewed(DocumentKind.EMAIL) ? undefined : "Hover a part to edit or regenerate it"}
+            hint={viewed(DocumentKind.EMAIL) ? undefined : "Fahr über einen Teil, um ihn zu bearbeiten oder neu schreiben zu lassen"}
             notice={viewed(DocumentKind.EMAIL) ? versionBanner(viewed(DocumentKind.EMAIL)!) : undefined}
             writing={emailJob !== null}
             onWrite={() => void writeEmail()}
@@ -784,14 +784,14 @@ export function ApplicationView({
           {(message) =>
             message.canUndo &&
             (message.undone || undoing.includes(message.id) ? (
-              <span className="px-1 text-label text-muted">Undone</span>
+              <span className="px-1 text-label text-muted">Rückgängig gemacht</span>
             ) : (
               <button
                 type="button"
                 onClick={() => undo(message)}
                 className="px-1 text-label text-muted underline underline-offset-3 hover:text-ink"
               >
-                Undo
+                Rückgängig
               </button>
             ))
           }

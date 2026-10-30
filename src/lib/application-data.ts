@@ -126,7 +126,7 @@ export type Match = z.infer<typeof matchSchema>;
 
 /** A gap after its skill was added to the profile (NEW-5): in the profile, not yet used in a role. */
 export function withSkillAdded(item: Match["items"][number], skill: string): Match["items"][number] {
-  return { ...item, result: "partial", skill, note: "In your skills, but not linked to a role yet" };
+  return { ...item, result: "partial", skill, note: "In deinen Fähigkeiten, aber noch keiner Position zugeordnet" };
 }
 
 /** "5/7 match": requirements that are covered or partly covered, out of all of them. */

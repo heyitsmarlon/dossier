@@ -21,7 +21,7 @@ export function DragHandle({ ref, ...props }: ComponentProps<"span">) {
       ref={ref}
       {...props}
       aria-hidden="true"
-      title="Drag to reorder"
+      title="Ziehen zum Sortieren"
       className="flex w-7 flex-none cursor-grab touch-none items-center justify-end text-base text-faint select-none hover:text-muted active:cursor-grabbing"
     >
       ⠿
@@ -94,18 +94,18 @@ export function EntryCard({
         >
           <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
             <span className="text-[15.5px] font-medium">{title}</span>
-            <span className="text-control text-muted">{subtitle || "Not filled in yet"}</span>
+            <span className="text-control text-muted">{subtitle || "Noch nicht ausgefüllt"}</span>
             {meta && <span className="text-meta text-muted tabular-nums">{meta}</span>}
             {footnote && <span className="mt-[3px] text-label text-muted">{footnote}</span>}
           </span>
-          <span className="w-10 flex-none text-right text-meta text-muted">{open ? "Close" : "Edit"}</span>
+          <span className="w-10 flex-none text-right text-meta text-muted">{open ? "Schließen" : "Bearbeiten"}</span>
         </button>
         {reorder && (
           <span className="flex flex-none flex-col justify-center gap-0.5 pr-3">
-            <MoveButton label={`Move “${title}” up`} disabled={reorder.first} onClick={reorder.moveUp}>
+            <MoveButton label={`„${title}“ nach oben`} disabled={reorder.first} onClick={reorder.moveUp}>
               ↑
             </MoveButton>
-            <MoveButton label={`Move “${title}” down`} disabled={reorder.last} onClick={reorder.moveDown}>
+            <MoveButton label={`„${title}“ nach unten`} disabled={reorder.last} onClick={reorder.moveDown}>
               ↓
             </MoveButton>
           </span>
@@ -116,10 +116,10 @@ export function EntryCard({
           {children}
           <div className="flex items-center justify-between">
             <Button variant="danger-text" size="sm" onClick={onRemove}>
-              Remove
+              Entfernen
             </Button>
             <Button variant="secondary" size="sm" className="bg-input" onClick={onToggle}>
-              Done
+              Fertig
             </Button>
           </div>
         </div>
@@ -146,7 +146,7 @@ export function AddEntryButton({ children, onClick, disabled }: { children: Reac
 export function EmptyEntries() {
   return (
     <div className="rounded-panel border border-dashed border-line-strong p-9 text-center text-sm text-muted">
-      Nothing here yet. Add your first one below.
+      Noch nichts hier. Füge unten den ersten Eintrag hinzu.
     </div>
   );
 }

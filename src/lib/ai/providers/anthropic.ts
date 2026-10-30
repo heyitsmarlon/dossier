@@ -58,7 +58,7 @@ export class AnthropicProvider extends BaseProvider {
   }
 
   protected async chat(call: ChatCall): Promise<ChatAnswer> {
-    if (!this.client) throw AiError.config("Add your Anthropic API key in Settings → AI provider first.");
+    if (!this.client) throw AiError.config("Trag zuerst deinen Anthropic-API-Schlüssel unter Einstellungen → KI-Anbieter ein.");
     const effort = call.effort && (await this.effortLevels(this.client, call.model, call.signal)).has(call.effort) ? call.effort : undefined;
     const schemaKey = call.json ? `${this.baseURL} ${call.model} ${call.json.name}` : "";
     if (!call.json || promptSchemas.has(schemaKey)) return this.send(this.client, call, effort, false);
@@ -86,7 +86,7 @@ export class AnthropicProvider extends BaseProvider {
       { signal: call.signal },
     );
     if (message.stop_reason === "refusal") {
-      throw new AiError("provider", "The model declined to answer this one. Try rewording it, or try again.", "refusal");
+      throw new AiError("provider", "Das Modell hat die Antwort verweigert. Formuliere es um oder versuch es noch einmal.", "refusal");
     }
     return {
       text: message.content.flatMap((block) => (block.type === "text" ? [block.text] : [])).join(""),

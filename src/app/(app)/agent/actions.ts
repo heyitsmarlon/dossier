@@ -35,7 +35,7 @@ export const saveAgentSettings = action(
     const settings = await loadSettings();
     const query = changes.query ?? settings.agentQuery;
     if (changes.enabled && !agentQueryReady(query)) {
-      throw new ActionError(query.keywords.trim() ? "Choose a country for the search before turning the agent on." : "Type what the agent should look for before turning it on.");
+      throw new ActionError(query.keywords.trim() ? "Wähle ein Land für die Suche, bevor du den Agenten einschaltest." : "Gib ein, wonach der Agent suchen soll, bevor du ihn einschaltest.");
     }
     await saveSettings({
       agentEnabled: changes.enabled,
@@ -58,7 +58,7 @@ export const saveAgentSettings = action(
  */
 export const runAgentNow = action(z.object({}), async () => {
   const settings = await loadSettings();
-  if (!settings.agentEnabled) throw new ActionError("Turn the job agent on in Settings → Job agent first.");
+  if (!settings.agentEnabled) throw new ActionError("Schalte den Job-Agenten zuerst ein (Einstellungen → Job-Agent).");
   const setup = await agentSetupProblem(settings.agentQuery);
   if (setup) throw new ActionError(setup);
   const [unfinished] = await findUnfinishedJobs(AGENT_JOB_KEY);
@@ -86,11 +86,11 @@ function revalidateAgent() {
  */
 export const prepareAgentDraft = action(z.object({ candidateId }), async ({ candidateId }) => {
   const candidate = await prisma.agentCandidate.findUnique({ where: { id: candidateId }, select: { status: true, applicationId: true } });
-  if (!candidate) throw new ActionError("That posting is no longer in the agent's queue.");
+  if (!candidate) throw new ActionError("Diese Anzeige ist nicht mehr in der Liste des Agenten.");
   if (candidate.status === AgentCandidateStatus.DRAFTED && candidate.applicationId) return { jobId: null, applicationId: candidate.applicationId };
   const [unfinished] = await findUnfinishedJobs(draftJobKey(candidateId));
   if (unfinished) return { jobId: unfinished.id, applicationId: null };
-  if (candidate.status !== AgentCandidateStatus.SCORED) throw new ActionError("That posting is no longer waiting for a draft.");
+  if (candidate.status !== AgentCandidateStatus.SCORED) throw new ActionError("Diese Anzeige wartet nicht mehr auf einen Entwurf.");
   const jobId = await startJob(agentDraftJob, { candidateId }, { key: draftJobKey(candidateId) });
   revalidatePath("/agent");
   return { jobId, applicationId: null };
@@ -100,7 +100,7 @@ export const prepareAgentDraft = action(z.object({ candidateId }), async ({ cand
 export const approveAgentDraft = action(z.object({ candidateId }), async ({ candidateId }, { toast }) => {
   const applicationId = await approveCandidate(candidateId);
   revalidateAgent();
-  toast("Added to Applications as a draft. Nothing has been sent.");
+  toast("Als Entwurf zu den Bewerbungen hinzugefügt. Nichts wurde verschickt.");
   return { applicationId };
 });
 

@@ -50,11 +50,11 @@ export const agentQueryReady = (query: SearchQuery) => Boolean(query.keywords.tr
 
 /** Why the agent can't run at all, in words, or null when it's set up. */
 export async function agentSetupProblem(query: SearchQuery): Promise<string | null> {
-  if (!query.keywords.trim()) return "Add what to look for in Settings → Job agent first.";
-  if (!query.country) return "Choose a country for the search in Settings → Job agent first.";
-  if (!(await isAiConfigured())) return "Choose an AI provider in Settings → AI provider first.";
+  if (!query.keywords.trim()) return "Leg zuerst fest, wonach gesucht werden soll (Einstellungen → Job-Agent).";
+  if (!query.country) return "Wähle zuerst ein Land für die Suche (Einstellungen → Job-Agent).";
+  if (!(await isAiConfigured())) return "Wähle zuerst einen KI-Anbieter (Einstellungen → KI-Anbieter).";
   const config = await loadJobSearchConfig();
-  if (!config.source) return "Choose a job source in Settings → Job search first.";
+  if (!config.source) return "Wähle zuerst eine Jobquelle (Einstellungen → Jobsuche).";
   // It searches on its own, which the BA's terms forbid most clearly (#223).
   if (config.source === "ARBEITSAGENTUR") return "The job agent doesn't search the Bundesagentur für Arbeit. Choose JSearch, Adzuna or FreeHire in Settings → Job search for it.";
   try {
@@ -99,7 +99,7 @@ const newestFirst = (a: FoundPosting, b: FoundPosting) => (b.postedAt ? Date.par
  */
 export async function runAgentScan({ manual }: { manual: boolean }, context: JobContext, now = new Date()): Promise<AgentScanResult> {
   const settings = await loadSettings();
-  if (!settings.agentEnabled && !manual) return stopped("The job agent is off.");
+  if (!settings.agentEnabled && !manual) return stopped("Der Job-Agent ist aus.");
   const setup = await agentSetupProblem(settings.agentQuery);
   if (setup) return stopped(setup);
   const limit = runLimitProblem(settings.agentRuns, now, { manual: false });
@@ -111,7 +111,7 @@ export async function runAgentScan({ manual }: { manual: boolean }, context: Job
     return result;
   };
 
-  await context.step("Searching for new postings");
+  await context.step("Suche nach neuen Anzeigen");
   const config = await loadJobSearchConfig();
   const source = config.source!;
   let postings: FoundPosting[];
@@ -125,10 +125,10 @@ export async function runAgentScan({ manual }: { manual: boolean }, context: Job
 
   const fresh = await newPostings(postings);
   const counts = { found: postings.length, fresh: fresh.length, skipped: postings.length - fresh.length, drafted: 0 };
-  if (fresh.length === 0) return finish({ ...counts, scored: 0, message: postings.length === 0 ? "The search found no postings this time." : "No new postings this time." });
+  if (fresh.length === 0) return finish({ ...counts, scored: 0, message: postings.length === 0 ? "Die Suche hat diesmal keine Anzeigen gefunden." : "Diesmal keine neuen Anzeigen." });
 
   const toScore = fresh.toSorted(newestFirst).slice(0, settings.agentMaxScores);
-  await context.step(`Scoring ${toScore.length} ${toScore.length === 1 ? "posting" : "postings"}`);
+  await context.step(`Bewerte ${toScore.length} ${toScore.length === 1 ? "Anzeige" : "Anzeigen"}`);
   const [provider, options, profile] = await Promise.all([getAiProvider(), loadTaskOptions(), loadProfile()]);
   let scored = 0;
   let queued = 0;
@@ -170,14 +170,14 @@ export async function runAgentScan({ manual }: { manual: boolean }, context: Job
     drafted = best.length;
   }
 
-  const waiting = `${queued} new ${queued === 1 ? "posting is" : "postings are"} waiting for a look.`;
+  const waiting = `${queued} ${queued === 1 ? "neue Anzeige wartet" : "neue Anzeigen warten"} auf einen Blick.`;
   const message =
     scored === 0
-      ? (problem ?? "No postings could be scored this time.")
+      ? (problem ?? "Diesmal konnten keine Anzeigen bewertet werden.")
       : queued === 0
-        ? `Scored ${scored} new ${scored === 1 ? "posting" : "postings"}; none reached your minimum score of ${settings.agentMinScore}.`
+        ? `${scored} ${scored === 1 ? "neue Anzeige" : "neue Anzeigen"} bewertet; keine erreichte deine Mindestpunktzahl von ${settings.agentMinScore}.`
         : drafted > 0
-          ? `${waiting} Preparing ${drafted === 1 ? "a draft for the best one" : `drafts for the best ${drafted}`}.`
+          ? `${waiting} Bereite ${drafted === 1 ? "einen Entwurf für die beste vor" : `Entwürfe für die besten ${drafted} vor`}.`
           : waiting;
   return finish({ ...counts, scored, drafted, message });
 }

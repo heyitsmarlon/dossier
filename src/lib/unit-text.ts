@@ -33,10 +33,9 @@ export function cleanUnitText(unitId: string, text: string): string {
  */
 export function unitName(unit: { id: string; label: string }): string {
   const label = unit.label.trim();
-  if (["experience:", "project:", "education:", "publication:"].some((prefix) => unit.id.startsWith(prefix))) return label || "entry";
+  if (["experience:", "project:", "education:", "publication:"].some((prefix) => unit.id.startsWith(prefix))) return label || "Eintrag";
   if (unit.id.startsWith("paragraph:")) {
-    const name = label.toLowerCase() || "paragraph";
-    return /\bparagraph$/.test(name) ? name : `${name} paragraph`;
+    return label || "Absatz";
   }
-  return label.toLowerCase() || "part";
+  return label || "Teil";
 }

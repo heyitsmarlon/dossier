@@ -27,32 +27,32 @@ function ReferenceForm({
       <Input
         className="col-span-2"
         label="Name"
-        placeholder="Jane Doe"
+        placeholder="Erika Musterfrau"
         value={entry.name}
         onChange={(event) => set({ name: event.target.value })}
         autoFocus={autoFocus}
       />
       <Input
-        label="How you know them"
-        placeholder="Former manager"
+        label="Woher du die Person kennst"
+        placeholder="Ehemalige Vorgesetzte"
         value={entry.relation}
         onChange={(event) => set({ relation: event.target.value })}
       />
       <Input
-        label="Company"
-        placeholder="Acme Inc."
+        label="Firma"
+        placeholder="Muster GmbH"
         value={entry.company}
         onChange={(event) => set({ company: event.target.value })}
       />
       <Input
-        label="Email"
+        label="E-Mail"
         type="email"
         placeholder="jane.doe@example.com"
         value={entry.email}
         onChange={(event) => set({ email: event.target.value })}
       />
       <Input
-        label="Phone"
+        label="Telefon"
         type="tel"
         placeholder="+1 555 010 0001"
         value={entry.phone}
@@ -71,9 +71,9 @@ export function ReferencesSection({ profile, update }: { profile: ProfileData; u
     <EntryList
       items={profile.references}
       setItems={(change) => update((current) => ({ ...current, references: change(current.references) }))}
-      addLabel="Add a reference"
+      addLabel="Referenz hinzufügen"
       summary={(entry) => ({
-        title: entry.name.trim() || "New reference",
+        title: entry.name.trim() || "Neue Referenz",
         subtitle: [entry.relation, entry.company].filter((part) => part.trim()).join(" · "),
         meta: entry.email.trim() || undefined,
       })}

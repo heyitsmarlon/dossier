@@ -11,7 +11,7 @@ import { THEME_FIELDS } from "@/lib/theme-data";
 import { parseThemeFile, themeFieldsSchema } from "@/lib/theme-file";
 import type { ThemeData } from "@/lib/themes";
 
-const THEME_GONE = "That theme doesn't exist anymore. Reload the page to see your themes.";
+const THEME_GONE = "Dieses Design gibt es nicht mehr. Lade die Seite neu, um deine Designs zu sehen.";
 
 /** Makes a theme the base resume theme (RES-2). */
 export const setBaseTheme = action(z.object({ id: z.string().min(1) }), async ({ id }) => {
@@ -35,7 +35,7 @@ export const saveTheme = action(
       if (id) {
         const existing = await tx.theme.findUnique({ where: { id }, select: { builtIn: true } });
         if (!existing) throw new ActionError(THEME_GONE);
-        if (existing.builtIn) throw new ActionError("Built-in themes can't be changed. Save it as a new theme instead.");
+        if (existing.builtIn) throw new ActionError("Mitgelieferte Designs lassen sich nicht ändern. Speichere es stattdessen als neues Design.");
         saved = await tx.theme.update({ where: { id }, data: fields, select: THEME_FIELDS });
       } else {
         saved = await tx.theme.create({ data: fields, select: THEME_FIELDS });
@@ -56,7 +56,7 @@ export const duplicateTheme = action(z.object({ id: z.string().min(1) }), async 
   const original = await prisma.theme.findUnique({ where: { id }, select: { ...THEME_FIELDS, id: false, builtIn: false } });
   if (!original) throw new ActionError(THEME_GONE);
   const copy = await prisma.$transaction(async (tx) => {
-    const created = await tx.theme.create({ data: { ...original, name: `${original.name} copy`.slice(0, 60) }, select: THEME_FIELDS });
+    const created = await tx.theme.create({ data: { ...original, name: `${original.name} Kopie`.slice(0, 60) }, select: THEME_FIELDS });
     await saveSettings({ baseThemeId: created.id }, tx);
     return created;
   });
@@ -73,7 +73,7 @@ export const duplicateTheme = action(z.object({ id: z.string().min(1) }), async 
 export const deleteTheme = action(z.object({ id: z.string().min(1) }), async ({ id }, { toast }) => {
   const theme = await prisma.theme.findUnique({ where: { id }, select: { name: true, builtIn: true } });
   if (!theme) throw new ActionError(THEME_GONE);
-  if (theme.builtIn) throw new ActionError("Built-in themes can't be deleted.");
+  if (theme.builtIn) throw new ActionError("Mitgelieferte Designs lassen sich nicht löschen.");
   const baseThemeId = await prisma.$transaction(async (tx) => {
     let base = (await loadSettings()).baseThemeId;
     if (base === id) {

@@ -44,19 +44,19 @@ export type GoogleConnectionView =
   | { status: "disconnected" }
   | { status: "connected"; email: string; canSend: boolean; canRead: boolean; canUseCalendar: boolean; lastSync: string | null; syncProblem: string | null };
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const DAYS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 const INTERVALS = [5, 10, 15, 30, 60];
 const LENGTHS = [15, 30, 45, 60, 90];
 const BUFFERS = [0, 10, 15, 30];
 
 /** What came back from Google's consent page, as a message. */
 export const CALLBACK_MESSAGES: Record<string, string> = {
-  connected: "Connected to Google.",
-  denied: "Google wasn't given access, so nothing changed.",
-  expired: "That took too long or didn't start here. Try connecting again.",
-  rejected: "Google refused the sign-in. Check the client ID and secret below.",
-  failed: "Connecting to Google didn't work. Try again.",
-  "not-configured": "Google isn't set up on this server yet. See the steps below.",
+  connected: "Mit Google verbunden.",
+  denied: "Google wurde kein Zugriff gewährt, daher hat sich nichts geändert.",
+  expired: "Das hat zu lange gedauert oder wurde nicht hier gestartet. Verbinde dich noch einmal.",
+  rejected: "Google hat die Anmeldung abgelehnt. Prüf Client-ID und Secret unten.",
+  failed: "Die Verbindung mit Google hat nicht geklappt. Versuch es noch einmal.",
+  "not-configured": "Google ist auf diesem Server noch nicht eingerichtet. Siehe die Schritte unten.",
 };
 
 /**
@@ -112,8 +112,8 @@ export function GoogleSection({
   return (
     <>
       <SettingsSectionIntro title="Google">
-        Send applications from your Gmail, see employers&apos; replies next to each application, and offer interview times from your
-        calendar. Dossier always asks before it sends anything.
+        Verschicke Bewerbungen aus deinem Gmail, sieh Antworten von Arbeitgebern direkt bei jeder Bewerbung und biete Gesprächstermine aus deinem
+        Kalender an. Dossier fragt immer, bevor es etwas verschickt.
       </SettingsSectionIntro>
 
       <Card className="flex flex-col gap-4">
@@ -122,26 +122,26 @@ export function GoogleSection({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p role="status" className="flex items-center gap-2 text-control">
                 <span aria-hidden className="size-2 flex-none rounded-full bg-success" />
-                Connected as <span className="font-medium">{connection.email}</span>
+                Verbunden als <span className="font-medium">{connection.email}</span>
               </p>
               <Button variant="danger-outline" size="sm" onClick={() => setConfirming(true)}>
-                Disconnect
+                Trennen
               </Button>
             </div>
             <ul className="flex flex-col gap-1.5 text-meta text-muted">
-              <Permission granted={connection.canSend} group="send" label="Send email from your address" />
-              <Permission granted={connection.canRead} group="read" label="Read your mail, to find replies to your applications" />
-              <Permission granted={connection.canUseCalendar} group="calendar" label="See when you're free and add interviews to your calendar" />
+              <Permission granted={connection.canSend} group="send" label="E-Mails von deiner Adresse senden" />
+              <Permission granted={connection.canRead} group="read" label="Deine Mails lesen, um Antworten auf deine Bewerbungen zu finden" />
+              <Permission granted={connection.canUseCalendar} group="calendar" label="Sehen, wann du frei bist, und Gespräche in deinen Kalender eintragen" />
             </ul>
           </>
         ) : (
           <div className="flex flex-col items-start gap-3">
             <p className="text-sm text-muted">
-              You&apos;ll sign in on Google&apos;s own page and choose what Dossier may do. Tokens are stored encrypted on your server and
-              never leave it, except to talk to Google.
+              Du meldest dich auf Googles eigener Seite an und wählst, was Dossier darf. Tokens werden verschlüsselt auf deinem Server gespeichert und
+              verlassen ihn nie, außer zur Kommunikation mit Google.
             </p>
             <a href="/api/google/connect" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-              Connect Google account
+              Google-Konto verbinden
             </a>
           </div>
         )}
@@ -152,8 +152,8 @@ export function GoogleSection({
           <Card padding="none" className="flex flex-col px-7 pt-1.5 pb-5">
             <Toggle
               className="py-4"
-              label="Read replies"
-              description="Check Gmail for employers' replies, link them to applications and have the AI read them."
+              label="Antworten lesen"
+              description="Gmail nach Antworten von Arbeitgebern durchsuchen, sie Bewerbungen zuordnen und von der KI lesen lassen."
               checked={settings.gmailRead}
               disabled={!connection.canRead}
               onCheckedChange={(gmailRead) => change({ gmailRead })}
@@ -162,42 +162,42 @@ export function GoogleSection({
               <div className="flex flex-col gap-4 border-t border-line pt-4">
                 <div className="flex flex-col gap-[7px]">
                   <span id="gmail-scope" className="text-label text-muted">
-                    Which mail
+                    Welche Mails
                   </span>
                   <SegmentedControl<"known" | "all">
                     aria-labelledby="gmail-scope"
                     size="sm"
                     options={[
-                      { value: "known", label: "Threads I started and company domains" },
-                      { value: "all", label: "Every new email" },
+                      { value: "known", label: "Von mir begonnene Verläufe und Firmen-Domains" },
+                      { value: "all", label: "Jede neue E-Mail" },
                     ]}
                     value={settings.gmailScope}
                     onValueChange={(gmailScope) => change({ gmailScope })}
                   />
                   <p className="text-meta text-muted">
                     {settings.gmailScope === "known"
-                      ? "Only mail that matches an application is kept and sent to the AI."
-                      : "Mail that doesn't match an application waits under Needs a look. With a hosted AI, it's sent to the provider to be read."}
+                      ? "Nur Mails, die zu einer Bewerbung passen, werden behalten und an die KI geschickt."
+                      : "Mails ohne passende Bewerbung warten unter „Bitte ansehen“. Mit gehosteter KI werden sie zum Lesen an den Anbieter geschickt."}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-end gap-4">
                   <Select
-                    label="Check every"
+                    label="Prüfen alle"
                     className="w-40"
                     value={settings.gmailInterval}
                     onChange={(event) => change({ gmailInterval: Number(event.target.value) })}
                   >
                     {INTERVALS.map((minutes) => (
                       <option key={minutes} value={minutes}>
-                        {minutes} minutes
+                        {minutes} Minuten
                       </option>
                     ))}
                   </Select>
                   <Button variant="secondary" onClick={checkNow} disabled={checking}>
-                    {checking ? "Checking…" : "Check now"}
+                    {checking ? "Prüfe…" : "Jetzt prüfen"}
                   </Button>
                   <p role="status" className={cn("flex items-center gap-2 pb-2 text-control", connection.syncProblem ? "text-error" : "text-muted")}>
-                    {connection.syncProblem ?? (connection.lastSync ? `Last checked ${connection.lastSync}` : "Not checked yet")}
+                    {connection.syncProblem ?? (connection.lastSync ? `Zuletzt geprüft ${connection.lastSync}` : "Noch nicht geprüft")}
                   </p>
                 </div>
               </div>
@@ -207,16 +207,16 @@ export function GoogleSection({
           <Card padding="none" className="flex flex-col px-7 pt-1.5 pb-6">
             <Toggle
               className="py-4"
-              label="Offer times from my calendar"
-              description="When an employer asks to meet, the drafted answer offers times you're free."
+              label="Termine aus meinem Kalender anbieten"
+              description="Bittet ein Arbeitgeber um ein Treffen, bietet die entworfene Antwort Zeiten an, zu denen du frei bist."
               checked={settings.calendarAvailability}
               disabled={!connection.canUseCalendar}
               onCheckedChange={(calendarAvailability) => change({ calendarAvailability })}
             />
             <Toggle
               className="border-t border-line py-4"
-              label="Add interviews to my calendar"
-              description="Once a time is agreed, add it with a link back to the application, and keep it in step: a time changed here or in Google changes on both sides."
+              label="Gespräche in meinen Kalender eintragen"
+              description="Steht ein Termin fest, wird er mit Link zur Bewerbung eingetragen und synchron gehalten: Eine Änderung hier oder in Google gilt auf beiden Seiten."
               checked={settings.calendarEvents}
               disabled={!connection.canUseCalendar}
               onCheckedChange={(calendarEvents) => change({ calendarEvents })}
@@ -224,7 +224,7 @@ export function GoogleSection({
             <div className="grid gap-x-[18px] gap-y-5 border-t border-line pt-5 sm:grid-cols-2">
               <div className="flex flex-col gap-[7px] sm:col-span-2">
                 <span id="work-days" className="text-label text-muted">
-                  Working days
+                  Arbeitstage
                 </span>
                 <div role="group" aria-labelledby="work-days" className="flex flex-wrap gap-1.5">
                   {DAYS.map((label, index) => {
@@ -246,34 +246,34 @@ export function GoogleSection({
                   })}
                 </div>
               </div>
-              <Input label="From" type="time" value={settings.workStart} onChange={(event) => event.target.value && change({ workStart: event.target.value })} />
-              <Input label="Until" type="time" value={settings.workEnd} onChange={(event) => event.target.value && change({ workEnd: event.target.value })} />
-              <Select label="Interview length" value={settings.slotMinutes} onChange={(event) => change({ slotMinutes: Number(event.target.value) })}>
+              <Input label="Von" type="time" value={settings.workStart} onChange={(event) => event.target.value && change({ workStart: event.target.value })} />
+              <Input label="Bis" type="time" value={settings.workEnd} onChange={(event) => event.target.value && change({ workEnd: event.target.value })} />
+              <Select label="Gesprächsdauer" value={settings.slotMinutes} onChange={(event) => change({ slotMinutes: Number(event.target.value) })}>
                 {LENGTHS.map((minutes) => (
                   <option key={minutes} value={minutes}>
-                    {minutes} minutes
+                    {minutes} Minuten
                   </option>
                 ))}
               </Select>
-              <Select label="Keep free around meetings" value={settings.bufferMinutes} onChange={(event) => change({ bufferMinutes: Number(event.target.value) })}>
+              <Select label="Puffer um Termine" value={settings.bufferMinutes} onChange={(event) => change({ bufferMinutes: Number(event.target.value) })}>
                 {BUFFERS.map((minutes) => (
                   <option key={minutes} value={minutes}>
-                    {minutes === 0 ? "No gap" : `${minutes} minutes`}
+                    {minutes === 0 ? "Kein Puffer" : `${minutes} Minuten`}
                   </option>
                 ))}
               </Select>
               <Input
-                label="Time zone"
+                label="Zeitzone"
                 placeholder={browserTimeZone ?? "Europe/Berlin"}
-                hint={browserTimeZone ? `Empty uses your browser's: ${browserTimeZone}` : "Empty uses your browser's"}
+                hint={browserTimeZone ? `Leer nutzt die deines Browsers: ${browserTimeZone}` : "Leer nutzt die deines Browsers"}
                 value={timeZone}
                 spellCheck={false}
                 onChange={(event) => setTimeZone(event.target.value)}
                 onBlur={() => timeZone.trim() !== (settings.workTimeZone ?? "") && change({ workTimeZone: timeZone.trim() || null })}
               />
               <Input
-                label="Calendar"
-                hint="primary is your main calendar; or a calendar's ID from Google Calendar's settings"
+                label="Kalender"
+                hint="primary ist dein Hauptkalender; oder die ID eines Kalenders aus den Einstellungen von Google Kalender"
                 value={calendarId}
                 spellCheck={false}
                 onChange={(event) => setCalendarId(event.target.value)}
@@ -289,9 +289,9 @@ export function GoogleSection({
       <ConfirmDialog
         open={confirming}
         onOpenChange={setConfirming}
-        title="Disconnect Google?"
-        description="Dossier's access is revoked at Google. Mail already in Dossier stays; nothing new comes in until you connect again."
-        confirmLabel="Disconnect"
+        title="Google trennen?"
+        description="Der Zugriff von Dossier wird bei Google widerrufen. Mails, die schon in Dossier sind, bleiben; bis du dich neu verbindest, kommt nichts Neues dazu."
+        confirmLabel="Trennen"
         onConfirm={() => void disconnect()}
       />
     </>
@@ -306,10 +306,10 @@ function Permission({ granted, group, label }: { granted: boolean; group: string
       <span className={cn(granted && "text-ink")}>{label}</span>
       {!granted && (
         <a href={`/api/google/connect?scopes=${group}`} className="underline underline-offset-3">
-          Allow
+          Erlauben
         </a>
       )}
-      <span className="sr-only">{granted ? "(allowed)" : "(not allowed)"}</span>
+      <span className="sr-only">{granted ? "(erlaubt)" : "(nicht erlaubt)"}</span>
     </li>
   );
 }
@@ -319,39 +319,39 @@ function SetupSteps({ redirectUri, client }: { redirectUri: string; client: Goog
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(redirectUri);
-      toast("Copied the redirect URI.");
+      toast("Weiterleitungs-URI kopiert.");
     } catch {
-      toast("That didn't copy. Select it and copy it yourself.");
+      toast("Kopieren hat nicht geklappt. Markiere sie und kopiere sie selbst.");
     }
   };
   return (
     <>
       <SettingsSectionIntro title="Google">
-        Connect Gmail and Google Calendar to send applications, read replies and offer interview times. First, give this server a
-        Google OAuth client.
+        Verbinde Gmail und Google Kalender, um Bewerbungen zu senden, Antworten zu lesen und Gesprächstermine anzubieten. Gib diesem Server zuerst einen
+        Google-OAuth-Client.
       </SettingsSectionIntro>
       <Card className="flex flex-col gap-4 text-sm">
         <ol className="flex list-decimal flex-col gap-2.5 pl-5">
           <li>
-            In <span className="font-medium">Google Cloud Console</span>, create a project and enable the{" "}
-            <span className="font-medium">Gmail API</span> and the <span className="font-medium">Google Calendar API</span>.
+            Leg in der <span className="font-medium">Google Cloud Console</span> ein Projekt an und aktiviere die{" "}
+            <span className="font-medium">Gmail API</span> und die <span className="font-medium">Google Calendar API</span>.
           </li>
           <li>
-            Set up the <span className="font-medium">OAuth consent screen</span> as External, add yourself as a test user, then{" "}
-            <span className="font-medium">publish</span> it (In production). Unpublished, Google stops the access after 7 days.
+            Richte den <span className="font-medium">OAuth-Zustimmungsbildschirm</span> als „Extern“ ein, trag dich als Testnutzer ein und{" "}
+            <span className="font-medium">veröffentliche</span> ihn (In Produktion). Unveröffentlicht beendet Google den Zugriff nach 7 Tagen.
           </li>
           <li>
-            Create an <span className="font-medium">OAuth client ID</span> of type Web application, with this authorised redirect URI:
+            Erstelle eine <span className="font-medium">OAuth-Client-ID</span> vom Typ Webanwendung mit dieser autorisierten Weiterleitungs-URI:
             <span className="mt-1.5 flex items-center gap-2">
               <code className="rounded-control border border-line-field bg-input px-2 py-1 font-mono text-label [overflow-wrap:anywhere]">
                 {redirectUri}
               </code>
               <Button variant="text" size="sm" onClick={() => void copy()}>
-                Copy
+                Kopieren
               </Button>
             </span>
           </li>
-          <li>Paste the client&apos;s ID and secret below.</li>
+          <li>Füge ID und Secret des Clients unten ein.</li>
         </ol>
       </Card>
       <ClientCard initial={client} connected={false} />
@@ -360,10 +360,10 @@ function SetupSteps({ redirectUri, client }: { redirectUri: string; client: Goog
 }
 
 const SECRET_PLACEHOLDER: Record<GoogleClientView["secretState"], string> = {
-  set: "Saved · type a new secret to replace it",
-  env: "Using DOSSIER_GOOGLE_CLIENT_SECRET · type one to save it here",
-  none: "Stored encrypted on your server",
-  unreadable: "Stored encrypted on your server",
+  set: "Gespeichert · neues Secret eingeben, um es zu ersetzen",
+  env: "Nutzt DOSSIER_GOOGLE_CLIENT_SECRET · eingeben, um hier eines zu speichern",
+  none: "Verschlüsselt auf deinem Server gespeichert",
+  unreadable: "Verschlüsselt auf deinem Server gespeichert",
 };
 
 /**
@@ -399,17 +399,17 @@ function ClientCard({ initial, connected }: { initial: GoogleClientView; connect
   return (
     <Card className="flex flex-col gap-5">
       <div className="flex flex-col gap-1">
-        <h3 className="text-control font-medium">OAuth client</h3>
+        <h3 className="text-control font-medium">OAuth-Client</h3>
         <p className="text-meta text-muted">
-          {connected ? "Changing the client ID disconnects your Google account; connect again afterwards." : "Saved on this server, so no restart is needed."}
+          {connected ? "Eine neue Client-ID trennt dein Google-Konto; verbinde es danach neu." : "Wird auf diesem Server gespeichert, kein Neustart nötig."}
         </p>
       </div>
       <div className="grid grid-cols-1 gap-x-[18px] gap-y-5 sm:grid-cols-2">
         <Input
-          label="Client ID"
+          label="Client-ID"
           value={id}
-          placeholder={view.idState === "env" ? "Using DOSSIER_GOOGLE_CLIENT_ID" : "…apps.googleusercontent.com"}
-          hint={view.idState === "env" ? "From DOSSIER_GOOGLE_CLIENT_ID · type one to save it here" : undefined}
+          placeholder={view.idState === "env" ? "Nutzt DOSSIER_GOOGLE_CLIENT_ID" : "…apps.googleusercontent.com"}
+          hint={view.idState === "env" ? "Aus DOSSIER_GOOGLE_CLIENT_ID · eingeben, um hier eine zu speichern" : undefined}
           spellCheck={false}
           autoComplete="off"
           inputClassName="font-mono text-[13.5px]"
@@ -424,12 +424,12 @@ function ClientCard({ initial, connected }: { initial: GoogleClientView; connect
         />
         <div className="flex flex-col gap-2.5">
           <Input
-            label="Client secret"
+            label="Client-Secret"
             type="password"
             autoComplete="off"
             value={secret}
             placeholder={SECRET_PLACEHOLDER[view.secretState]}
-            error={view.secretState === "unreadable" ? "The saved secret can't be read, probably since DOSSIER_SECRET changed. Enter it again." : undefined}
+            error={view.secretState === "unreadable" ? "Das gespeicherte Secret ist nicht lesbar, vermutlich weil sich DOSSIER_SECRET geändert hat. Gib es neu ein." : undefined}
             onChange={(event) => setSecret(event.target.value)}
             onBlur={() => void saveSecret()}
             onKeyDown={(event) => {
@@ -441,7 +441,7 @@ function ClientCard({ initial, connected }: { initial: GoogleClientView; connect
           />
           {(view.secretState === "set" || view.secretState === "unreadable") && (
             <Button variant="text" size="sm" className="self-start" onClick={() => void save({ secret: { action: "clear" } })}>
-              Remove saved secret
+              Gespeichertes Secret entfernen
             </Button>
           )}
         </div>

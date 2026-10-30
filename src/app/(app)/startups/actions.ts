@@ -11,7 +11,7 @@ import { lookUpStartup, removeStartup, updateStartup } from "@/lib/startups/stor
 // user writes to a startup from New application or their own mail.
 
 const startupId = z.string().min(1).max(64);
-const GONE = "That startup is no longer in the list. Refresh the page.";
+const GONE = "Dieses Startup ist nicht mehr in der Liste. Lade die Seite neu.";
 
 /** "Refresh": asks both sources again, in the background; returns the job to follow. */
 export const refreshStartupsNow = action(z.object({}), async () => ({ jobId: await startStartupsRefresh() }));
@@ -42,6 +42,6 @@ export const saveStartupNotes = action(z.object({ id: startupId, notes: z.string
 /** "Remove and don't bring back": deletes it, and refreshes leave it out from now on. */
 export const removeStartupForGood = action(z.object({ id: startupId }), async ({ id }, { toast }) => {
   if (!(await removeStartup(id))) throw new ActionError(GONE);
-  toast("Removed. Refreshes won't bring it back.");
+  toast("Entfernt. Aktualisierungen holen es nicht zurück.");
   return null;
 });

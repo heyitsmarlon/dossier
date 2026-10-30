@@ -33,14 +33,14 @@ export function ThemeMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="text" size="sm" className="data-[state=open]:text-ink">
-          {current.name} theme
+          Design: {current.name}
           <span aria-hidden="true" className="text-[10px]">
             ▼
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto">
-        <DropdownMenuLabel>Theme for this resume and cover letter</DropdownMenuLabel>
+        <DropdownMenuLabel>Design für diesen Lebenslauf und das Anschreiben</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={current.id} onValueChange={(id) => id !== current.id && onChange(id)}>
           {themes.map((theme, index) => (
             <Fragment key={theme.id}>
@@ -49,7 +49,7 @@ export function ThemeMenu({
               <DropdownMenuRadioItem value={theme.id}>
                 {theme.name}
                 {/* The space only keeps the item's name readable: "Modern base theme". */}
-                {theme.id === baseThemeId && <> <span className="text-meta text-muted">base theme</span></>}
+                {theme.id === baseThemeId && <> <span className="text-meta text-muted">Basis-Design</span></>}
               </DropdownMenuRadioItem>
             </Fragment>
           ))}

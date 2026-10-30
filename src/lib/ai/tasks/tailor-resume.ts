@@ -116,14 +116,14 @@ export function resumeUnits(profile: ProfileData, answer: z.infer<typeof answerS
     ...new Set(answer.skills.flatMap((name) => profile.skills.find((skill) => sameName(skill.name, name))?.name ?? [])),
   ];
   const units: Unit[] = [
-    { id: "summary", label: "Summary", text: answer.summary.trim() },
+    { id: "summary", label: "Zusammenfassung", text: answer.summary.trim() },
     ...profile.experience.map((entry) => {
       const bullets = (roles.get(entry.id) ?? entry.bullets.split("\n")).map((line) => line.trim()).filter(Boolean);
-      return { id: `experience:${entry.id}`, label: `${entry.company || entry.role} role`, text: bullets.join("\n") };
+      return { id: `experience:${entry.id}`, label: `Position: ${entry.company || entry.role}`, text: bullets.join("\n") };
     }),
     ...profile.projects.map((entry) => {
       const bullets = (projects.get(entry.id) ?? entry.bullets.split("\n")).map((line) => line.trim()).filter(Boolean);
-      return { id: `project:${entry.id}`, label: `${entry.name || "Untitled"} project`, text: bullets.join("\n") };
+      return { id: `project:${entry.id}`, label: `Projekt: ${entry.name || "Ohne Titel"}`, text: bullets.join("\n") };
     }),
     { id: "skills", label: "Skills", text: skills.join(" · ") },
     ...profile.education.map((entry) => ({

@@ -67,7 +67,7 @@ function placeOf(offer: Offer): string {
 function salaryOf(offer: Offer): string {
   const { gehaltsspanneVon: from, gehaltsspanneBis: to } = offer;
   if (!from && !to) return "";
-  const amount = (value: number) => Math.round(value).toLocaleString("en-US");
+  const amount = (value: number) => Math.round(value).toLocaleString("de-DE");
   return `EUR ${from && to && from !== to ? `${amount(from)}–${amount(to)}` : amount((from || to)!)}`;
 }
 

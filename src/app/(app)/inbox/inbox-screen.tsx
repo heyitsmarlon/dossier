@@ -48,48 +48,48 @@ export function InboxScreen({
   return (
     <>
       <PageHeader
-        title="Inbox"
+        title="Posteingang"
         description={
           connected
-            ? "Employers' replies from your Gmail, linked to their applications. Open one to see what it asks and draft your answer."
-            : "Connect Gmail in Settings → Google, and employers' replies show up here, linked to their applications."
+            ? "Antworten von Arbeitgebern aus deinem Gmail, mit ihren Bewerbungen verknüpft. Öffne eine, um zu sehen, was gefragt wird, und deine Antwort zu entwerfen."
+            : "Verbinde Gmail unter Einstellungen → Google, dann erscheinen Antworten von Arbeitgebern hier, verknüpft mit ihren Bewerbungen."
         }
         actions={
           connected ? (
             <>
               <span className={problem ? "text-meta text-error" : "text-meta text-muted"}>
-                {problem ?? (lastSync ? `Checked ${formatWhen(lastSync, timeZone)}` : "Not checked yet")}
+                {problem ?? (lastSync ? `Geprüft ${formatWhen(lastSync, timeZone)}` : "Noch nicht geprüft")}
               </span>
               <Button variant="secondary" onClick={check} disabled={checking}>
-                {checking ? "Checking…" : "Check now"}
+                {checking ? "Prüfe…" : "Jetzt prüfen"}
               </Button>
             </>
           ) : (
             <Link href="/settings?section=google" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-              {configured ? "Connect Gmail" : "Set up Google"}
+              {configured ? "Gmail verbinden" : "Google einrichten"}
             </Link>
           )
         }
       />
       <div className="flex max-w-[860px] flex-col gap-5 px-10 pb-[72px]">
         {empty ? (
-          <p className={`${card} py-6! text-sm text-muted`}>{connected ? "Nothing yet. Replies to your applications will show up here." : "Nothing here yet."}</p>
+          <p className={`${card} py-6! text-sm text-muted`}>{connected ? "Noch nichts. Antworten auf deine Bewerbungen erscheinen hier." : "Noch nichts hier."}</p>
         ) : (
           <>
-            <Section title="Needs an answer" count={inbox.waiting.length} empty="All answered. Nice.">
+            <Section title="Braucht eine Antwort" count={inbox.waiting.length} empty="Alles beantwortet. Sehr gut.">
               {inbox.waiting.map((email) => (
                 <Row key={email.id} email={email} timeZone={timeZone} />
               ))}
             </Section>
             {inbox.unmatched.length > 0 && (
-              <Section title="Needs a look" count={inbox.unmatched.length} hint="I couldn't tell which application these are about.">
+              <Section title="Bitte ansehen" count={inbox.unmatched.length} hint="Ich konnte nicht erkennen, zu welcher Bewerbung diese gehören.">
                 {inbox.unmatched.map((email) => (
                   <Unmatched key={email.id} email={email} timeZone={timeZone} applications={applications} />
                 ))}
               </Section>
             )}
             {inbox.updates.length > 0 && (
-              <Section title="Updates" count={inbox.updates.length}>
+              <Section title="Neuigkeiten" count={inbox.updates.length}>
                 {inbox.updates.map((email) => (
                   <Row key={email.id} email={email} timeZone={timeZone} quiet />
                 ))}
@@ -158,12 +158,12 @@ function Unmatched({ email, timeZone, applications }: { email: EmailView; timeZo
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <select
-          aria-label="Link to application"
+          aria-label="Mit Bewerbung verknüpfen"
           value={choice}
           onChange={(event) => setChoice(event.target.value)}
           className="h-[30px] max-w-[320px] min-w-0 flex-1 cursor-pointer rounded-control border border-line-input bg-input px-2 text-control"
         >
-          <option value="">Choose application…</option>
+          <option value="">Bewerbung wählen…</option>
           {applications.map((application) => (
             <option key={application.id} value={application.id}>
               {application.label}
@@ -171,10 +171,10 @@ function Unmatched({ email, timeZone, applications }: { email: EmailView; timeZo
           ))}
         </select>
         <Button size="sm" variant="secondary" disabled={!choice || pending} onClick={() => run(async () => toastResult(await linkEmail({ emailId: email.id, applicationId: choice })))}>
-          Link
+          Verknüpfen
         </Button>
         <Button size="sm" variant="text" className="ml-auto" disabled={pending} onClick={() => run(async () => toastResult(await dismissEmail({ emailId: email.id })))}>
-          Not job-related
+          Nicht jobbezogen
         </Button>
       </div>
     </li>

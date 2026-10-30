@@ -70,7 +70,7 @@ const responseSchema = z.object({
   data: z.object({ jobs: z.array(z.unknown()), cursor: z.string().nullish() }),
 });
 
-const PERIODS: Record<string, string> = { YEAR: "a year", MONTH: "a month", WEEK: "a week", DAY: "a day", HOUR: "an hour" };
+const PERIODS: Record<string, string> = { YEAR: "pro Jahr", MONTH: "pro Monat", WEEK: "pro Woche", DAY: "pro Tag", HOUR: "pro Stunde" };
 
 /** "EUR 60,000–75,000 a year", from the salary fields; empty when there's none. */
 function salaryOf(job: Job): string {
@@ -78,7 +78,7 @@ function salaryOf(job: Job): string {
   if (written) return written;
   const { job_min_salary: min, job_max_salary: max } = job;
   if (min == null && max == null) return "";
-  const amount = (value: number) => value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+  const amount = (value: number) => value.toLocaleString("de-DE", { maximumFractionDigits: 0 });
   const range = min != null && max != null && min !== max ? `${amount(min)}–${amount(max)}` : amount((min ?? max)!);
   return [job.job_salary_currency, range, PERIODS[job.job_salary_period?.toUpperCase() ?? ""]].filter(Boolean).join(" ");
 }

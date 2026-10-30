@@ -58,7 +58,7 @@ export async function startDueRun(now = new Date()): Promise<string | null> {
 export async function resetInterruptedDrafts(): Promise<number> {
   const { count } = await prisma.agentCandidate.updateMany({
     where: { status: AgentCandidateStatus.DRAFTING },
-    data: { status: AgentCandidateStatus.SCORED, error: "Drafting was interrupted. Try again." },
+    data: { status: AgentCandidateStatus.SCORED, error: "Der Entwurf wurde unterbrochen. Versuch es noch einmal." },
   });
   return count;
 }

@@ -21,16 +21,16 @@ export function ApplicationHeader({
   /** The tab list, drawn on the header's bottom line. */
   children?: ReactNode;
 }) {
-  const name = title.trim() || "Untitled application";
+  const name = title.trim() || "Bewerbung ohne Titel";
   return (
     <>
       <PageBar>
         <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-2">
-          <nav aria-label="Breadcrumb">
+          <nav aria-label="Brotkrumen">
             <ol className="flex gap-1.5 text-meta text-muted">
               <li>
                 <Link href="/applications" className="text-muted hover:text-ink">
-                  Applications
+                  Bewerbungen
                 </Link>
               </li>
               <li aria-hidden="true">/</li>

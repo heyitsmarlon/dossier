@@ -40,19 +40,19 @@ export class JobSearchError extends Error {
 export function jobSearchError(problem: JobSearchProblem, source: JobSource, { country = "", detail }: { country?: string; detail?: string } = {}) {
   const { name, quotaPeriod } = SOURCE_INFO[source];
   const message = {
-    off: `${name} isn't offered on this server. Choose another source in Settings → Job search.`,
+    off: `${name} wird auf diesem Server nicht angeboten. Wähle eine andere Quelle unter Einstellungen → Jobsuche.`,
     "not-accepted": `Read the note about ${name} and tick “I understand” before Dossier searches it.`,
-    "no-key": `Add your ${name} ${source === "ADZUNA" ? "app ID and key" : "key"} in Settings → Job search first.`,
-    key: `${name} didn't accept your key. Check it in Settings → Job search.`,
+    "no-key": `Trag zuerst deine${source === "ADZUNA" ? " App-ID und deinen Schlüssel" : "n Schlüssel"} für ${name} unter Einstellungen → Jobsuche ein.`,
+    key: `${name} hat deinen Schlüssel nicht akzeptiert. Prüf ihn unter Einstellungen → Jobsuche.`,
     quota: quotaPeriod
-      ? `You've used up your ${name} searches for ${quotaPeriod}. Try again then, or move to a bigger plan.`
-      : `${name} is limiting searches right now. Wait a minute and try again.`,
-    country: `${name} doesn't list jobs in ${countryName(country)}. Choose another country, or another source in Settings → Job search.`,
-    unavailable: `${name} isn't answering right now. Try again in a minute.`,
+      ? `Du hast deine Suchen bei ${name} für ${quotaPeriod} aufgebraucht. Versuch es dann wieder, oder wechsle in einen größeren Tarif.`
+      : `${name} begrenzt gerade die Suchen. Warte eine Minute und versuch es noch einmal.`,
+    country: `${name} listet keine Jobs in ${countryName(country)}. Wähle ein anderes Land oder eine andere Quelle unter Einstellungen → Jobsuche.`,
+    unavailable: `${name} antwortet gerade nicht. Versuch es in einer Minute noch einmal.`,
     changed:
       source === "ARBEITSAGENTUR"
-        ? "The Arbeitsagentur's job search has changed or isn't answering. Try another source in Settings → Job search."
-        : `${name} answered in a way Dossier doesn't understand; its service may have changed. Try again later.`,
+        ? "Die Jobsuche der Arbeitsagentur hat sich geändert oder antwortet nicht. Versuch eine andere Quelle unter Einstellungen → Jobsuche."
+        : `${name} hat so geantwortet, dass Dossier es nicht versteht; der Dienst hat sich vielleicht geändert. Versuch es später noch einmal.`,
   }[problem];
   return new JobSearchError(problem, message, detail ? `${source}: ${detail}` : undefined);
 }

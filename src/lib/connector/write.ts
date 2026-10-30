@@ -93,7 +93,7 @@ export function letterUnits(letter: z.output<typeof writtenLetterSchema>, signOf
     ...withoutFrame(letter.paragraphs, signOff)
       .filter((paragraph) => paragraph.text.trim())
       .map((paragraph, index) => ({ id: `paragraph:${index + 1}`, label: paragraph.label.trim() || `Paragraph ${index + 1}`, text: paragraph.text.trim() })),
-    { id: SIGN_OFF_UNIT, label: "Sign-off", text: signOff },
+    { id: SIGN_OFF_UNIT, label: "Grußformel", text: signOff },
   ]);
 }
 

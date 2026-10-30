@@ -29,7 +29,7 @@ const TAG_BYTES = 16;
 export class SecretUnreadable extends Error {
   override name = "SecretUnreadable";
   constructor() {
-    super("A saved secret can't be read.");
+    super("Ein gespeichertes Geheimnis ist nicht lesbar.");
   }
 }
 

@@ -17,16 +17,16 @@ export type AiErrorKind =
   | "provider";
 
 const MESSAGES: Record<Exclude<AiErrorKind, "model" | "config">, string> = {
-  unreachable: "Couldn't reach the server. Check the address and that it's running.",
-  auth: "The server didn't accept the API key. Check it in Settings → AI provider.",
-  "rate-limited": "The AI provider is limiting requests right now. Wait a minute and try again.",
-  busy: "The AI provider is overloaded right now. Try again in a moment.",
-  timeout: "The model took too long to answer. Try again, or pick a faster model.",
-  "too-long": "That's more text than the model can take in at once. Try a shorter posting, or a model with a larger context.",
+  unreachable: "Der Server war nicht erreichbar. Prüf die Adresse und ob er läuft.",
+  auth: "Der Server hat den API-Schlüssel nicht akzeptiert. Prüf ihn unter Einstellungen → KI-Anbieter.",
+  "rate-limited": "Der KI-Anbieter begrenzt gerade die Anfragen. Warte eine Minute und versuch es noch einmal.",
+  busy: "Der KI-Anbieter ist gerade überlastet. Versuch es gleich noch einmal.",
+  timeout: "Das Modell hat zu lange gebraucht. Versuch es noch einmal oder wähle ein schnelleres Modell.",
+  "too-long": "Das ist mehr Text, als das Modell auf einmal verarbeiten kann. Versuch eine kürzere Anzeige oder ein Modell mit größerem Kontext.",
   cancelled: "Cancelled.",
-  "invalid-output": "The model's answer didn't come back in the expected shape. Try again.",
-  "cut-off": "The model's answer was cut off before it was finished. Try again, or pick another model in Settings → AI provider.",
-  provider: "The AI provider ran into a problem. Try again in a moment.",
+  "invalid-output": "Die Antwort des Modells kam nicht im erwarteten Format. Versuch es noch einmal.",
+  "cut-off": "Die Antwort des Modells wurde abgeschnitten. Versuch es noch einmal oder wähle ein anderes Modell unter Einstellungen → KI-Anbieter.",
+  provider: "Beim KI-Anbieter ist ein Problem aufgetreten. Versuch es gleich noch einmal.",
 };
 
 /** An AI failure with a message for people; `retryable` says whether Retry can help. */
@@ -51,7 +51,7 @@ export class AiError extends Error {
   }
 
   static unknownModel(model: string, detail?: string): AiError {
-    return new AiError("model", `The server doesn't have the model “${model}”. Pick another one in Settings → AI provider.`, detail);
+    return new AiError("model", `Der Server hat das Modell „${model}“ nicht. Wähle ein anderes unter Einstellungen → KI-Anbieter.`, detail);
   }
 
   static config(message: string): AiError {

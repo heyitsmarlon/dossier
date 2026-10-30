@@ -15,7 +15,7 @@ const same = (a: string, b: string) => a.replace(/\s+/g, " ").trim() === b.repla
 
 /** "A, B and C" */
 function listOf(names: string[]): string {
-  return names.length <= 1 ? (names[0] ?? "") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+  return names.length <= 1 ? (names[0] ?? "") : `${names.slice(0, -1).join(", ")} und ${names.at(-1)}`;
 }
 
 export function tailoringSummary({
@@ -45,14 +45,14 @@ export function tailoringSummary({
   /** Settings → "Show what changed" (SET-5). */
   showChanges: boolean;
 }): TailoringSummary {
-  const where = company.trim() || "this job";
+  const where = company.trim() || "diese Stelle";
   const unit = (id: string) => resume.find((entry) => entry.id === id);
   const list: string[] = [];
 
   const summary = unit("summary")?.text ?? "";
-  const forRole = role.trim() ? `for the ${role.trim()} role` : "for this job";
-  if (summary && !profile.basics.summary.trim()) list.push(`Wrote a summary ${forRole}`);
-  else if (summary && !same(summary, profile.basics.summary)) list.push(`Rewrote your summary ${forRole}`);
+  const forRole = role.trim() ? `für die Stelle als ${role.trim()}` : "für diese Stelle";
+  if (summary && !profile.basics.summary.trim()) list.push(`Zusammenfassung ${forRole} geschrieben`);
+  else if (summary && !same(summary, profile.basics.summary)) list.push(`Deine Zusammenfassung ${forRole} umgeschrieben`);
 
   const reworded = profile.experience.filter((entry) => {
     const tailored = unit(`experience:${entry.id}`);
@@ -61,8 +61,8 @@ export function tailoringSummary({
   if (reworded.length > 0) {
     list.push(
       reworded.length === profile.experience.length && reworded.length > 1
-        ? `Reworded all ${reworded.length} roles to lead with what ${where} asks for`
-        : `Reworded your ${listOf(reworded.map((entry) => entry.company || entry.role))} ${reworded.length === 1 ? "role" : "roles"} for this job`,
+        ? `Alle ${reworded.length} Positionen so umformuliert, dass vorne steht, was ${where} sucht`
+        : `${reworded.length === 1 ? "Position" : "Positionen"} ${listOf(reworded.map((entry) => entry.company || entry.role))} für diese Stelle umformuliert`,
     );
   }
 
@@ -71,52 +71,52 @@ export function tailoringSummary({
     return tailored && !same(tailored.text, entry.bullets.split("\n").map((line) => line.trim()).filter(Boolean).join("\n"));
   });
   if (projects.length > 0) {
-    list.push(`Reworded your ${listOf(projects.map((entry) => entry.name || "untitled"))} ${projects.length === 1 ? "project" : "projects"} for this job`);
+    list.push(`${projects.length === 1 ? "Projekt" : "Projekte"} ${listOf(projects.map((entry) => entry.name || "ohne Titel"))} für diese Stelle umformuliert`);
   }
 
   const publications = resume.filter((entry) => entry.id.startsWith("publication:")).length;
-  if (publications > 0) list.push(`Kept your ${publications === 1 ? "publication" : `${publications} publications`} word for word`);
+  if (publications > 0) list.push(`${publications === 1 ? "Deine Veröffentlichung" : `Deine ${publications} Veröffentlichungen`} wörtlich übernommen`);
 
   const skills = (unit("skills")?.text ?? "").split(" · ").filter(Boolean);
   const profileSkills = profile.skills.map((skill) => skill.name);
   const kept = profileSkills.filter((name) => skills.some((skill) => sameName(skill, name)));
   if (skills.length > 1 && !skills.every((skill, index) => kept[index] && sameName(skill, kept[index]))) {
-    list.push(`Ordered your skills by what ${where} asks for`);
+    list.push(`Deine Fähigkeiten danach sortiert, was ${where} sucht`);
   }
   const dropped = profileSkills.filter((name) => !skills.some((skill) => sameName(skill, name)));
   if (skills.length > 0 && dropped.length > 0) {
-    list.push(dropped.length <= 3 ? `Left out ${listOf(dropped)}, which this job isn't about` : `Left out ${dropped.length} skills that don't help here`);
+    list.push(dropped.length <= 3 ? `${listOf(dropped)} weggelassen, darum geht es bei dieser Stelle nicht` : `${dropped.length} Fähigkeiten weggelassen, die hier nicht helfen`);
   }
 
   if (profile.references.length > 0) {
     list.push(
       references === "included"
-        ? "Included your references, since the posting asks for them"
+        ? "Deine Referenzen aufgenommen, da die Anzeige danach fragt"
         : references === "not-asked"
-          ? "Left out references, since the posting doesn't ask for them"
-          : "Left out references, as set in Settings",
+          ? "Referenzen weggelassen, da die Anzeige nicht danach fragt"
+          : "Referenzen weggelassen, wie in den Einstellungen festgelegt",
     );
   }
 
-  if (letter.some(isParagraph)) list.push(`Wrote a ${TONES[tone].label.toLowerCase()} cover letter`);
-  const gaps = match.items.filter((item) => item.result === "gap").map((item) => `“${item.requirement}”`);
-  if (gaps.length > 0) list.push(`Worth being ready to talk about ${listOf(gaps)}, since ${gaps.length === 1 ? "it isn't" : "they aren't"} in your profile`);
-  if (note.trim()) list.push(`Took your note into account: “${note.trim()}”`);
+  if (letter.some(isParagraph)) list.push(`Anschreiben im Ton „${TONES[tone].label}“ geschrieben`);
+  const gaps = match.items.filter((item) => item.result === "gap").map((item) => `„${item.requirement}“`);
+  if (gaps.length > 0) list.push(`Sei bereit, über ${listOf(gaps)} zu sprechen, da ${gaps.length === 1 ? "es" : "sie"} nicht in deinem Profil ${gaps.length === 1 ? "steht" : "stehen"}`);
+  if (note.trim()) list.push(`Deinen Hinweis berücksichtigt: „${note.trim()}“`);
 
   const flagged = [...resume, ...letter].reduce((count, entry) => count + (entry.unverified?.length ?? 0), 0);
   if (strict && flagged > 0) {
-    list.push(`Marked ${flagged === 1 ? "one detail" : `${flagged} details`} to check (not in your profile or the posting)`);
+    list.push(`${flagged === 1 ? "Ein Detail" : `${flagged} Details`} zur Prüfung markiert (weder in deinem Profil noch in der Anzeige)`);
   }
 
   const foot = !strict
-    ? "“Never invent experience” is off, so check the facts before you send anything."
+    ? "„Nie Erfahrung erfinden“ ist aus, prüf also die Fakten, bevor du etwas verschickst."
     : flagged > 0
-      ? "Double-check the marked details before you send anything."
-      : "Nothing invented: every line comes from your profile.";
+      ? "Prüf die markierten Details genau, bevor du etwas verschickst."
+      : "Nichts erfunden: Jede Zeile stammt aus deinem Profil.";
 
   return showChanges
-    ? { intro: `Here's what I tailored for ${where}:`, list, foot }
-    : { intro: `Your tailored resume and cover letter for ${where} are ready.`, list: [], foot };
+    ? { intro: `Das habe ich für ${where} angepasst:`, list, foot }
+    : { intro: `Dein zugeschnittener Lebenslauf und dein Anschreiben für ${where} sind fertig.`, list: [], foot };
 }
 
 /** The message as stored: intro, a bulleted list, the footnote. */

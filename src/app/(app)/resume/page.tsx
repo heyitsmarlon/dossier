@@ -7,7 +7,7 @@ import { loadThemes, loadThemeUsage } from "@/lib/theme-data";
 
 import { ResumeWorkspace } from "./resume-workspace";
 
-export const metadata: Metadata = { title: "Base resume" };
+export const metadata: Metadata = { title: "Basis-Lebenslauf" };
 
 /** The base resume: a live preview of the profile in the chosen theme (RES-1). */
 export default async function BaseResumePage() {

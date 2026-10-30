@@ -69,16 +69,16 @@ export function ProfileEditor({ initial, section, order }: { initial: ProfileDat
   return (
     <TrackSaveContext value={saves.track}>
       <PageHeader
-        title="Your profile"
-        description="Everything here feeds your resumes and cover letters. Fill in what you like. You can always come back to it."
+        title="Dein Profil"
+        description="Alles hier fließt in deine Lebensläufe und Anschreiben. Füll aus, was du magst. Du kannst jederzeit zurückkommen."
         actions={
           <>
             <SavedIndicator status={saves.status} savedAt={saves.savedAt} />
             <Link href="/profile/import" className={buttonClassName("secondary")}>
-              Import from a resume
+              Aus Lebenslauf importieren
             </Link>
             <Link href="/resume" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-              See base resume →
+              Basis-Lebenslauf ansehen →
             </Link>
           </>
         }
@@ -87,7 +87,7 @@ export function ProfileEditor({ initial, section, order }: { initial: ProfileDat
       <div className="flex flex-wrap items-start gap-x-12 gap-y-10 px-10 pt-2 pb-20">
         <div className="flex max-w-[220px] min-w-[200px] flex-[1_1_200px] flex-col gap-6">
           <StrengthMeter profile={profile} />
-          <nav aria-label="Profile sections" className="flex flex-col gap-0.5">
+          <nav aria-label="Profilbereiche" className="flex flex-col gap-0.5">
             {SECTIONS.map((entry) => (
               <Link
                 key={entry.id}
@@ -129,11 +129,11 @@ export function ProfileEditor({ initial, section, order }: { initial: ProfileDat
             )}
             {next ? (
               <Link href={sectionHref(next.id)} className={buttonClassName("secondary", "md", "bg-card")}>
-                Next: {next.label} →
+                Weiter: {next.label} →
               </Link>
             ) : (
               <Link href="/resume" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-                Looks good. See my resume →
+                Sieht gut aus. Lebenslauf ansehen →
               </Link>
             )}
           </div>

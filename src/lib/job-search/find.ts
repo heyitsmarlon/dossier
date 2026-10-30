@@ -19,8 +19,8 @@ export async function askSource(
 ): Promise<({ ok: true; source: JobSource } & SearchPage) | SearchProblem> {
   const config = await loadJobSearchConfig();
   const from = source ?? config.source;
-  if (!from) return { ok: false, problem: "off", message: "Choose where to search in Settings → Job search first." };
-  if (!query.country) return { ok: false, problem: "no-country", message: "Choose a country to search in." };
+  if (!from) return { ok: false, problem: "off", message: "Wähle zuerst, wo gesucht wird (Einstellungen → Jobsuche)." };
+  if (!query.country) return { ok: false, problem: "no-country", message: "Wähle ein Land für die Suche." };
   try {
     const page = await searchPostings(from, credentialsFor(config, from), query, next, requestContext(from));
     return { ok: true, source: from, ...page };

@@ -67,14 +67,14 @@ export function AboutSection({ facts, usagePing, updates }: { facts: AboutFacts;
   };
   const fromEnv = usagePing.source === "env";
   const pingDescription = !usagePing.production
-    ? "Development servers never send it."
+    ? "Entwicklungsserver senden ihn nie."
     : fromEnv
-      ? `Set with DOSSIER_TELEMETRY=${usagePing.choice} on the server, which decides while it's set. Change it there.`
+      ? `Über DOSSIER_TELEMETRY=${usagePing.choice} auf dem Server festgelegt, das gilt, solange es gesetzt ist. Dort ändern.`
       : pinging
-        ? `On. Once on each day Dossier is used, the server sends ${usagePing.host} ${usagePing.id ? `this install's ID (${usagePing.id})` : "this install's ID, made with the first ping,"} and the version number. Nothing else.`
+        ? `An. Einmal an jedem Tag, an dem Dossier genutzt wird, sendet der Server an ${usagePing.host} ${usagePing.id ? `die ID dieser Installation (${usagePing.id})` : "die ID dieser Installation, die beim ersten Ping erzeugt wird,"} und die Versionsnummer. Sonst nichts.`
         : answered
-          ? "Off. Nothing is sent, and this install's ID is forgotten."
-          : "Not answered yet, so nothing is sent.";
+          ? "Aus. Es wird nichts gesendet, und die ID dieser Installation ist vergessen."
+          : "Noch nicht beantwortet, daher wird nichts gesendet.";
 
   const run = async () => {
     setCheck({ status: "checking" });
@@ -94,7 +94,7 @@ export function AboutSection({ facts, usagePing, updates }: { facts: AboutFacts;
 
   return (
     <>
-      <SettingsSectionIntro title="About this install">Free and open source. No accounts, no subscriptions.</SettingsSectionIntro>
+      <SettingsSectionIntro title="Über diese Installation">Frei und quelloffen. Keine Konten, keine Abos.</SettingsSectionIntro>
       <Card padding="none" className="px-7 py-2">
         <dl>
           {facts.map(({ label, value }) => (
@@ -107,7 +107,7 @@ export function AboutSection({ facts, usagePing, updates }: { facts: AboutFacts;
       </Card>
       <Card padding="none" className="px-7 py-4">
         <Toggle
-          label="Send the daily usage ping"
+          label="Täglichen Nutzungs-Ping senden"
           description={pingDescription}
           checked={usagePing.production && (fromEnv ? usagePing.choice === "on" : pinging)}
           disabled={!usagePing.production || fromEnv}
@@ -116,11 +116,11 @@ export function AboutSection({ facts, usagePing, updates }: { facts: AboutFacts;
       </Card>
       <Card padding="none" className="px-7 py-4">
         <Toggle
-          label="Check for updates daily"
+          label="Täglich nach Updates suchen"
           description={
             daily
-              ? "Once on each day Dossier is used, the server asks GitHub for the latest release, and the sidebar says when a newer one is out."
-              : "Off. Dossier only checks when you press Check for updates."
+              ? "Einmal an jedem Tag, an dem Dossier genutzt wird, fragt der Server GitHub nach der neuesten Version, und die Seitenleiste zeigt an, wenn eine neuere da ist."
+              : "Aus. Dossier prüft nur, wenn du auf „Nach Updates suchen“ drückst."
           }
           checked={daily}
           onCheckedChange={switchDaily}
@@ -128,36 +128,36 @@ export function AboutSection({ facts, usagePing, updates }: { facts: AboutFacts;
       </Card>
       <div className="flex flex-wrap items-center gap-3.5">
         <Button variant="secondary" aria-disabled={check.status === "checking" || undefined} onClick={() => check.status !== "checking" && void run()}>
-          {check.status === "checking" ? "Checking…" : "Check for updates"}
+          {check.status === "checking" ? "Prüfe…" : "Nach Updates suchen"}
         </Button>
         <p role="status" className="text-control text-muted">
-          {check.status === "latest" && "You're on the latest version."}
-          {check.status === "unknown" && "Couldn't check for updates right now."}
+          {check.status === "latest" && "Du nutzt die neueste Version."}
+          {check.status === "unknown" && "Konnte gerade nicht nach Updates suchen."}
           {check.status === "newer" && (
             <>
-              Version {check.version} is available.{" "}
+              Version {check.version} ist verfügbar.{" "}
               <a href={check.url} target="_blank" rel="noopener noreferrer" className={LINK}>
-                See what&apos;s new{" "}
-                <span className="sr-only">(opens in a new tab)</span>
+                Was ist neu{" "}
+                <span className="sr-only">(öffnet in neuem Tab)</span>
               </a>
               {" · "}
               <a href={UPGRADE_GUIDE_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
-                How to update{" "}
-                <span className="sr-only">(opens in a new tab)</span>
+                So aktualisierst du{" "}
+                <span className="sr-only">(öffnet in neuem Tab)</span>
               </a>
             </>
           )}
         </p>
       </div>
-      <p className="text-meta text-muted">Checking asks GitHub for the latest release and sends nothing about you or this install, daily or when you press it.</p>
+      <p className="text-meta text-muted">Die Prüfung fragt GitHub nach der neuesten Version und sendet nichts über dich oder diese Installation, weder täglich noch auf Knopfdruck.</p>
       <p className="text-meta text-muted">
-        The usage ping only goes once you agree. It tells the Dossier project&apos;s maintainer, on the project&apos;s own server, how many installs are in use and how often. The ID is random and says nothing about you, and what&apos;s kept is deleted after a year. To have the rows already kept for this install removed sooner, note its ID, switch the ping off, and send the ID to{" "}
+        Der Nutzungs-Ping geht erst raus, wenn du zustimmst. Er teilt dem Betreuer des Dossier-Projekts auf dessen eigenem Server mit, wie viele Installationen wie oft genutzt werden. Die ID ist zufällig und sagt nichts über dich, und Gespeichertes wird nach einem Jahr gelöscht. Wenn die bereits gespeicherten Einträge dieser Installation früher entfernt werden sollen, notiere ihre ID, schalte den Ping aus und schick die ID an{" "}
         <a href="mailto:dossier.app@pm.me" className={LINK}>
           dossier.app@pm.me
         </a>
-        ; you get a confirmation once they&apos;re gone.{" "}
+        ; du bekommst eine Bestätigung, sobald sie gelöscht sind.{" "}
         <a href={USAGE_PING_PRIVACY_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
-          More in Privacy <span className="sr-only">(opens in a new tab)</span>
+          Mehr unter Datenschutz <span className="sr-only">(öffnet in neuem Tab)</span>
         </a>
       </p>
     </>

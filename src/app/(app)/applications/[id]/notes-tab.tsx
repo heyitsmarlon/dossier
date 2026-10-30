@@ -44,9 +44,9 @@ export function NotesTab({ applicationId, activity }: { applicationId: string; a
     startTransition(async () => {
       const result = await deleteNote({ id: applicationId, noteId });
       if (!result.ok) return toast(result.error);
-      toast("Note deleted.", {
+      toast("Notiz gelöscht.", {
         action: {
-          label: "Undo",
+          label: "Rückgängig",
           onClick: () => void restoreNote({ id: applicationId, ...result.data }).then((restored) => !restored.ok && toast(restored.error)),
         },
       });
@@ -55,19 +55,19 @@ export function NotesTab({ applicationId, activity }: { applicationId: string; a
   return (
     <div className="@container flex flex-1 flex-col items-center gap-4 overflow-auto bg-canvas px-10 pt-11 pb-16">
       <div className="flex w-full max-w-[640px] flex-wrap justify-between gap-x-3 gap-y-1 text-meta text-muted">
-        <span>Notes and activity</span>
-        <span>Private and never sent to the AI</span>
+        <span>Notizen und Verlauf</span>
+        <span>Privat und nie an die KI geschickt</span>
       </div>
       <div className="flex w-full max-w-[640px] flex-col gap-5 rounded-panel border border-line-card bg-card px-[30px] py-7">
         <div className="flex flex-col gap-2.5">
           <label htmlFor={draftId} className="text-[15px] font-medium">
-            Add a note
+            Notiz hinzufügen
           </label>
           <textarea
             id={draftId}
             rows={3}
             value={draft}
-            placeholder="Who you talked to, what they said, what's next…"
+            placeholder="Mit wem du gesprochen hast, was gesagt wurde, wie es weitergeht…"
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -79,12 +79,12 @@ export function NotesTab({ applicationId, activity }: { applicationId: string; a
           />
           <div className="flex justify-end">
             <Button size="sm" aria-disabled={!draft.trim() || pending || undefined} onClick={add}>
-              Add note
+              Notiz speichern
             </Button>
           </div>
         </div>
 
-        <ol aria-label="Notes and activity" className="flex flex-col">
+        <ol aria-label="Notizen und Verlauf" className="flex flex-col">
           {activity.map((entry) => (
             <li key={`${entry.kind}:${entry.id}`} className="flex items-start gap-3 border-t border-line py-3.5">
               <span className="flex h-[1.4em] w-3 flex-none items-center justify-center" aria-hidden="true">
@@ -101,7 +101,7 @@ export function NotesTab({ applicationId, activity }: { applicationId: string; a
                   {editing?.id === entry.id ? (
                     <>
                       <textarea
-                        aria-label="Edit note"
+                        aria-label="Notiz bearbeiten"
                         // Opened on request, so the text box takes focus.
                         autoFocus
                         rows={Math.max(3, editing.body.split("\n").length + 1)}
@@ -118,10 +118,10 @@ export function NotesTab({ applicationId, activity }: { applicationId: string; a
                       />
                       <div className="flex justify-end gap-1.5">
                         <Button variant="secondary" size="sm" onClick={() => setEditing(null)}>
-                          Cancel
+                          Abbrechen
                         </Button>
                         <Button size="sm" aria-disabled={pending || undefined} onClick={save}>
-                          Save
+                          Speichern
                         </Button>
                       </div>
                     </>
@@ -135,19 +135,19 @@ export function NotesTab({ applicationId, activity }: { applicationId: string; a
                         </span>
                         <button
                           type="button"
-                          aria-label={`Edit the note from ${entry.date}`}
+                          aria-label={`Notiz vom ${entry.date} bearbeiten`}
                           className="hover:text-ink"
                           onClick={() => setEditing({ id: entry.id, body: entry.body })}
                         >
-                          Edit
+                          Bearbeiten
                         </button>
                         <button
                           type="button"
-                          aria-label={`Delete the note from ${entry.date}`}
+                          aria-label={`Notiz vom ${entry.date} löschen`}
                           className="text-danger hover:text-error-strong"
                           onClick={() => remove(entry.id)}
                         >
-                          Delete
+                          Löschen
                         </button>
                       </p>
                     </>
@@ -155,7 +155,7 @@ export function NotesTab({ applicationId, activity }: { applicationId: string; a
                 </div>
               ) : (
                 <p className="flex min-w-0 flex-1 flex-wrap justify-between gap-x-3 text-sm">
-                  <span>{entry.kind === "status" ? `Moved to ${statusInfo(entry.status).label}` : "Created"}</span>
+                  <span>{entry.kind === "status" ? `Verschoben nach ${statusInfo(entry.status).label}` : "Angelegt"}</span>
                   <span className="text-label text-muted">{entry.date}</span>
                 </p>
               )}

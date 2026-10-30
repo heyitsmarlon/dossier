@@ -17,6 +17,7 @@ import { QuietDays } from "./quiet-days";
 
 const card = "flex flex-col rounded-panel border border-line-card bg-card";
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
+const ACTION_LABELS: Record<string, string> = { Review: "Prüfen", Finish: "Fertigstellen", Open: "Öffnen", Answer: "Antworten" };
 
 /** The dashboard (DSH-1 to DSH-6): the funnel, where things stand, what's worth a look, and the calendar. */
 export function Dashboard({
@@ -42,21 +43,21 @@ export function Dashboard({
 }) {
   const { sent, heardBack } = figures;
   // The summary follows the time filter, so it says which period it covers.
-  const within = range === "all" ? null : DASHBOARD_PERIODS.find((entry) => entry.value === range)?.label.toLowerCase();
+  const within = range === "all" ? null : DASHBOARD_PERIODS.find((entry) => entry.value === range)?.days;
   return (
     <>
       <PageHeader
         title={<Greeting name={firstName} serverPeriod={period} />}
         description={
           sent > 0
-            ? `${within ? `In the ${within} you've` : "You've"} sent ${plural(sent, "application", "applications")} and heard back from ${heardBack}. That's a solid run. Keep it going.`
+            ? `${within ? `In den letzten ${within} Tagen hast du` : "Du hast"} ${plural(sent, "Bewerbung", "Bewerbungen")} gesendet und ${heardBack} Rückmeldungen bekommen. Starke Leistung, bleib dran.`
             : within
-              ? `Nothing sent in the ${within}. Your next application is only a paste away.`
-              : "Nothing sent yet. Your first application is only a paste away."
+              ? `In den letzten ${within} Tagen nichts gesendet. Deine nächste Bewerbung ist nur ein Einfügen entfernt.`
+              : "Noch nichts gesendet. Deine erste Bewerbung ist nur ein Einfügen entfernt."
         }
         actions={
           <Link href="/new?fresh=1" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-            + New application
+            + Neue Bewerbung
           </Link>
         }
       />
@@ -104,14 +105,14 @@ function Funnel({ figures }: { figures: DashboardFigures }) {
       <div className="flex flex-wrap items-baseline justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h2 id="funnel-heading" className="font-serif text-section">
-            Your funnel
+            Dein Trichter
           </h2>
-          <p className="text-control text-muted">How far each application you&apos;ve sent has made it, and where the ones that stopped are now.</p>
+          <p className="text-control text-muted">Wie weit jede gesendete Bewerbung gekommen ist, und wo die stehen, die hängen geblieben sind.</p>
         </div>
         <dl className="flex gap-7">
-          <Figure value={String(sent)} label="sent" />
-          <Figure value={heardBackPercent === null ? "None yet" : `${heardBackPercent}%`} label="heard back" />
-          <Figure value={String(reachedInterview)} label="reached interview" />
+          <Figure value={String(sent)} label="gesendet" />
+          <Figure value={heardBackPercent === null ? "Noch keine" : `${heardBackPercent}%`} label="Rückmeldung" />
+          <Figure value={String(reachedInterview)} label="bis zum Gespräch" />
         </dl>
       </div>
       <FunnelChart funnel={funnel} />
@@ -135,10 +136,10 @@ function WhereThingsStand({ byStatus }: { byStatus: Record<ApplicationStatus, nu
     <section aria-labelledby="standing-heading" className={`${card} gap-[18px] px-7 py-[26px]`}>
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="standing-heading" className="text-[15px] font-medium">
-          Where things stand
+          Wo du stehst
         </h2>
         <Link href="/applications?view=board" className="text-meta text-muted underline underline-offset-3 hover:text-ink">
-          Open board
+          Board öffnen
         </Link>
       </div>
       {/* The legend below says the same in words. */}
@@ -166,12 +167,12 @@ function WorthALook({ items, quietDays }: { items: DashboardFigures["attention"]
     <section aria-labelledby="attention-heading" className={`${card} px-7 pt-[26px] pb-3.5`}>
       <div className="flex items-baseline justify-between gap-3 pb-3">
         <h2 id="attention-heading" className="text-[15px] font-medium">
-          Worth a look
+          Einen Blick wert
         </h2>
-        {items.length > 0 && <span className="text-meta text-muted">{plural(items.length, "thing", "things")}</span>}
+        {items.length > 0 && <span className="text-meta text-muted">{plural(items.length, "Punkt", "Punkte")}</span>}
       </div>
       {items.length === 0 ? (
-        <p className="border-t border-line py-5 text-sm text-muted">All caught up. Nice.</p>
+        <p className="border-t border-line py-5 text-sm text-muted">Alles erledigt. Sehr gut.</p>
       ) : (
         <ul>
           {items.map((item) => (
@@ -181,11 +182,11 @@ function WorthALook({ items, quietDays }: { items: DashboardFigures["attention"]
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span className="text-field font-medium">
                     {[item.company, item.role].filter(Boolean).join(", ")}
-                    {item.soon && <span className="ml-2 rounded-[6px] bg-warning-surface px-2 py-[3px] align-[1px] text-xs font-normal text-warning">Soon</span>}
+                    {item.soon && <span className="ml-2 rounded-[6px] bg-warning-surface px-2 py-[3px] align-[1px] text-xs font-normal text-warning">Bald</span>}
                   </span>
                   <span className="text-meta leading-[1.45] text-muted">{item.reason}</span>
                 </span>
-                <span className="mt-px flex-none text-meta text-muted">{item.action} →</span>
+                <span className="mt-px flex-none text-meta text-muted">{ACTION_LABELS[item.action] ?? item.action} →</span>
               </Link>
             </li>
           ))}
@@ -200,17 +201,17 @@ function WorthALook({ items, quietDays }: { items: DashboardFigures["attention"]
 function Welcome() {
   return (
     <Panel>
-      <h2 className="font-serif text-section">Welcome to Dossier</h2>
+      <h2 className="font-serif text-section">Willkommen bei Dossier</h2>
       <p className="text-sm text-muted">
-        Start with your profile: your roles, skills and education are what every tailored resume and cover letter is built from.
-        Then paste a job posting, and your funnel and next steps will show up here.
+        Fang mit deinem Profil an: Aus deinen Stationen, Fähigkeiten und deiner Ausbildung entsteht jeder zugeschnittene Lebenslauf und jedes Anschreiben.
+        Füge dann eine Stellenanzeige ein, und dein Trichter und die nächsten Schritte erscheinen hier.
       </p>
       <div className="flex flex-wrap items-center gap-4 pt-1">
         <Link href="/profile" className={buttonClassName("secondary")}>
-          Fill in your profile
+          Profil ausfüllen
         </Link>
         <Link href="/new?fresh=1" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-          + New application
+          + Neue Bewerbung
         </Link>
       </div>
     </Panel>

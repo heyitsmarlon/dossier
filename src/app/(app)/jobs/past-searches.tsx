@@ -40,7 +40,7 @@ export function PastSearches({ days, countries }: { days: PastSearchDay[]; count
   if (shown.length === 0) {
     return (
       <div className="mx-10 mb-16 max-w-[860px] rounded-panel border border-line-card bg-card px-5 py-9 text-center text-sm text-muted">
-        No searches yet. Each search you run is kept here with what it found, so you can open it again without spending another search.
+        Noch keine Suchen. Jede Suche wird hier mit ihren Treffern gespeichert, so kannst du sie erneut öffnen, ohne eine weitere Suche zu verbrauchen.
       </div>
     );
   }
@@ -58,11 +58,11 @@ export function PastSearches({ days, countries }: { days: PastSearchDay[]; count
                   <Link href={searchRunHref(search.id)} className="flex min-w-0 flex-col gap-0.5 text-ink hover:text-ink">
                     <span className="truncate text-field font-medium">{what}</span>
                     <span className="text-meta text-muted">
-                      {search.time} · {search.found === 1 ? "1 posting" : `${search.found} postings`} · {SOURCE_INFO[search.source].name}
+                      {search.time} · {search.found === 1 ? "1 Anzeige" : `${search.found} Anzeigen`} · {SOURCE_INFO[search.source].name}
                     </span>
                   </Link>
-                  <Button variant="text" size="sm" aria-label={`Remove the search “${what}” from ${search.time}`} onClick={() => void remove(search.id)}>
-                    Remove
+                  <Button variant="text" size="sm" aria-label={`Suche „${what}“ vom ${search.time} entfernen`} onClick={() => void remove(search.id)}>
+                    Entfernen
                   </Button>
                 </li>
               );

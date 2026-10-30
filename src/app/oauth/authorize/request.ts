@@ -20,15 +20,15 @@ const one = (value: string | string[] | undefined) => (Array.isArray(value) ? va
  * redirect must never send the browser anywhere.
  */
 export async function checkAuthorizeRequest(params: Record<string, string | string[] | undefined>): Promise<AuthorizeRequest | { error: string }> {
-  if (!(await connectorSince())) return { error: "The Claude connector is off. Turn it on in Settings → Claude connector, then connect again from Claude." };
+  if (!(await connectorSince())) return { error: "Der Claude-Connector ist aus. Schalte ihn unter Einstellungen → Claude-Connector ein und verbinde dich dann erneut aus Claude." };
   const client = await readClient(one(params.client_id));
-  if (!client) return { error: "Claude's sign-in link isn't valid any more. Remove the connector in Claude and add it again." };
+  if (!client) return { error: "Claudes Anmeldelink ist nicht mehr gültig. Entferne den Connector in Claude und füge ihn neu hinzu." };
   const redirectUri = one(params.redirect_uri);
-  if (!allowedRedirect(redirectUri) || !clientAllows(client, redirectUri)) return { error: "This sign-in would send you somewhere other than Claude, so it was stopped." };
-  if (one(params.response_type) !== "code") return { error: "Claude asked for a kind of sign-in Dossier doesn't offer." };
+  if (!allowedRedirect(redirectUri) || !clientAllows(client, redirectUri)) return { error: "Diese Anmeldung würde dich woanders als zu Claude schicken und wurde daher gestoppt." };
+  if (one(params.response_type) !== "code") return { error: "Claude hat eine Art von Anmeldung angefragt, die Dossier nicht anbietet." };
   const codeChallenge = one(params.code_challenge);
   if (one(params.code_challenge_method) !== "S256" || !/^[A-Za-z0-9_-]{43,128}$/.test(codeChallenge)) {
-    return { error: "Claude's sign-in request is missing its PKCE challenge." };
+    return { error: "Claudes Anmeldeanfrage fehlt die PKCE-Challenge." };
   }
   return { clientId: one(params.client_id), clientName: client.name, redirectUri, codeChallenge, state: one(params.state), resource: one(params.resource) };
 }

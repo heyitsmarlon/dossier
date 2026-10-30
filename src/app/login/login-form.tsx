@@ -54,21 +54,21 @@ export function LoginForm({ next }: { next?: string }) {
     >
       {next && <input type="hidden" name="next" value={next} />}
       <div className="flex flex-col gap-1.5">
-        <h1 className="font-serif text-[28px] leading-[1.15] tracking-[-0.01em]">Welcome back</h1>
-        <p className="text-sm text-muted">Sign in to pick up where you left off.</p>
+        <h1 className="font-serif text-[28px] leading-[1.15] tracking-[-0.01em]">Willkommen zurück</h1>
+        <p className="text-sm text-muted">Melde dich an und mach da weiter, wo du aufgehört hast.</p>
       </div>
 
       <div className="flex flex-col gap-[7px]">
         <div className="flex justify-between text-label text-muted">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">Passwort</label>
           <button
             type="button"
-            aria-label={visible ? "Hide password" : "Show password"}
+            aria-label={visible ? "Passwort verbergen" : "Passwort anzeigen"}
             aria-controls="password"
             onClick={() => setVisible((shown) => !shown)}
             className="underline underline-offset-3 hover:text-ink"
           >
-            {visible ? "Hide" : "Show"}
+            {visible ? "Verbergen" : "Anzeigen"}
           </button>
         </div>
         <input
@@ -95,14 +95,14 @@ export function LoginForm({ next }: { next?: string }) {
       </div>
 
       <Checkbox
-        label="Keep me signed in for 30 days"
+        label="30 Tage angemeldet bleiben"
         name="remember"
         checked={remember}
         onChange={(event) => setRemember(event.target.checked)}
       />
 
       <Button type="submit" size="lg" disabled={pending}>
-        {pending ? "Signing in…" : "Sign in"}
+        {pending ? "Melde an…" : "Anmelden"}
       </Button>
     </form>
   );

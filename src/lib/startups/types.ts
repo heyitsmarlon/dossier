@@ -9,7 +9,7 @@ export const STARTUP_SOURCES = ["YC", "HN"] as const;
 export type StartupSource = (typeof STARTUP_SOURCES)[number];
 
 export const STARTUP_SOURCE_INFO: Record<StartupSource, { name: string; kind: string }> = {
-  YC: { name: "Y Combinator", kind: "Job post" },
+  YC: { name: "Y Combinator", kind: "Stellenanzeige" },
   HN: { name: "Hacker News", kind: "Who is hiring?" },
 };
 

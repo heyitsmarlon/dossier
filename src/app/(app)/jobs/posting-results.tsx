@@ -91,7 +91,7 @@ export function PostingResults(props: PostingResultsProps) {
     if (!result.ok) return void toast(result.error);
     change(posting, { saved: false });
     // In Saved, the posting leaves the list: Undo puts it back.
-    if (mode === "saved") toast("Removed from Saved.", { action: { label: "Undo", onClick: () => void save(posting) } });
+    if (mode === "saved") toast("Aus „Gemerkt“ entfernt.", { action: { label: "Rückgängig", onClick: () => void save(posting) } });
     else toastResult(result);
   };
 
@@ -99,16 +99,16 @@ export function PostingResults(props: PostingResultsProps) {
     const result = toastResult(await restorePosting({ source: posting.source, externalId: posting.externalId, saved }));
     if (!result.ok) return;
     change(posting, { dismissed: false, saved });
-    if (mode === "dismissed") toast("Brought back. It'll show in your searches again.");
+    if (mode === "dismissed") toast("Zurückgeholt. Sie erscheint wieder in deinen Suchen.");
   };
 
   const dismiss = async (posting: ShownPosting) => {
     const result = await dismissFoundPosting({ posting: withoutState(posting) });
     if (!result.ok) return void toast(result.error);
     change(posting, { dismissed: true, saved: false });
-    toast("Dismissed. It won't show in your searches.", {
+    toast("Verworfen. Sie erscheint nicht mehr in deinen Suchen.", {
       action: {
-        label: "Undo",
+        label: "Rückgängig",
         onClick: () => {
           void restore(posting, result.data.wasSaved);
           setSelectedKey(postingKey(posting));
@@ -127,7 +127,7 @@ export function PostingResults(props: PostingResultsProps) {
     if (result.ok && "handoff" in result.data) {
       sendPendingTab(chat, result.data.handoff);
       setScoring((current) => without(current, key));
-      toast("Scoring it in Claude. Reload this page once Claude has saved the score.");
+      toast("Wird in Claude bewertet. Lade die Seite neu, sobald Claude die Bewertung gespeichert hat.");
       return;
     }
     chat?.close();
@@ -138,7 +138,7 @@ export function PostingResults(props: PostingResultsProps) {
     if (job.status === "DONE" || job.status === "FAILED") {
       setScoring((current) => without(current, key));
       if (job.status === "DONE" && job.result) updateState(key, { score: job.result });
-      else toast(job.error ?? "The posting couldn't be scored. Try again.");
+      else toast(job.error ?? "Die Anzeige konnte nicht bewertet werden. Versuch es noch einmal.");
       return;
     }
     setScoring((current) => (current[key] ? { ...current, [key]: { ...current[key], step: job.step } } : current));
@@ -160,14 +160,14 @@ export function PostingResults(props: PostingResultsProps) {
   const radius = props.mode === "search" && SOURCE_INFO[props.search.source].radius;
   const empty =
     mode === "saved"
-      ? "Nothing saved yet. Save a posting from your search results to keep it here."
+      ? "Noch nichts gemerkt. Merk dir eine Anzeige aus deinen Suchergebnissen, um sie hier zu behalten."
       : mode === "dismissed"
-        ? "Nothing dismissed. Postings you dismiss stay out of your searches and wait here."
+        ? "Nichts verworfen. Verworfene Anzeigen bleiben aus deinen Suchen raus und warten hier."
         : postings.length > 0 || !searched
-          ? "You've dismissed every posting here."
+          ? "Du hast hier alle Anzeigen verworfen."
           : radius
-            ? `No postings for “${searched.keywords}”${searched.place ? ` within ${searched.radiusKm} km of ${searched.place}` : ""}. Try a bigger radius or fewer words.`
-            : `No postings for “${searched.keywords}”${searched.place ? ` in ${searched.place}` : ""}. Try fewer words.`;
+            ? `Keine Anzeigen für „${searched.keywords}“${searched.place ? ` im Umkreis von ${searched.radiusKm} km um ${searched.place}` : ""}. Versuch einen größeren Umkreis oder weniger Wörter.`
+            : `Keine Anzeigen für „${searched.keywords}“${searched.place ? ` in ${searched.place}` : ""}. Versuch es mit weniger Wörtern.`;
 
   return (
     <div className="flex flex-wrap items-start gap-6 px-10 pb-16">
@@ -178,10 +178,10 @@ export function PostingResults(props: PostingResultsProps) {
         <p className={cn("flex flex-wrap items-baseline gap-x-3 gap-y-1 text-meta text-muted", mode !== "search" && visible.length === 0 && "hidden")}>
           <span>
             {props.mode === "search"
-              ? `${plural(postings.length, "posting", "postings")} from ${SOURCE_INFO[props.search.source].name}${next ? ", more to come" : ""} · searched ${props.search.ranAt}`
+              ? `${plural(postings.length, "Anzeige", "Anzeigen")} von ${SOURCE_INFO[props.search.source].name}${next ? ", weitere folgen" : ""} · gesucht ${props.search.ranAt}`
               : mode === "saved"
-                ? plural(visible.length, "saved posting", "saved postings")
-                : `${plural(visible.length, "dismissed posting", "dismissed postings")}, kept out of your searches`}
+                ? plural(visible.length, "gemerkte Anzeige", "gemerkte Anzeigen")
+                : `${plural(visible.length, "verworfene Anzeige", "verworfene Anzeigen")}, aus deinen Suchen ausgeblendet`}
           </span>
           {props.mode === "search" && (
             <button
@@ -190,7 +190,7 @@ export function PostingResults(props: PostingResultsProps) {
               aria-disabled={props.searching || undefined}
               className="underline underline-offset-3 hover:text-ink aria-disabled:text-faint"
             >
-              Search again
+              Erneut suchen
             </button>
           )}
           {hidden > 0 && (
@@ -200,7 +200,7 @@ export function PostingResults(props: PostingResultsProps) {
               onClick={() => setShowDismissed(!showDismissed)}
               className="underline-offset-3 hover:text-ink aria-pressed:text-ink aria-pressed:underline"
             >
-              {hidden === 1 ? "1 dismissed posting hidden" : `${hidden} dismissed postings hidden`} · {showDismissed ? "Hide" : "Show"}
+              {hidden === 1 ? "1 verworfene Anzeige ausgeblendet" : `${hidden} verworfene Anzeigen ausgeblendet`} · {showDismissed ? "Ausblenden" : "Anzeigen"}
             </button>
           )}
         </p>
@@ -220,7 +220,7 @@ export function PostingResults(props: PostingResultsProps) {
 
         {next && (
           <Button variant="secondary" className="self-start" onClick={() => void showMore()} aria-disabled={loadingMore || undefined}>
-            {loadingMore ? "Loading more…" : "Show more"}
+            {loadingMore ? "Lade mehr…" : "Mehr anzeigen"}
           </Button>
         )}
       </div>
@@ -264,7 +264,7 @@ function ScoreWatcher({ jobId, onChange }: { jobId: string; onChange: (job: JobV
 export function StartButton({ starting, onClick }: { starting: boolean; onClick: () => void }) {
   return (
     <Button size="sm" aria-disabled={starting || undefined} onClick={starting ? undefined : onClick}>
-      {starting ? "Starting…" : "Start application →"}
+      {starting ? "Startet…" : "Bewerbung starten →"}
     </Button>
   );
 }
@@ -309,12 +309,12 @@ function PostingList({
   };
 
   return (
-    <ul aria-label="Postings" className="flex flex-col gap-2" onKeyDown={move}>
+    <ul aria-label="Anzeigen" className="flex flex-col gap-2" onKeyDown={move}>
       {postings.map((posting) => {
         const key = postingKey(posting);
         const current = key === selectedKey;
-        const title = posting.title || "Untitled posting";
-        const pillLabel = scoring[key] ? "Scoring…" : "Score";
+        const title = posting.title || "Anzeige ohne Titel";
+        const pillLabel = scoring[key] ? "Bewerte…" : "Bewerten";
         return (
           <li key={key} className={cn("group relative", posting.state.dismissed && "opacity-60")}>
             <button
@@ -379,7 +379,7 @@ function PostingList({
 }
 
 function StateBadges({ state }: { state: PostingState }) {
-  const badges = [state.applicationId && "Applied", state.saved && "Saved", state.dismissed && "Dismissed"].filter(Boolean) as string[];
+  const badges = [state.applicationId && "Beworben", state.saved && "Gemerkt", state.dismissed && "Verworfen"].filter(Boolean) as string[];
   if (badges.length === 0) return null;
   return (
     <span className="flex shrink-0 gap-1.5">
@@ -402,7 +402,7 @@ function Fit({ fit }: { fit: PostingFit }) {
           {fitBand(fit.score)} · {fit.score} of 100
         </p>
         {fit.reasons.length > 0 && (
-          <ul aria-label="Why it fits" className="flex list-disc flex-col gap-0.5 pl-5 text-muted">
+          <ul aria-label="Warum es passt" className="flex list-disc flex-col gap-0.5 pl-5 text-muted">
             {fit.reasons.map((reason, index) => (
               <li key={index}>{reason}</li>
             ))}
@@ -410,7 +410,7 @@ function Fit({ fit }: { fit: PostingFit }) {
         )}
         {fit.redFlags.length > 0 && (
           <div className="text-meta text-warning">
-            <p className="font-medium">Worth knowing</p>
+            <p className="font-medium">Gut zu wissen</p>
             <ul className="flex list-disc flex-col gap-0.5 pl-5">
               {fit.redFlags.map((flag, index) => (
                 <li key={index}>{flag}</li>
@@ -482,19 +482,19 @@ function PostingDetail({
     >
       <div className="flex flex-col gap-1.5">
         <h2 id={headingId} className="font-serif text-section text-pretty">
-          {posting.title || "Untitled posting"}
+          {posting.title || "Anzeige ohne Titel"}
         </h2>
         <p className="text-sm text-muted">{[posting.company, posting.place, posting.remote ? "Remote" : "", posting.salary].filter(Boolean).join(" · ")}</p>
         {(ago || posting.via) && (
-          <p className="text-meta text-muted">{[ago && `Posted ${ago === "Today" || ago === "Yesterday" ? ago.toLowerCase() : ago}`, posting.via && `via ${posting.via}`].filter(Boolean).join(" · ")}</p>
+          <p className="text-meta text-muted">{[ago && `Veröffentlicht ${ago === "Heute" || ago === "Gestern" ? ago.toLowerCase() : ago}`, posting.via && `via ${posting.via}`].filter(Boolean).join(" · ")}</p>
         )}
       </div>
 
       {state.applicationId && (
         <p role="note" className="rounded-card bg-track px-4 py-3 text-meta">
-          You&apos;ve applied for this.{" "}
+          Du hast dich hierauf beworben.{" "}
           <Link href={`/applications/${state.applicationId}`} className="underline underline-offset-2">
-            Open the application
+            Bewerbung öffnen
           </Link>
         </p>
       )}
@@ -503,58 +503,58 @@ function PostingDetail({
         {children}
         {state.dismissed ? (
           <Button variant="secondary" size="sm" onClick={onRestore}>
-            Bring back
+            Zurückholen
           </Button>
         ) : (
           <Button variant="secondary" size="sm" aria-pressed={state.saved} onClick={state.saved ? onUnsave : onSave}>
-            {state.saved ? "Saved" : "Save"}
+            {state.saved ? "Gemerkt" : "Merken"}
           </Button>
         )}
         {posting.url && (
           <a href={posting.url} target="_blank" rel="noopener noreferrer" className={buttonClassName("secondary", "sm")}>
-            Open posting<span aria-hidden>↗</span>
-            <span className="sr-only"> (opens in a new tab)</span>
+            Anzeige öffnen<span aria-hidden>↗</span>
+            <span className="sr-only"> (öffnet in neuem Tab)</span>
           </a>
         )}
         {/* A BA posting with a link of its own still links to its ad on arbeitsagentur.de (#223). */}
         {sourcePage && sourcePage !== posting.url && (
           <a href={sourcePage} target="_blank" rel="noopener noreferrer" className={buttonClassName("secondary", "sm")}>
-            On arbeitsagentur.de<span aria-hidden>↗</span>
-            <span className="sr-only"> (opens in a new tab)</span>
+            Auf arbeitsagentur.de<span aria-hidden>↗</span>
+            <span className="sr-only"> (öffnet in neuem Tab)</span>
           </a>
         )}
         <Button variant="secondary" size="sm" aria-disabled={scoring ? true : undefined} onClick={scoring ? undefined : onScore}>
-          {scoring ? "Scoring…" : state.score ? "Score again" : "Score"}
+          {scoring ? "Bewerte…" : state.score ? "Neu bewerten" : "Bewerten"}
         </Button>
         {!state.dismissed && (
           <Button variant="secondary" size="sm" onClick={onDismiss}>
-            Dismiss
+            Verwerfen
           </Button>
         )}
       </div>
 
       {scoring ? (
         <p role="status" className="text-meta text-muted">
-          {scoring.step ?? "Starting…"}
+          {scoring.step ?? "Startet…"}
         </p>
       ) : (
         state.score && <Fit fit={state.score} />
       )}
 
       {/* Only the text scrolls, so the title and actions stay in view; focusable, so it scrolls from the keyboard too. */}
-      <div tabIndex={0} role="region" aria-label="Posting text" className="-mx-1 min-h-0 flex-1 overflow-y-auto border-t border-line px-1 pt-4">
+      <div tabIndex={0} role="region" aria-label="Anzeigentext" className="-mx-1 min-h-0 flex-1 overflow-y-auto border-t border-line px-1 pt-4">
         {text.status === "loading" ? (
           <p role="status" className="text-sm text-muted">
-            Getting the whole posting…
+            Hole die ganze Anzeige…
           </p>
         ) : (
           <>
             {text.status === "partial" && (
               <p className="mb-3 rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-                This is only the start of the posting. When you start an application, you can paste the rest from the posting&apos;s page.
+                Das ist nur der Anfang der Anzeige. Wenn du eine Bewerbung startest, kannst du den Rest von der Seite der Anzeige einfügen.
               </p>
             )}
-            <div className="text-sm leading-relaxed whitespace-pre-line">{text.text || "The source didn't send a description."}</div>
+            <div className="text-sm leading-relaxed whitespace-pre-line">{text.text || "Die Quelle hat keine Beschreibung geliefert."}</div>
           </>
         )}
       </div>

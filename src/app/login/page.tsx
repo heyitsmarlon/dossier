@@ -6,7 +6,7 @@ import { getSession } from "@/lib/auth/session";
 
 import { LoginForm } from "./login-form";
 
-export const metadata: Metadata = { title: "Sign in" };
+export const metadata: Metadata = { title: "Anmelden" };
 
 /** Password-only sign-in, outside the app shell (PRD AUTH-1, AUTH-8). */
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -22,14 +22,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           <BrandMark className="size-10" />
           <div className="flex flex-col">
             <div className="font-serif text-[30px] font-medium tracking-[-0.01em]">Dossier</div>
-            <div className="text-sm text-muted">Your job search, on your server</div>
+            <div className="text-sm text-muted">Deine Jobsuche, auf deinem Server</div>
           </div>
         </div>
         <LoginForm next={typeof next === "string" ? next : undefined} />
         <p className="text-meta leading-[1.6] text-pretty text-muted">
-          Your password is set on the server, as a hash in{" "}
-          <code className="font-mono text-label">DOSSIER_PASSWORD</code>. Forgot it? Make a new hash with{" "}
-          <code className="font-mono text-label">hash-password</code> and restart.
+          Dein Passwort ist auf dem Server hinterlegt, als Hash in{" "}
+          <code className="font-mono text-label">DOSSIER_PASSWORD</code>. Vergessen? Erzeuge einen neuen Hash mit{" "}
+          <code className="font-mono text-label">hash-password</code> und starte neu.
         </p>
       </div>
       </div>

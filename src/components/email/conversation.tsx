@@ -30,16 +30,16 @@ import { statusInfo } from "@/lib/status";
 // with free times from the calendar, and agreed interviews.
 
 export const KIND_LABELS: Record<ReplyKind, string> = {
-  REJECTION: "Rejection",
-  INTERVIEW: "Interview invite",
-  QUESTION: "Question",
-  OFFER: "Offer",
-  ACKNOWLEDGEMENT: "Acknowledgement",
-  OTHER: "Other",
+  REJECTION: "Absage",
+  INTERVIEW: "Einladung zum Gespräch",
+  QUESTION: "Frage",
+  OFFER: "Angebot",
+  ACKNOWLEDGEMENT: "Eingangsbestätigung",
+  OTHER: "Sonstiges",
 };
 
 export function formatWhen(date: Date, timeZone?: string): string {
-  return new Intl.DateTimeFormat("en-GB", { timeZone, day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(date);
+  return new Intl.DateTimeFormat("de-DE", { timeZone, day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(date);
 }
 
 /** Every message of a conversation; the newest unanswered reply opens with its answer. */
@@ -59,7 +59,7 @@ export function Conversation({ emails, aiReady, timeZone }: { emails: EmailView[
 function Message({ email, aiReady, timeZone, initiallyOpen }: { email: EmailView; aiReady: boolean; timeZone?: string; initiallyOpen: boolean }) {
   const [open, setOpen] = useState(initiallyOpen);
   const outgoing = email.direction === "OUTGOING";
-  const who = outgoing ? "You" : email.fromName || email.fromAddress;
+  const who = outgoing ? "Du" : email.fromName || email.fromAddress;
   return (
     <article className={cn("rounded-panel border border-line-card bg-card", outgoing && "bg-canvas")}>
       <button
@@ -84,7 +84,7 @@ function Message({ email, aiReady, timeZone, initiallyOpen }: { email: EmailView
       {open && (
         <div className="flex flex-col gap-4 px-6 pb-5">
           {email.subject && <p className="text-meta text-muted">{email.subject}</p>}
-          <div className="text-field leading-[1.6] break-words whitespace-pre-wrap">{email.body || <span className="text-muted">No text.</span>}</div>
+          <div className="text-field leading-[1.6] break-words whitespace-pre-wrap">{email.body || <span className="text-muted">Kein Text.</span>}</div>
           {!outgoing && <Reading email={email} aiReady={aiReady} timeZone={timeZone} />}
         </div>
       )}
@@ -106,8 +106,8 @@ function Reading({ email, aiReady, timeZone }: { email: EmailView; aiReady: bool
 
   if (!email.read) {
     return (
-      <Panel title="Not read yet">
-        <p className="text-meta text-muted">{aiReady ? "The AI hasn't read this one yet." : "With an AI provider, I'd read this and draft an answer."}</p>
+      <Panel title="Noch nicht gelesen">
+        <p className="text-meta text-muted">{aiReady ? "Die KI hat diese noch nicht gelesen." : "Mit einem KI-Anbieter würde ich sie lesen und eine Antwort entwerfen."}</p>
         {aiReady && (
           <Button
             variant="secondary"
@@ -120,7 +120,7 @@ function Reading({ email, aiReady, timeZone }: { email: EmailView; aiReady: bool
               })
             }
           >
-            {pending ? "Reading…" : "Read it now"}
+            {pending ? "Lese…" : "Jetzt lesen"}
           </Button>
         )}
       </Panel>
@@ -137,7 +137,7 @@ function Reading({ email, aiReady, timeZone }: { email: EmailView; aiReady: bool
 
   return (
     <>
-      <Panel title="What I read">
+      <Panel title="Was ich gelesen habe">
         <p className="text-sm">{email.summary}</p>
         {email.questions.length > 0 && (
           <ul className="flex list-disc flex-col gap-1 pl-5 text-meta text-muted">
@@ -148,12 +148,12 @@ function Reading({ email, aiReady, timeZone }: { email: EmailView; aiReady: bool
         )}
         {email.suggestedStatus && email.application && (
           <div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
-            <span className="mr-auto text-meta">Move to {statusInfo(email.suggestedStatus).label}?</span>
+            <span className="mr-auto text-meta">Verschieben nach {statusInfo(email.suggestedStatus).label}?</span>
             <Button variant="text" size="sm" disabled={pending} onClick={() => suggest(false)}>
-              Not now
+              Nicht jetzt
             </Button>
             <Button variant="secondary" size="sm" disabled={pending} onClick={() => suggest(true)}>
-              Move to {statusInfo(email.suggestedStatus).label}
+              Verschieben nach {statusInfo(email.suggestedStatus).label}
             </Button>
           </div>
         )}
@@ -163,7 +163,7 @@ function Reading({ email, aiReady, timeZone }: { email: EmailView; aiReady: bool
         <ReplyDraft email={email} aiReady={aiReady} />
       ) : (
         <p className="text-meta text-muted">
-          {email.kind === "ACKNOWLEDGEMENT" || email.kind === "REJECTION" ? "No answer needed." : "Answered."}{" "}
+          {email.kind === "ACKNOWLEDGEMENT" || email.kind === "REJECTION" ? "Keine Antwort nötig." : "Beantwortet."}{" "}
           <button
             type="button"
             className="underline underline-offset-3 hover:text-ink"
@@ -173,7 +173,7 @@ function Reading({ email, aiReady, timeZone }: { email: EmailView; aiReady: bool
               })
             }
           >
-            Answer anyway
+            Trotzdem antworten
           </button>
         </p>
       )}
@@ -203,12 +203,12 @@ function InterviewConfirm({ email, timeZone }: { email: EmailView; timeZone?: st
       router.refresh();
     });
   return (
-    <Panel title={`Interview on ${formatWhen(email.confirmedAt!, timeZone)}`}>
-      <p className="text-meta text-muted">They settled on this time. Add it to your calendar and dashboard?</p>
-      {email.application?.status !== "INTERVIEW" && <Checkbox label="Move to Interview too" checked={move} onChange={(event) => setMove(event.target.checked)} />}
+    <Panel title={`Gespräch am ${formatWhen(email.confirmedAt!, timeZone)}`}>
+      <p className="text-meta text-muted">Dieser Termin steht fest. In Kalender und Übersicht eintragen?</p>
+      {email.application?.status !== "INTERVIEW" && <Checkbox label="Auch nach „Gespräch“ verschieben" checked={move} onChange={(event) => setMove(event.target.checked)} />}
       <div className="flex justify-end">
         <Button size="sm" disabled={pending} onClick={confirm}>
-          {pending ? "Adding…" : "Add interview"}
+          {pending ? "Trage ein…" : "Gespräch eintragen"}
         </Button>
       </div>
     </Panel>
@@ -251,7 +251,7 @@ function ReplyDraft({ email, aiReady }: { email: EmailView; aiReady: boolean }) 
   const drafting = useJob<DraftReplyResult>(job, 0, (update) => {
     if (update.status === "FAILED") {
       setJob(null);
-      toast(update.error ?? "That didn't work. Try again.");
+      toast(update.error ?? "Das hat nicht geklappt. Versuch es noch einmal.");
     } else if (update.status === "DONE" && update.result) {
       setJob(null);
       setBody(update.result.body);
@@ -264,7 +264,7 @@ function ReplyDraft({ email, aiReady }: { email: EmailView; aiReady: boolean }) 
 
   const draft = () =>
     startTransition(async () => {
-      if (!aiReady) return toast("That needs an AI provider. Choose one in Settings → AI provider.");
+      if (!aiReady) return toast("Dafür brauchst du einen KI-Anbieter. Wähle einen unter Einstellungen → KI-Anbieter.");
       const result = await startDraftingReply({ emailId: email.id, note, slots: wantsSlots && slots ? picked : null });
       if (!result.ok) return toast(result.error);
       setJob(result.data);
@@ -288,15 +288,15 @@ function ReplyDraft({ email, aiReady }: { email: EmailView; aiReady: boolean }) 
   return (
     <section className="flex flex-col gap-3 rounded-card border border-line-card px-4 py-4" aria-busy={job !== null || undefined}>
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-[15px] font-medium">Your answer</h3>
-        {job && <span className="text-meta text-muted">{drafting?.step ?? "Starting…"}</span>}
+        <h3 className="text-[15px] font-medium">Deine Antwort</h3>
+        {job && <span className="text-meta text-muted">{drafting?.step ?? "Startet…"}</span>}
       </div>
 
       {wantsSlots && (
         <div className="flex flex-col gap-2">
-          <span className="text-label text-muted">{slots === null ? "Looking at your calendar…" : slots.length > 0 ? "Times to offer, from your calendar" : "No calendar times: connect Google Calendar in Settings to offer some"}</span>
+          <span className="text-label text-muted">{slots === null ? "Schaue in deinen Kalender…" : slots.length > 0 ? "Anzubietende Zeiten aus deinem Kalender" : "Keine Kalenderzeiten: Verbinde Google Kalender in den Einstellungen, um welche anzubieten"}</span>
           {slots && slots.length > 0 && (
-            <div role="group" aria-label="Times to offer" className="flex flex-wrap gap-1.5">
+            <div role="group" aria-label="Anzubietende Zeiten" className="flex flex-wrap gap-1.5">
               {slots.map((slot) => {
                 const on = picked.includes(slot.start);
                 return (
@@ -321,7 +321,7 @@ function ReplyDraft({ email, aiReady }: { email: EmailView; aiReady: boolean }) 
 
       {drafted || body ? (
         <textarea
-          aria-label="Your answer"
+          aria-label="Deine Antwort"
           value={body}
           rows={Math.min(18, Math.max(6, body.split("\n").length + 1))}
           onChange={(event) => setBody(event.target.value)}
@@ -332,26 +332,26 @@ function ReplyDraft({ email, aiReady }: { email: EmailView; aiReady: boolean }) 
           )}
         />
       ) : (
-        <p className="text-meta text-muted">I&apos;ll answer from your profile and this application, and only with facts that are in them.</p>
+        <p className="text-meta text-muted">Ich antworte auf Basis deines Profils und dieser Bewerbung, und nur mit Fakten, die darin stehen.</p>
       )}
 
       {gaps.length > 0 && (
         <div role="note" className="flex flex-col gap-1 rounded-card bg-warning-surface px-3.5 py-2.5 text-meta text-warning">
-          <span className="font-medium">Your profile doesn&apos;t say:</span>
+          <span className="font-medium">Dein Profil sagt nichts über:</span>
           <ul className="list-disc pl-5">
             {gaps.map((gap) => (
               <li key={gap}>{gap}</li>
             ))}
           </ul>
-          <span>Fill in the […] above, or tell me below and draft again.</span>
+          <span>Füll die […] oben aus, oder sag es mir unten und lass neu entwerfen.</span>
         </div>
       )}
 
       <div className="flex gap-2">
         <input
-          aria-label="Tell the AI"
+          aria-label="Der KI sagen"
           value={note}
-          placeholder={body ? "e.g. My notice period is 3 months; make it shorter" : "Anything to add? e.g. My notice period is 3 months"}
+          placeholder={body ? "z. B. Meine Kündigungsfrist ist 3 Monate; mach es kürzer" : "Etwas zu ergänzen? z. B. Meine Kündigungsfrist ist 3 Monate"}
           onChange={(event) => setNote(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -362,24 +362,24 @@ function ReplyDraft({ email, aiReady }: { email: EmailView; aiReady: boolean }) 
           className="h-[34px] min-w-0 flex-1 rounded-control border border-line-input bg-input px-3 text-sm placeholder:text-muted focus-visible:border-primary focus-visible:outline-offset-0"
         />
         <Button variant="secondary" disabled={busy} onClick={draft}>
-          {job ? "Drafting…" : drafted ? "Draft again" : "Draft an answer"}
+          {job ? "Entwerfe…" : drafted ? "Neu entwerfen" : "Antwort entwerfen"}
         </Button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
         <Button variant="text" size="sm" disabled={busy} onClick={skip}>
-          No answer needed
+          Keine Antwort nötig
         </Button>
         <Button
           className="ml-auto"
           aria-disabled={busy || !body.trim() || undefined}
           onClick={() => {
             if (busy || !body.trim()) return;
-            if (missing) return toast("Fill in the parts marked […] first.");
+            if (missing) return toast("Füll zuerst die mit […] markierten Stellen aus.");
             setConfirming(true);
           }}
         >
-          Review and send
+          Prüfen und senden
         </Button>
       </div>
 
@@ -387,15 +387,15 @@ function ReplyDraft({ email, aiReady }: { email: EmailView; aiReady: boolean }) 
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="fixed inset-0 z-40 bg-black/40" />
           <AlertDialog.Content className="fixed top-1/2 left-1/2 z-50 flex max-h-[85vh] w-[min(560px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-dialog border border-line-popover bg-card p-6 shadow-menu">
-            <AlertDialog.Title className="font-serif text-[22px] leading-tight">Send your answer?</AlertDialog.Title>
+            <AlertDialog.Title className="font-serif text-[22px] leading-tight">Deine Antwort senden?</AlertDialog.Title>
             <AlertDialog.Description className="text-sm text-muted">
-              To {email.fromName ? `${email.fromName} <${email.fromAddress}>` : email.fromAddress}, in the same thread. This can&apos;t be unsent.
+              An {email.fromName ? `${email.fromName} <${email.fromAddress}>` : email.fromAddress}, im selben Verlauf. Das lässt sich nicht zurückholen.
             </AlertDialog.Description>
             <div className="min-h-0 overflow-auto rounded-control border border-line bg-canvas px-4 py-3 text-control leading-[1.6] whitespace-pre-wrap">{body}</div>
             <div className="mt-2 flex justify-end gap-2">
-              <AlertDialog.Cancel className={buttonClassName("secondary", "sm")}>Cancel</AlertDialog.Cancel>
+              <AlertDialog.Cancel className={buttonClassName("secondary", "sm")}>Abbrechen</AlertDialog.Cancel>
               <AlertDialog.Action className={buttonClassName("primary", "sm", "hover:text-on-primary")} onClick={send}>
-                Send now
+                Jetzt senden
               </AlertDialog.Action>
             </div>
           </AlertDialog.Content>

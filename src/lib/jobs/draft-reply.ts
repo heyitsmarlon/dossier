@@ -35,7 +35,7 @@ export const draftReplyJob = defineJob({
     const email = await prisma.emailMessage.findUniqueOrThrow({ where: { id: emailId }, include: { application: true } });
     const application = email.application;
 
-    await step("Checking your calendar");
+    await step("Prüfe deinen Kalender");
     // The user's zone, for the offered times and the email's date.
     const { timeZone } = await workingHours();
     let offered: string[] = [];
@@ -50,7 +50,7 @@ export const draftReplyJob = defineJob({
       starts = picked.map((slot) => slot.start.toISOString());
     }
 
-    await step("Writing your answer");
+    await step("Schreibe deine Antwort");
     const thread = await prisma.emailMessage.findMany({
       where: { threadId: email.threadId, id: { not: email.id }, sentAt: { lt: email.sentAt } },
       orderBy: { sentAt: "asc" },

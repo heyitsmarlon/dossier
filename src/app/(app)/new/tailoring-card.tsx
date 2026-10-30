@@ -26,10 +26,10 @@ export function TailoringCard({
   const descriptionId = useId();
   return (
     <Card className="flex flex-col gap-5 py-6">
-      <h2 className="text-[15px] font-medium">Tailoring</h2>
+      <h2 className="text-[15px] font-medium">Zuschnitt</h2>
       <div className="flex flex-col gap-[9px]">
         <span id={labelId} className="text-label text-muted">
-          Cover letter tone
+          Ton des Anschreibens
         </span>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <SegmentedControl
@@ -45,10 +45,10 @@ export function TailoringCard({
         </div>
       </div>
       <Textarea
-        label="Anything I should know?"
-        hint="Kept with the application as a fact for the AI. Change it later on its Job posting tab."
+        label="Gibt es etwas, das ich wissen sollte?"
+        hint="Wird als Fakt für die KI bei der Bewerbung gespeichert. Später im Tab „Stellenanzeige“ änderbar."
         rows={3}
-        placeholder="e.g. I'm relocating to Amsterdam in January. Or: lean on my research work."
+        placeholder="z. B. Ich ziehe im Januar nach Hamburg. Oder: Stell meine Forschungsarbeit in den Vordergrund."
         value={note}
         onChange={(event) => onNote(event.target.value)}
       />

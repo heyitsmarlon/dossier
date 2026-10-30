@@ -18,11 +18,11 @@ export async function archiveApplication(id: string, archived: boolean): Promise
     return false;
   }
   if (archived) {
-    toast("Archived. It's off your board, and still counts on your dashboard.", {
-      action: { label: "Undo", onClick: () => void setArchived({ id, archived: false }).then(toastResult) },
+    toast("Archiviert. Sie ist vom Board verschwunden und zählt weiter auf deiner Übersicht.", {
+      action: { label: "Rückgängig", onClick: () => void setArchived({ id, archived: false }).then(toastResult) },
     });
   } else {
-    toast("Back on your board.");
+    toast("Wieder auf deinem Board.");
   }
   return true;
 }
@@ -46,14 +46,14 @@ export function DeleteApplicationDialog({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Delete this application?"
-      description="Its tailored resume and cover letter, the chat, your notes, its history and its mail from Gmail go with it. This can't be undone. Archive it instead to keep it out of the way."
-      confirmLabel="Delete application"
+      title="Diese Bewerbung löschen?"
+      description="Zugeschnittener Lebenslauf und Anschreiben, der Chat, deine Notizen, der Verlauf und die Mails aus Gmail werden mitgelöscht. Das lässt sich nicht rückgängig machen. Archiviere sie stattdessen, um sie aus dem Weg zu räumen."
+      confirmLabel="Bewerbung löschen"
       returnFocusTo={returnFocusTo}
       onConfirm={async () => {
         const result = await deleteApplication({ id });
         if (!result.ok) return toast(result.error);
-        toast("Application deleted.");
+        toast("Bewerbung gelöscht.");
         onDeleted?.();
       }}
     />

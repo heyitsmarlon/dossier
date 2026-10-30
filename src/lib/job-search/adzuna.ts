@@ -46,10 +46,10 @@ const responseSchema = z.object({ results: z.array(z.unknown()), count: z.coerce
 function salaryOf(result: Result, country: string): string {
   const { salary_min: min, salary_max: max } = result;
   if (!min && !max) return "";
-  const amount = (value: number) => Math.round(value).toLocaleString("en-US");
+  const amount = (value: number) => Math.round(value).toLocaleString("de-DE");
   const range = min && max && Math.round(min) !== Math.round(max) ? `${amount(min)}–${amount(max)}` : amount((min || max)!);
   const estimated = result.salary_is_predicted === "1" || result.salary_is_predicted === 1 || result.salary_is_predicted === true;
-  return [CURRENCIES[country], range, "a year", estimated ? "(estimated)" : ""].filter(Boolean).join(" ");
+  return [CURRENCIES[country], range, "pro Jahr", estimated ? "(geschätzt)" : ""].filter(Boolean).join(" ");
 }
 
 export function postingFromResult(result: Result, country: string): FoundPosting {

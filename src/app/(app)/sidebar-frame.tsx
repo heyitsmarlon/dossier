@@ -70,8 +70,8 @@ export function SidebarFrame({
           <button
             type="button"
             onClick={toggle}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Seitenleiste ausklappen" : "Seitenleiste einklappen"}
+            title={collapsed ? "Seitenleiste ausklappen" : "Seitenleiste einklappen"}
             className={cn(
               "grid size-7 shrink-0 place-items-center rounded-control text-muted hover:bg-hover hover:text-ink",
               collapsed &&

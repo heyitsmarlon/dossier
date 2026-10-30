@@ -160,7 +160,7 @@ export const saveJobSourceKey = action(
 /** "Test connection": the smallest request the chosen source takes, timed. */
 export const testJobSource = action(z.object({}), async () => {
   const config = await loadJobSearchConfig();
-  if (!config.source) return { connected: false as const, message: "Choose a source first." };
+  if (!config.source) return { connected: false as const, message: "Wähle zuerst eine Quelle." };
   const started = performance.now();
   try {
     await testSource(config.source, credentialsFor(config, config.source), requestContext(config.source));
@@ -188,7 +188,7 @@ export const updateSettings = action(
     /** One of the built-in languages, or null for English. */
     resumeLanguage: z
       .string()
-      .refine((name) => DOCUMENT_LANGUAGES.some((language) => language.name === name), "Pick a language from the list.")
+      .refine((name) => DOCUMENT_LANGUAGES.some((language) => language.name === name), "Wähle eine Sprache aus der Liste.")
       .nullable()
       .optional(),
     fileNamePattern: z.string().max(200).optional(),
@@ -209,7 +209,7 @@ export const updateSettings = action(
  * documents in it. A name already in the list, in any case, is just picked.
  */
 export const addDocumentLanguage = action(
-  z.object({ name: z.string().trim().min(1, "Type a language first.").max(60) }),
+  z.object({ name: z.string().trim().min(1, "Gib zuerst eine Sprache ein.").max(60) }),
   async ({ name }) => {
     const { customLanguages } = await loadSettings();
     const known = [...DOCUMENT_LANGUAGES.map((language) => language.name), ...customLanguages];
@@ -222,7 +222,7 @@ export const addDocumentLanguage = action(
 /** "Download all PDFs" (E10-5): zips every tailored document in the background. */
 export const startZippingPdfs = action(z.object({}), async () => {
   const documents = await countTailoredDocuments();
-  if (documents === 0) throw new ActionError("There are no tailored documents to download yet.");
+  if (documents === 0) throw new ActionError("Es gibt noch keine zugeschnittenen Unterlagen zum Herunterladen.");
   return { jobId: await startJob(zipPdfsJob, {}), documents };
 });
 
@@ -293,8 +293,8 @@ export const setConnector = action(z.object({ on: z.boolean() }), async ({ on })
 
 /** "Disconnect Claude": the connector stays on, but Claude has to connect again. */
 export const disconnectClaude = action(z.object({}), async (_input, { toast }) => {
-  if (!(await loadSettings()).connectorEnabledAt) throw new ActionError("The Claude connector is off already.");
+  if (!(await loadSettings()).connectorEnabledAt) throw new ActionError("Der Claude-Connector ist schon aus.");
   await saveSettings({ connectorEnabledAt: new Date().toISOString() });
-  toast("Claude is disconnected. Connect it again from Claude to use Dossier there.");
+  toast("Claude ist getrennt. Verbinde es in Claude neu, um Dossier dort zu nutzen.");
   return null;
 });

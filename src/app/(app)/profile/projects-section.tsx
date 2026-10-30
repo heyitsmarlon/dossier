@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAutosave } from "@/hooks/use-autosave";
-import { formatDateRange, type EntryOrder, type ProfileData, type ProjectItem } from "@/lib/profile";
+import { formatDateRange, UI_DATE_OPTIONS, type EntryOrder, type ProfileData, type ProjectItem } from "@/lib/profile";
 
 import {
   attachNewProjectSkill,
@@ -47,8 +47,8 @@ function ProjectForm({
   return (
     <div className="grid grid-cols-2 gap-[18px]" onBlur={flush}>
       <Input
-        label="Project"
-        placeholder="Churn predictor"
+        label="Projekt"
+        placeholder="Relaunch Vereinswebsite"
         value={entry.name}
         onChange={(event) => set({ name: event.target.value })}
         autoFocus={autoFocus}
@@ -60,27 +60,27 @@ function ProjectForm({
         onChange={(event) => set({ link: event.target.value })}
       />
       <MonthYearField
-        label="Started"
+        label="Beginn"
         value={{ month: entry.startMonth, year: entry.startYear }}
         onChange={({ month, year }) => set({ startMonth: month, startYear: year })}
       />
       <div className="flex flex-col gap-2.5">
         <MonthYearField
-          label="Finished"
+          label="Ende"
           value={{ month: entry.endMonth, year: entry.endYear }}
           onChange={({ month, year }) => set({ endMonth: month, endYear: year })}
           disabled={entry.current}
         />
         <Checkbox
-          label="Still working on it"
+          label="Arbeite noch daran"
           checked={entry.current}
           onChange={(event) => set({ current: event.target.checked })}
         />
       </div>
       <Textarea
         className="col-span-2"
-        label="What you did"
-        placeholder="One point per line: what you built, how, and what came of it."
+        label="Was du gemacht hast"
+        placeholder="Ein Punkt pro Zeile: was du gebaut hast, wie, und was daraus wurde."
         rows={4}
         value={entry.bullets}
         onChange={(event) => set({ bullets: event.target.value })}
@@ -98,16 +98,16 @@ export function ProjectsSection({ profile, update, order }: { profile: ProfileDa
     <EntryList
       items={profile.projects}
       setItems={(change) => update((current) => ({ ...current, projects: change(current.projects) }))}
-      addLabel="Add a project"
+      addLabel="Projekt hinzufügen"
       ordering={{
         mode: order,
         save: (ids) => reorderEntries({ section: "project", ids }),
         sortByDate: () => sortEntriesByDate({ section: "project" }),
       }}
       summary={(entry) => ({
-        title: entry.name.trim() || "New project",
+        title: entry.name.trim() || "Neues Projekt",
         subtitle: entry.link.trim(),
-        meta: formatDateRange(entry),
+        meta: formatDateRange(entry, UI_DATE_OPTIONS),
         footnote: skillNames(entry).join(" · ") || undefined,
       })}
       create={() => createProject({})}
@@ -118,7 +118,7 @@ export function ProjectsSection({ profile, update, order }: { profile: ProfileDa
           <ProjectForm entry={entry} onChange={onChange} autoFocus={autoFocus} />
           <SkillsUsed
             entry={entry}
-            noun="project"
+            noun="Projekt"
             skills={profile.skills}
             update={update}
             setLinks={(change) =>

@@ -123,7 +123,7 @@ export async function waitingByApplication(): Promise<Map<string, { count: numbe
   for (const row of rows) {
     const entry = map.get(row.applicationId!);
     if (entry) entry.count++;
-    else map.set(row.applicationId!, { count: 1, summary: row.summary || `${row.fromName || "They"} wrote back.` });
+    else map.set(row.applicationId!, { count: 1, summary: row.summary || `${row.fromName || "Sie"} hat geantwortet.` });
   }
   return map;
 }

@@ -58,7 +58,7 @@ export function Board({
   };
 
   const byNewest = [...rows].sort((a, b) => b.updatedAt - a.updatedAt);
-  const name = (row: ApplicationRow) => [row.role, row.company].filter(Boolean).join(" at ");
+  const name = (row: ApplicationRow) => [row.role, row.company].filter(Boolean).join(" bei ");
 
   return (
     <DndContext
@@ -69,10 +69,10 @@ export function Board({
       onDragCancel={() => setDragging(null)}
       accessibility={{
         announcements: {
-          onDragStart: ({ active }) => `Picked up ${name(rows.find((row) => row.id === active.id)!)}.`,
-          onDragOver: ({ over }) => (over ? `Over ${statusLabel(over.id as ApplicationStatus)}.` : "Not over a column."),
-          onDragEnd: ({ over }) => (over ? `Dropped on ${statusLabel(over.id as ApplicationStatus)}.` : "Dropped back where it was."),
-          onDragCancel: () => "Moving cancelled.",
+          onDragStart: ({ active }) => `${name(rows.find((row) => row.id === active.id)!)} aufgenommen.`,
+          onDragOver: ({ over }) => (over ? `Über ${statusLabel(over.id as ApplicationStatus)}.` : "Über keiner Spalte."),
+          onDragEnd: ({ over }) => (over ? `Abgelegt in ${statusLabel(over.id as ApplicationStatus)}.` : "Zurück an den alten Platz gelegt."),
+          onDragCancel: () => "Verschieben abgebrochen.",
         },
       }}
     >
@@ -120,7 +120,7 @@ function Column({ status, count, children }: { status: ApplicationStatus; count:
         <span className="flex-1 text-control font-medium">{statusLabel(status)}</span>{" "}
         <span className="text-label text-muted tabular-nums">
           {count}{" "}
-          <span className="sr-only">{count === 1 ? "application" : "applications"}</span>
+          <span className="sr-only">{count === 1 ? "Bewerbung" : "Bewerbungen"}</span>
         </span>
       </h2>
       {count > 0 ? (
@@ -128,7 +128,7 @@ function Column({ status, count, children }: { status: ApplicationStatus; count:
         // at the side and focus rings aren't cut off; the heading stays.
         <ul className="-mx-3 -mt-1 -mb-3 flex min-h-0 flex-1 scrollbar-subtle flex-col gap-2.5 overflow-y-auto px-3 pt-1 pb-3">{children}</ul>
       ) : (
-        <p className="px-2.5 py-5 text-center text-label text-muted">Nothing here yet</p>
+        <p className="px-2.5 py-5 text-center text-label text-muted">Noch nichts hier</p>
       )}
     </section>
   );
@@ -167,8 +167,8 @@ function CardFace({ row, lifted = false, onOpen }: { row: ApplicationRow; lifted
       )}
     >
       <p className="flex items-baseline justify-between gap-2 text-label text-muted">
-        {row.company || "No company"}
-        {row.archived && <span className="rounded-[6px] bg-track px-1.5 text-xs">Archived</span>}
+        {row.company || "Keine Firma"}
+        {row.archived && <span className="rounded-[6px] bg-track px-1.5 text-xs">Archiviert</span>}
       </p>
       {/* The link covers the card, so clicking anywhere opens it. */}
       <Link
@@ -182,11 +182,11 @@ function CardFace({ row, lifted = false, onOpen }: { row: ApplicationRow; lifted
       {place && <p className="text-label text-muted">{place}</p>}
       {row.status === "DRAFT" && row.deadline && (
         <p className="flex">
-          <span className="rounded-[6px] bg-warning-surface px-2 py-[3px] text-xs text-warning">Apply by {row.deadline}</span>
+          <span className="rounded-[6px] bg-warning-surface px-2 py-[3px] text-xs text-warning">Bewerben bis {row.deadline}</span>
         </p>
       )}
       <p className="mt-0.5 flex justify-between gap-2 border-t border-line pt-1.5 text-xs text-muted">
-        <span>{row.match ? `${row.match.hit}/${row.match.total} match` : "Not matched"}</span>
+        <span>{row.match ? `${row.match.hit}/${row.match.total} passend` : "Nicht abgeglichen"}</span>
         <span>{row.updated}</span>
       </p>
     </div>

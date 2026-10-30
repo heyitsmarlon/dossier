@@ -26,20 +26,20 @@ export const THEME_FILE_FORMAT = "dossier-theme";
  */
 export const THEME_FILE_VERSION = 3;
 
-const font = z.enum(ThemeFont, { error: (issue) => `That theme uses a font Dossier doesn't have (${String(issue.input)}).` });
+const font = z.enum(ThemeFont, { error: (issue) => `Dieses Design nutzt eine Schrift, die Dossier nicht hat (${String(issue.input)}).` });
 
 /** A theme's name and look, checked the same way wherever it comes from. */
 export const themeFieldsSchema = z.object({
   name: z
     .string()
     .trim()
-    .max(60, "Keep the name under 60 characters.")
+    .max(60, "Der Name darf höchstens 60 Zeichen haben.")
     .transform((name) => name || "My theme"),
   headFont: font,
   bodyFont: font,
   accent: z
     .string()
-    .regex(/^#[0-9a-f]{6}$/i, "The accent has to be a color like #1f6f5c.")
+    .regex(/^#[0-9a-f]{6}$/i, "Die Akzentfarbe muss eine Farbe wie #1f6f5c sein.")
     .transform((accent) => accent.toLowerCase()),
   layout: z.enum(ThemeLayout),
   align: z.enum(ThemeAlign),
@@ -86,16 +86,16 @@ export function themeFileName(theme: Pick<ThemeData, "name">): string {
 export function parseThemeFile(json: unknown): { ok: true; theme: ThemeFields } | { ok: false; error: string } {
   const header = json as { format?: unknown; version?: unknown } | null;
   if (typeof json !== "object" || json === null || header?.format !== THEME_FILE_FORMAT) {
-    return { ok: false, error: "That file isn't a Dossier theme." };
+    return { ok: false, error: "Diese Datei ist kein Dossier-Design." };
   }
   if (typeof header.version !== "number" || header.version > THEME_FILE_VERSION) {
-    return { ok: false, error: "That theme comes from a newer version of Dossier. Update this server first." };
+    return { ok: false, error: "Dieses Design stammt aus einer neueren Dossier-Version. Aktualisiere zuerst diesen Server." };
   }
   const parsed = themeFileSchema.safeParse(json);
   if (!parsed.success) {
     const [issue] = parsed.error.issues;
     // The font message is written for people; others only say where the file is broken.
-    return { ok: false, error: issue.message.startsWith("That") ? issue.message : `That theme file is damaged (${issue.path.join(".")}).` };
+    return { ok: false, error: issue.message.startsWith("Dies") || issue.message.startsWith("Der ") || issue.message.startsWith("Die ") ? issue.message : `Diese Design-Datei ist beschädigt (${issue.path.join(".")}).` };
   }
   return { ok: true, theme: parsed.data.theme };
 }

@@ -27,10 +27,10 @@ export const scorePostingJob = defineJob({
   async run({ posting }, { step, signal }) {
     let description = posting.description;
     if (!posting.complete) {
-      await step("Getting the whole posting");
+      await step("Hole die ganze Anzeige");
       description = (await fullText(posting)) ?? posting.description;
     }
-    await step("Scoring it against your profile");
+    await step("Bewerte sie anhand deines Profils");
     const [provider, options, profile] = await Promise.all([getAiProvider(), loadTaskOptions(), loadProfile()]);
     const { data, promptVersion } = await scorePosting(
       provider,

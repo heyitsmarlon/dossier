@@ -14,7 +14,7 @@ export const LMSTUDIO_CONTEXT_TOKENS = 16_384;
 const THINKING_TOKENS = 4_096;
 
 export const LMSTUDIO_UNREACHABLE =
-  "Couldn't reach LM Studio. Check the address, that its server is running (Developer tab), and, with Dossier in Docker, that Serve on Local Network is on.";
+  "LM Studio war nicht erreichbar. Prüf die Adresse, ob der Server läuft (Developer-Tab) und, mit Dossier in Docker, ob „Serve on Local Network“ an ist.";
 
 /** A model in LM Studio's own list (`GET /api/v1/models`, LM Studio 0.4 and later). */
 type LmStudioModel = {
@@ -96,7 +96,7 @@ export class LmStudioProvider extends OpenAICompatibleProvider {
       const smallest = Math.min(...instances.map((instance) => instance.config?.context_length ?? needed));
       if (smallest >= needed) return;
       throw AiError.config(
-        `LM Studio has “${model}” loaded with ${smallest.toLocaleString("en-US")} tokens of context, and Dossier needs ${needed.toLocaleString("en-US")}. Eject it in LM Studio and Dossier loads it again with enough, or load it yourself with a larger context length.`,
+        `LM Studio hat „${model}“ mit ${smallest.toLocaleString("de-DE")} Tokens Kontext geladen, Dossier braucht ${needed.toLocaleString("de-DE")}. Wirf es in LM Studio aus, dann lädt Dossier es mit genug Kontext neu, oder lade es selbst mit größerer Kontextlänge.`,
       );
     }
 

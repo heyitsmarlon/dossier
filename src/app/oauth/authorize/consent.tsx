@@ -36,10 +36,10 @@ export function Consent({ request }: { request: ConsentRequest }) {
       )}
       <div className="flex flex-wrap gap-3">
         <Button type="button" aria-disabled={pending || undefined} onClick={() => !pending && answer(true)}>
-          {pending ? "Connecting…" : "Allow"}
+          {pending ? "Verbinde…" : "Erlauben"}
         </Button>
         <Button type="button" variant="secondary" aria-disabled={pending || undefined} onClick={() => !pending && answer(false)}>
-          Deny
+          Ablehnen
         </Button>
       </div>
     </div>

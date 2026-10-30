@@ -37,7 +37,7 @@ export async function DashboardCalendar({ date, now }: { date: unknown; now: Dat
 export function CalendarSkeleton() {
   return (
     <div role="status" className="h-[440px] rounded-panel bg-track">
-      <span className="sr-only">Loading your calendar…</span>
+      <span className="sr-only">Lade deinen Kalender…</span>
     </div>
   );
 }

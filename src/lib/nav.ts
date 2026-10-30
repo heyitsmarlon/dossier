@@ -15,31 +15,31 @@ const within = (pathname: string, base: string) =>
 
 /** The sections in groups; the last group sits at the bottom. */
 export const NAV: { label?: string; items: NavItem[] }[] = [
-  { items: [{ href: "/", label: "Dashboard", icon: House, isActive: (pathname) => pathname === "/" }] },
+  { items: [{ href: "/", label: "Übersicht", icon: House, isActive: (pathname) => pathname === "/" }] },
   {
-    label: "You",
+    label: "Du",
     items: [
-      { href: "/profile", label: "Profile", icon: UserRound },
-      { href: "/resume", label: "Base resume", icon: FileText },
+      { href: "/profile", label: "Profil", icon: UserRound },
+      { href: "/resume", label: "Basis-Lebenslauf", icon: FileText },
     ],
   },
   {
-    label: "Job search",
+    label: "Jobsuche",
     items: [
-      { href: "/jobs", label: "Find jobs", icon: Search },
+      { href: "/jobs", label: "Jobs finden", icon: Search },
       { href: "/startups", label: "Startups", icon: Rocket },
       { href: "/agent", label: "Agent", icon: Bot },
       {
         href: "/applications",
-        label: "Applications",
+        label: "Bewerbungen",
         icon: BriefcaseBusiness,
         // A new application becomes one, so the flow belongs to Applications.
         isActive: (pathname) => within(pathname, "/applications") || within(pathname, "/new"),
       },
-      { href: "/inbox", label: "Inbox", icon: Inbox },
+      { href: "/inbox", label: "Posteingang", icon: Inbox },
     ],
   },
-  { items: [{ href: "/settings", label: "Settings", icon: Settings }] },
+  { items: [{ href: "/settings", label: "Einstellungen", icon: Settings }] },
 ];
 
 export const isCurrent = ({ href, isActive = (path) => within(path, href) }: NavItem, pathname: string) => isActive(pathname);

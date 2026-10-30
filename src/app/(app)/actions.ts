@@ -28,7 +28,7 @@ export const rememberQuietDays = action(z.object({ days: z.number().int().min(1)
  */
 export const chooseUsagePing = action(z.object({ send: z.boolean() }), async ({ send }) => {
   if (env.DOSSIER_TELEMETRY) {
-    throw new ActionError(`DOSSIER_TELEMETRY=${env.DOSSIER_TELEMETRY} is set on the server, so it decides. Change it there.`);
+    throw new ActionError(`DOSSIER_TELEMETRY=${env.DOSSIER_TELEMETRY} ist auf dem Server gesetzt und entscheidet. Dort ändern.`);
   }
   await saveUsagePingChoice(send ? "on" : "off");
   revalidatePath("/", "layout");

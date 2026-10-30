@@ -35,7 +35,7 @@ export function RowMenu({ row, onMove }: { row: ApplicationRow; onMove: (to: App
       <DropdownMenu>
         <DropdownMenuTrigger
           ref={trigger}
-          aria-label={`Actions for ${[row.role, row.company].filter(Boolean).join(", ")}`}
+          aria-label={`Aktionen für ${[row.role, row.company].filter(Boolean).join(", ")}`}
           className="grid size-7 place-items-center rounded-control text-muted hover:bg-hover hover:text-ink data-[state=open]:bg-hover data-[state=open]:text-ink"
         >
           <span aria-hidden="true" className="text-base leading-none">
@@ -43,7 +43,7 @@ export function RowMenu({ row, onMove }: { row: ApplicationRow; onMove: (to: App
           </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Move to</DropdownMenuLabel>
+          <DropdownMenuLabel>Verschieben nach</DropdownMenuLabel>
           <DropdownMenuRadioGroup value={row.status} onValueChange={(value) => value !== row.status && onMove(value as ApplicationStatus)}>
             {STATUSES.map((status) => (
               <DropdownMenuRadioItem key={status.value} value={status.value}>
@@ -54,10 +54,10 @@ export function RowMenu({ row, onMove }: { row: ApplicationRow; onMove: (to: App
           </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => void archiveApplication(row.id, !row.archived)}>
-            {row.archived ? "Unarchive" : "Archive"}
+            {row.archived ? "Aus dem Archiv holen" : "Archivieren"}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setDeleting(true)} className="text-danger data-highlighted:text-error-strong">
-            Delete…
+            Löschen…
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

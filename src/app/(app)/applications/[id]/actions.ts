@@ -23,8 +23,8 @@ import { prisma } from "@/lib/prisma";
 import { findOrCreateSkill } from "@/lib/profile-entries";
 import { cleanUnitText, isPublicationUnit, unitName } from "@/lib/unit-text";
 
-const GONE = "That application no longer exists.";
-const PART_GONE = "That part of the document no longer exists. Reload the page to see what's there now.";
+const GONE = "Diese Bewerbung gibt es nicht mehr.";
+const PART_GONE = "Dieser Teil des Dokuments existiert nicht mehr. Lade die Seite neu, um den aktuellen Stand zu sehen.";
 
 const refresh = (id: string) => revalidatePath(`/applications/${id}`);
 
@@ -54,7 +54,7 @@ export const setShowPhoto = action(z.object({ id: z.string().min(1), show: z.boo
  */
 export const setApplicationTheme = action(z.object({ id: z.string().min(1), themeId: z.string().min(1) }), async ({ id, themeId }) => {
   if (!(await prisma.theme.count({ where: { id: themeId } }))) {
-    throw new ActionError("That theme doesn't exist anymore. Reload the page to see your themes.");
+    throw new ActionError("Dieses Design gibt es nicht mehr. Lade die Seite neu, um deine Designs zu sehen.");
   }
   if (!(await prisma.application.count({ where: { id } }))) throw new ActionError(GONE);
   await prisma.document.updateMany({
@@ -79,11 +79,11 @@ export const setInterviewDate = action(
     refresh(id);
     try {
       const { inCalendar } = await syncInterviewToCalendar(id);
-      if (inCalendar) toast(at ? "Interview date saved, in your calendar too." : "Interview date removed, from your calendar too.");
-      else toast(at ? "Interview date saved. It'll show on your dashboard." : "Interview date removed.");
+      if (inCalendar) toast(at ? "Gesprächstermin gespeichert, auch in deinem Kalender." : "Gesprächstermin entfernt, auch aus deinem Kalender.");
+      else toast(at ? "Gesprächstermin gespeichert. Er erscheint auf deiner Übersicht." : "Gesprächstermin entfernt.");
     } catch (error) {
       if (!(error instanceof GoogleError)) throw error;
-      toast(`${at ? "Interview date saved" : "Interview date removed"}, but your calendar wasn't changed: ${error.message}`);
+      toast(`${at ? "Gesprächstermin gespeichert" : "Gesprächstermin entfernt"}, aber dein Kalender wurde nicht geändert: ${error.message}`);
     }
     return null;
   },
@@ -107,7 +107,7 @@ export const saveUnit = action(
     const clean = cleanUnitText(unitId, text);
     // The email's recipient may be left empty, for the mail app to fill in.
     if (!clean && !(document === DocumentKind.EMAIL && unitId === "to")) {
-      throw new ActionError("Write something first, or cancel to keep it as it was.");
+      throw new ActionError("Schreib zuerst etwas, oder brich ab, um es so zu lassen.");
     }
 
     await updateDocuments(id, async (documents) => {
@@ -120,7 +120,7 @@ export const saveUnit = action(
       }
       if (!unit) throw new ActionError(PART_GONE);
       if (unit.text !== expected) {
-        throw new ActionError("This part changed while you were editing it. Copy your text, cancel, and edit the new version.");
+        throw new ActionError("Dieser Teil hat sich beim Bearbeiten geändert. Kopier deinen Text, brich ab und bearbeite die neue Fassung.");
       }
       unit.text = clean;
       delete unit.unverified;
@@ -146,11 +146,11 @@ export const startRegenerating = action(
     const frame = document === DocumentKind.COVER_LETTER && isFrameUnit(unitId);
     // The sender, date and signature come from the profile and the day, not the AI (E8-11).
     if ((frame && !WRITTEN_FRAME_UNITS.has(unitId)) || (document === DocumentKind.EMAIL && !WRITTEN_EMAIL_UNITS.has(unitId))) {
-      throw new ActionError("This part isn't written by the AI. Edit it instead.");
+      throw new ActionError("Dieser Teil stammt nicht von der KI. Bearbeite ihn stattdessen.");
     }
     // A publication is the user's own citation (#218).
     if (document === DocumentKind.RESUME && isPublicationUnit(unitId)) {
-      throw new ActionError("A publication stays as you wrote it. Edit it instead.");
+      throw new ActionError("Eine Veröffentlichung bleibt, wie du sie geschrieben hast. Bearbeite sie stattdessen.");
     }
     if (frame && shown) {
       await updateDocuments(id, async (documents) => {
@@ -186,7 +186,7 @@ export const restoreUnit = action(
     await updateDocuments(id, async (documents) => {
       const unit = documents[document]?.find((entry) => entry.id === unitId);
       if (!unit) throw new ActionError(PART_GONE);
-      if (unit.text !== expected) throw new ActionError("It's been changed again since, so this can't be undone.");
+      if (unit.text !== expected) throw new ActionError("Es wurde seitdem wieder geändert, daher lässt sich das nicht rückgängig machen.");
       unit.text = text;
       if (unverified?.length) unit.unverified = unverified;
       else delete unit.unverified;
@@ -228,9 +228,9 @@ export const sendMessage = action(
       return { jobId: null };
     }
 
-    if (!(await isAiConfigured())) throw new ActionError("That needs an AI provider. Choose one in Settings → AI provider.");
+    if (!(await isAiConfigured())) throw new ActionError("Dafür brauchst du einen KI-Anbieter. Wähle einen unter Einstellungen → KI-Anbieter.");
     if ((await findUnfinishedJobs(refineJobKey(id))).length > 0) {
-      throw new ActionError("I'm still working on your last message. Send this one when I'm done.");
+      throw new ActionError("Ich arbeite noch an deiner letzten Nachricht. Schick diese, wenn ich fertig bin.");
     }
     let targetLabel: string | null = null;
     if (target) {
@@ -251,7 +251,7 @@ export const sendMessage = action(
 );
 
 /** "A, B and C" */
-const listOf = (names: string[]) => (names.length <= 1 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`);
+const listOf = (names: string[]) => (names.length <= 1 ? names.join("") : `${names.slice(0, -1).join(", ")} und ${names.at(-1)}`);
 
 /**
  * "Undo" under a reply in the chat (E8-6, APP-8): puts back what the reply
@@ -261,17 +261,17 @@ const listOf = (names: string[]) => (names.length <= 1 ? names.join("") : `${nam
 export const undoMessage = action(z.object({ id: z.string().min(1), messageId: z.string().min(1) }), async ({ id, messageId }) => {
   const message = await prisma.chatMessage.findFirst({ where: { id: messageId, applicationId: id, role: ChatRole.AI } });
   const edits = message && editsSchema.safeParse(message.edits);
-  if (!message || !edits?.success || edits.data.length === 0) throw new ActionError("There's nothing to undo in that message.");
+  if (!message || !edits?.success || edits.data.length === 0) throw new ActionError("In dieser Nachricht gibt es nichts rückgängig zu machen.");
   if (message.undone) throw new ActionError("That's already undone.");
 
   await updateDocuments(id, async (documents, tx) => {
     const changed = edits.data.flatMap((edit) => {
       const unit = documents[edit.document]?.find((entry) => entry.id === edit.unitId);
-      return unit?.text === edit.text ? [] : [`the ${unitName(unit ?? { id: edit.unitId, label: "" })}`];
+      return unit?.text === edit.text ? [] : [`„${unitName(unit ?? { id: edit.unitId, label: "" })}“`];
     });
     if (changed.length > 0) {
       throw new ActionError(
-        `You've changed ${listOf(changed)} since, so undoing this would overwrite that. Edit ${changed.length === 1 ? "it" : "them"} by hand instead.`,
+        `Du hast ${listOf(changed)} seitdem geändert, Rückgängig würde das überschreiben. Bearbeite ${changed.length === 1 ? "es" : "sie"} stattdessen von Hand.`,
       );
     }
     for (const edit of edits.data) {
@@ -301,7 +301,7 @@ export const addMatchSkill = action(z.object({ id: z.string().min(1), index: z.n
   const item = match.success ? match.data.items[index] : undefined;
   const requirement = extracted.success ? extracted.data.requirements[index] : undefined;
   if (!match.success || !item || item.result !== "gap" || requirement?.kind !== "skill" || !requirement.skill) {
-    throw new ActionError("That requirement can't be added to your profile. Reload the page to see what's there now.");
+    throw new ActionError("Diese Anforderung kann nicht zu deinem Profil hinzugefügt werden. Lade die Seite neu, um den aktuellen Stand zu sehen.");
   }
 
   const { skill } = await findOrCreateSkill(requirement.skill.trim());
@@ -323,7 +323,7 @@ export const addNote = action(z.object({ id: z.string().min(1), body: noteBody }
   return null;
 });
 
-const NOTE_GONE = "That note no longer exists.";
+const NOTE_GONE = "Diese Notiz gibt es nicht mehr.";
 
 export const updateNote = action(
   z.object({ id: z.string().min(1), noteId: z.string().min(1), body: noteBody }),
@@ -387,7 +387,7 @@ export const putBackTrimmed = action(z.object({ id: z.string().min(1), index: z.
   const row = await prisma.document.findUnique({ where: { applicationId_kind: { applicationId: id, kind: DocumentKind.RESUME } } });
   const trimmed = row ? trimmedSchema.safeParse(row.trimmed) : null;
   const item = trimmed?.success ? trimmed.data[index] : undefined;
-  if (!row || !trimmed?.success || !item) throw new ActionError("That's already back. Reload the page to see the resume as it is.");
+  if (!row || !trimmed?.success || !item) throw new ActionError("Das ist schon wieder drin. Lade die Seite neu, um den aktuellen Lebenslauf zu sehen.");
 
   await updateDocuments(id, async (documents) => {
     const units = documents[DocumentKind.RESUME];
@@ -409,7 +409,7 @@ export const putBackTrimmed = action(z.object({ id: z.string().min(1), index: z.
 
 // ─── Versions (E8-10, APP-13) ────────────────────────────────────────────────
 
-const VERSION_GONE = "That version no longer exists. Open the history again to see what's there.";
+const VERSION_GONE = "Diese Fassung gibt es nicht mehr. Öffne den Verlauf erneut, um den Stand zu sehen.";
 
 /** A document's versions, newest first, without their units. */
 export const listVersions = action(z.object({ id: z.string().min(1), document: z.enum(DocumentKind) }), async ({ id, document }) => {
@@ -450,7 +450,7 @@ export const restoreVersion = action(z.object({ id: z.string().min(1), versionId
     async (documents, tx) => {
       const current = documents[kind];
       if (!current) throw new ActionError(PART_GONE);
-      if (JSON.stringify(current) === JSON.stringify(units)) throw new ActionError("That's the version you have now.");
+      if (JSON.stringify(current) === JSON.stringify(units)) throw new ActionError("Das ist die Fassung, die du gerade hast.");
       const newest = await tx.documentVersion.findFirst({ where: { documentId: version.document.id }, orderBy: { createdAt: "desc" }, select: { units: true } });
       if (!newest || JSON.stringify(unitsSchema.parse(newest.units)) !== JSON.stringify(current)) {
         await saveVersion(tx, version.document.id, current, { cause: VersionCause.BEFORE_RESTORE });
@@ -476,7 +476,7 @@ export const restoreVersion = action(z.object({ id: z.string().min(1), versionId
       data: { trimmed: stillLeftOut.length > 0 ? stillLeftOut : Prisma.DbNull },
     });
   }
-  toast(`Restored the ${DOCUMENT_LABELS[kind].toLowerCase()} as it was then. The version you had is in the history too.`);
+  toast(`${DOCUMENT_LABELS[kind]} auf den damaligen Stand zurückgesetzt. Deine bisherige Fassung ist ebenfalls im Verlauf.`);
   refresh(id);
   return null;
 });
@@ -490,7 +490,7 @@ export const restoreVersion = action(z.object({ id: z.string().min(1), versionId
  */
 export const startWritingEmail = action(z.object({ id: z.string().min(1) }), async ({ id }) => {
   if (!(await prisma.application.count({ where: { id } }))) throw new ActionError(GONE);
-  if (!(await isAiConfigured())) throw new ActionError("That needs an AI provider. Choose one in Settings → AI provider.");
+  if (!(await isAiConfigured())) throw new ActionError("Dafür brauchst du einen KI-Anbieter. Wähle einen unter Einstellungen → KI-Anbieter.");
   const [running] = await findUnfinishedJobs(emailJobKey(id));
   return running?.id ?? startJob(writeEmailJob, { applicationId: id }, { key: emailJobKey(id), applicationId: id });
 });
@@ -503,14 +503,14 @@ export const undoEmailRewrite = action(z.object({ id: z.string().min(1), jobId: 
   const job = await prisma.job.findFirst({ where: { id: jobId, key: emailJobKey(id), status: "DONE" }, select: { result: true } });
   const result = writeEmailJob.result.safeParse(job?.result);
   const previous = result.success ? result.data.previous : null;
-  if (!result.success || !previous) throw new ActionError("There's nothing to undo.");
+  if (!result.success || !previous) throw new ActionError("Es gibt nichts rückgängig zu machen.");
 
   const same = (a: unknown, b: unknown) => JSON.stringify(unitsSchema.parse(a)) === JSON.stringify(unitsSchema.parse(b));
   await updateDocuments(id, async (documents) => {
     const current = documents[DocumentKind.EMAIL];
     if (!current) throw new ActionError(PART_GONE);
     if (!same(current, result.data.units)) {
-      throw new ActionError("The email has changed since, so this can't be undone. Earlier versions are in its history.");
+      throw new ActionError("Die E-Mail hat sich seitdem geändert, daher lässt sich das nicht rückgängig machen. Frühere Fassungen sind in ihrem Verlauf.");
     }
     documents[DocumentKind.EMAIL] = previous;
   }, { version: { cause: VersionCause.UNDONE } });

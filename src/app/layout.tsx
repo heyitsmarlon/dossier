@@ -10,7 +10,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "Dossier", template: "%s · Dossier" },
-  description: "Your job search, on your server.",
+  description: "Deine Jobsuche, auf deinem Server.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Light or dark as chosen in the sidebar; without a choice, the system's.
   const scheme = parseColorScheme((await cookies()).get(COLOR_SCHEME_COOKIE)?.value);
   return (
-    <html lang="en" data-theme={scheme} className={`${fontVariables} h-full antialiased`}>
+    <html lang="de" data-theme={scheme} className={`${fontVariables} h-full antialiased`}>
       <body className="min-h-full">
         {children}
         <Toaster />

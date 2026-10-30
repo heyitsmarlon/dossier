@@ -39,7 +39,7 @@ export function ThemeToggle({ serverScheme }: { serverScheme?: ColorScheme }) {
   // guesses light, and the browser corrects it right after hydration.
   const scheme = useSyncExternalStore(subscribe, currentScheme, () => serverScheme ?? "light");
   const next: ColorScheme = scheme === "dark" ? "light" : "dark";
-  const label = next === "dark" ? "Dark mode" : "Light mode";
+  const label = next === "dark" ? "Dunkler Modus" : "Heller Modus";
   const Icon = next === "dark" ? Moon : Sun;
 
   const toggle = () => {

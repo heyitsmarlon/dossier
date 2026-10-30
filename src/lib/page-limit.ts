@@ -125,16 +125,16 @@ export function describeTrim(trimmed: Trimmed, profile: ProfileData, fits: boole
   const lines = trimmed.map((cut) => {
     if (cut.kind === "bullets") {
       const count = cut.lines.length;
-      return `Shortened the ${cut.label} by ${count} ${count === 1 ? "bullet" : "bullets"} to fit ${limit}`;
+      return `${cut.label} um ${count} ${count === 1 ? "Stichpunkt" : "Stichpunkte"} gekürzt, damit es auf ${limit} passt`;
     }
     const project = profile.projects.find((entry) => `project:${entry.id}` === cut.unit.id);
-    if (project) return `Left out the ${project.name.trim() || "untitled"} project to fit ${limit}`;
-    if (isPublicationUnit(cut.unit.id)) return `Left out the publication “${citationExcerpt(cut.unit.text)}” to fit ${limit}`;
+    if (project) return `Projekt ${project.name.trim() || "ohne Titel"} weggelassen, damit es auf ${limit} passt`;
+    if (isPublicationUnit(cut.unit.id)) return `Veröffentlichung „${citationExcerpt(cut.unit.text)}“ weggelassen, damit es auf ${limit} passt`;
     const entry = profile.experience.find((role) => `experience:${role.id}` === cut.unit.id);
     const name = entry?.company.trim() || entry?.role.trim() || cut.unit.label;
-    const years = entry?.startYear ? ` (${entry.startYear}–${entry.current ? "now" : (entry.endYear ?? "")})` : "";
-    return `Left out ${name}${years} to fit ${limit}`;
+    const years = entry?.startYear ? ` (${entry.startYear}–${entry.current ? "heute" : (entry.endYear ?? "")})` : "";
+    return `${name}${years} weggelassen, damit es auf ${limit} passt`;
   });
-  if (!fits && trimmed.length > 0) lines.push(`It still runs over ${limit}, so shorten it by hand if it has to fit`);
+  if (!fits && trimmed.length > 0) lines.push(`Er ist immer noch länger als ${limit}, kürze ihn also von Hand, falls er passen muss`);
   return lines;
 }

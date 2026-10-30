@@ -80,8 +80,8 @@ export function JobsScreen({
   const header = (
     <>
       <PageHeader
-        title="Find jobs"
-        description={`Search ${source ? SOURCE_INFO[source].name : "job postings"} for postings near you, then start an application from the one you like.`}
+        title="Jobs finden"
+        description={`Durchsuche ${source ? SOURCE_INFO[source].name : "Stellenanzeigen"} nach Anzeigen in deiner Nähe und starte eine Bewerbung aus der, die dir gefällt.`}
       />
       <ViewTabs view={view} counts={counts} />
     </>
@@ -140,7 +140,7 @@ export function JobsScreen({
       <SearchForm source={source} countries={countries} query={query} pending={pending} onSearch={run} />
       {/* Announces each new set of results; the list itself is replaced. */}
       <p role="status" className="sr-only">
-        {pending ? "Searching…" : failed ? failed.problem.message : search ? `${search.postings.length} postings found.` : ""}
+        {pending ? "Suche…" : failed ? failed.problem.message : search ? `${search.postings.length} Anzeigen gefunden.` : ""}
       </p>
       <div className={cn("flex flex-1 flex-col motion-safe:transition-opacity", pending && "opacity-60")} aria-busy={pending || undefined}>
         {failed ? (
@@ -158,8 +158,8 @@ export function JobsScreen({
         ) : (
           <p className="px-10 pb-16 text-sm text-muted">
             {missingSearch
-              ? "That search is no longer kept. Search again, or open one from Past searches."
-              : "Search for a role, a skill or a company. Every search is kept with what it found, so you can come back to it without spending another search."}
+              ? "Diese Suche ist nicht mehr gespeichert. Such noch einmal, oder öffne eine aus „Frühere Suchen“."
+              : "Suche nach einer Stelle, einer Fähigkeit oder einer Firma. Jede Suche wird mit ihren Treffern gespeichert, so kannst du zurückkommen, ohne eine weitere Suche zu verbrauchen."}
           </p>
         )}
       </div>
@@ -197,8 +197,8 @@ function SearchForm({
     event.preventDefault();
     if (pending) return;
     const problems = {
-      keywords: form.keywords.trim() ? undefined : "Type what you're looking for.",
-      country: form.country ? uncovered : "Choose a country.",
+      keywords: form.keywords.trim() ? undefined : "Gib ein, wonach du suchst.",
+      country: form.country ? uncovered : "Wähle ein Land.",
     };
     setErrors(problems);
     if (problems.keywords || problems.country) return;
@@ -208,7 +208,7 @@ function SearchForm({
   return (
     <form
       role="search"
-      aria-label="Search postings"
+      aria-label="Anzeigen durchsuchen"
       noValidate
       onSubmit={submit}
       className="mx-10 mb-7 grid grid-cols-1 items-start gap-x-4 gap-y-4 rounded-panel border border-line-card bg-card p-6 sm:grid-cols-2 lg:grid-cols-[2fr_1.5fr_1.3fr_1fr_1fr]"
@@ -217,7 +217,7 @@ function SearchForm({
       <div className="flex flex-wrap items-center justify-between gap-4 sm:col-span-2 lg:col-span-5">
         <RemoteOnlyField value={form} onChange={set} source={source} />
         <Button type="submit" aria-disabled={pending || undefined}>
-          {pending ? "Searching…" : "Search"}
+          {pending ? "Suche…" : "Suchen"}
         </Button>
       </div>
     </form>
@@ -228,13 +228,13 @@ function SearchForm({
 function ViewTabs({ view, counts }: { view: JobsView; counts: { searches: number; saved: number; dismissed: number } }) {
   const tabs = [
     // The latest search, as it was kept.
-    { view: "search", label: "Search", href: "/jobs", count: null },
-    { view: "history", label: "Past searches", href: viewHref("history"), count: counts.searches },
-    { view: "saved", label: "Saved", href: viewHref("saved"), count: counts.saved },
-    { view: "dismissed", label: "Dismissed", href: viewHref("dismissed"), count: counts.dismissed },
+    { view: "search", label: "Suche", href: "/jobs", count: null },
+    { view: "history", label: "Frühere Suchen", href: viewHref("history"), count: counts.searches },
+    { view: "saved", label: "Gemerkt", href: viewHref("saved"), count: counts.saved },
+    { view: "dismissed", label: "Verworfen", href: viewHref("dismissed"), count: counts.dismissed },
   ] as const;
   return (
-    <nav aria-label="Find jobs views" className="flex flex-wrap gap-1.5 px-10 pb-[18px]">
+    <nav aria-label="Ansichten der Jobsuche" className="flex flex-wrap gap-1.5 px-10 pb-[18px]">
       {tabs.map((tab) => (
         <Link
           key={tab.view}
@@ -257,13 +257,13 @@ function ViewTabs({ view, counts }: { view: JobsView; counts: { searches: number
 function NoSource() {
   return (
     <div className="mx-10 mb-16 flex max-w-[640px] flex-col items-start gap-3 rounded-panel border border-line-card bg-card px-7 py-7">
-      <h2 className="font-serif text-section">Choose where to search</h2>
+      <h2 className="font-serif text-section">Wähle, wo gesucht wird</h2>
       <p className="text-sm text-muted">
-        Find jobs searches one job source for you, such as JSearch (LinkedIn, Indeed and more) or Adzuna. Pick one in Settings. Until then,
-        nothing is sent anywhere.
+        „Jobs finden“ durchsucht eine Jobquelle für dich, etwa die Bundesagentur für Arbeit, JSearch (LinkedIn, Indeed und mehr) oder Adzuna. Wähle eine in den Einstellungen. Bis dahin
+        wird nichts irgendwohin geschickt.
       </p>
       <Link href={SETTINGS_HREF} className={buttonClassName("primary", "md", "mt-1 hover:text-on-primary")}>
-        Set up job search
+        Jobsuche einrichten
       </Link>
     </div>
   );
@@ -277,11 +277,11 @@ function SearchProblem({ problem, message, onRetry }: { problem: Problem["proble
       <p className="text-sm">{message}</p>
       {toSettings ? (
         <Link href={SETTINGS_HREF} className={buttonClassName("secondary", "sm")}>
-          Open Settings → Job search
+          Einstellungen → Jobsuche öffnen
         </Link>
       ) : problem === "unavailable" ? (
         <Button variant="secondary" size="sm" onClick={onRetry}>
-          Try again
+          Erneut versuchen
         </Button>
       ) : null}
     </div>

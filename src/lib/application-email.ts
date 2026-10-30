@@ -9,7 +9,7 @@ export const EMAIL_UNITS = ["to", "subject", "body"] as const;
 export type EmailUnitId = (typeof EMAIL_UNITS)[number];
 
 /** The units' labels, as the toolbar, the chat ("About: Subject") and the history name them. */
-export const EMAIL_LABELS: Record<EmailUnitId, string> = { to: "Recipient", subject: "Subject", body: "Message" };
+export const EMAIL_LABELS: Record<EmailUnitId, string> = { to: "Empfänger", subject: "Betreff", body: "Nachricht" };
 
 /** The parts the AI writes and can write again; the recipient comes from the posting or the user. */
 export const WRITTEN_EMAIL_UNITS: ReadonlySet<string> = new Set<EmailUnitId>(["subject", "body"]);

@@ -22,7 +22,7 @@ export function JobProgress({
   error,
   onRetry,
   onBack,
-  backLabel = "← Back to the posting",
+  backLabel = "← Zurück zur Anzeige",
 }: {
   title: string;
   steps: readonly string[];
@@ -44,14 +44,14 @@ export function JobProgress({
         <div role="alert" className="flex flex-col gap-3.5">
           <p className="text-control text-error">{error}</p>
           <div className="flex flex-wrap items-center gap-3">
-            <Button onClick={onRetry}>Retry</Button>
+            <Button onClick={onRetry}>Erneut versuchen</Button>
             <Button variant="text" onClick={onBack}>
               {backLabel}
             </Button>
           </div>
         </div>
       ) : (
-        <p className="text-meta text-muted">This can take a little longer on a local model.</p>
+        <p className="text-meta text-muted">Mit einem lokalen Modell kann das etwas länger dauern.</p>
       )}
     </Card>
   );

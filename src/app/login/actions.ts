@@ -40,7 +40,7 @@ export const signIn = publicAction(
 
     await startSession({ persistent: remember });
     const firstName = (await loadProfileName()).trim().split(/\s+/)[0] || "there";
-    toast(`Welcome back, ${firstName}.`);
+    toast(`Willkommen zurück, ${firstName}.`);
     return { redirectTo: safeNextPath(next) };
   },
 );

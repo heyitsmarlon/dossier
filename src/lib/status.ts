@@ -17,14 +17,14 @@ export type StatusInfo = {
 
 /** All statuses, in board and menu order. */
 export const STATUSES: readonly StatusInfo[] = [
-  { value: ApplicationStatus.DRAFT, label: "Draft", color: "var(--color-status-draft)", group: "in-progress", toast: "Moved back to draft." },
-  { value: ApplicationStatus.SENT, label: "Sent", color: "var(--color-status-sent)", group: "in-progress", toast: "Marked as sent. Fingers crossed!" },
-  { value: ApplicationStatus.SCREENING, label: "Screening", color: "var(--color-status-screening)", group: "in-progress", toast: "In screening. They're taking a look." },
-  { value: ApplicationStatus.INTERVIEW, label: "Interview", color: "var(--color-status-interview)", group: "in-progress", toast: "An interview! You've got this." },
-  { value: ApplicationStatus.OFFER, label: "Offer", color: "var(--color-status-offer)", group: "in-progress", toast: "An offer. Congratulations!" },
-  { value: ApplicationStatus.ACCEPTED, label: "Accepted", color: "var(--color-status-accepted)", group: "closed", toast: "Accepted. Huge congratulations!" },
-  { value: ApplicationStatus.REJECTED, label: "Rejected", color: "var(--color-status-rejected)", group: "closed", toast: "Sorry, that's a tough one. On to the next." },
-  { value: ApplicationStatus.DECLINED, label: "Declined", color: "var(--color-status-declined)", group: "closed", toast: "Declined. Good on you for choosing well." },
+  { value: ApplicationStatus.DRAFT, label: "Entwurf", color: "var(--color-status-draft)", group: "in-progress", toast: "Zurück zu Entwurf verschoben." },
+  { value: ApplicationStatus.SENT, label: "Gesendet", color: "var(--color-status-sent)", group: "in-progress", toast: "Als gesendet markiert. Daumen drücken!" },
+  { value: ApplicationStatus.SCREENING, label: "Vorauswahl", color: "var(--color-status-screening)", group: "in-progress", toast: "In der Vorauswahl. Sie schauen sich das an." },
+  { value: ApplicationStatus.INTERVIEW, label: "Gespräch", color: "var(--color-status-interview)", group: "in-progress", toast: "Ein Vorstellungsgespräch! Du schaffst das." },
+  { value: ApplicationStatus.OFFER, label: "Angebot", color: "var(--color-status-offer)", group: "in-progress", toast: "Ein Angebot. Glückwunsch!" },
+  { value: ApplicationStatus.ACCEPTED, label: "Angenommen", color: "var(--color-status-accepted)", group: "closed", toast: "Angenommen. Herzlichen Glückwunsch!" },
+  { value: ApplicationStatus.REJECTED, label: "Abgelehnt", color: "var(--color-status-rejected)", group: "closed", toast: "Schade, das ist hart. Weiter zur nächsten." },
+  { value: ApplicationStatus.DECLINED, label: "Abgesagt", color: "var(--color-status-declined)", group: "closed", toast: "Abgesagt. Gut, dass du sorgfältig auswählst." },
 ];
 
 export function statusInfo(status: ApplicationStatus): StatusInfo {

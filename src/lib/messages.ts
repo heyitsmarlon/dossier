@@ -1,8 +1,8 @@
 /** User-facing messages shared by Server Actions, route handlers and the pages calling them. */
 export const messages = {
-  signedOut: "You've been signed out. Sign in again to continue.",
-  invalidInput: "Some details aren't valid. Check the highlighted fields.",
-  unexpected: "Something went wrong on the server. Please try again.",
-  crossOrigin: "This request didn't come from Dossier's own pages, so it was blocked.",
-  offline: "Couldn't reach Dossier. Check your connection and try again.",
+  signedOut: "Du wurdest abgemeldet. Melde dich erneut an, um weiterzumachen.",
+  invalidInput: "Einige Angaben sind ungültig. Prüf die markierten Felder.",
+  unexpected: "Auf dem Server ist etwas schiefgegangen. Bitte versuch es noch einmal.",
+  crossOrigin: "Diese Anfrage kam nicht von Dossiers eigenen Seiten und wurde daher blockiert.",
+  offline: "Dossier ist nicht erreichbar. Prüf deine Verbindung und versuch es noch einmal.",
 } as const;

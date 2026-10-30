@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import type { Details } from "./new-application";
 
 const FIELDS: { field: Exclude<keyof Details, "title" | "deadline">; label: string; placeholder?: string }[] = [
-  { field: "company", label: "Company" },
-  { field: "role", label: "Role" },
-  { field: "location", label: "Location", placeholder: "Not mentioned" },
-  { field: "mode", label: "Work mode", placeholder: "Not mentioned" },
-  { field: "salary", label: "Salary", placeholder: "Not mentioned" },
+  { field: "company", label: "Firma" },
+  { field: "role", label: "Stelle" },
+  { field: "location", label: "Ort", placeholder: "Nicht genannt" },
+  { field: "mode", label: "Arbeitsmodell", placeholder: "Nicht genannt" },
+  { field: "salary", label: "Gehalt", placeholder: "Nicht genannt" },
 ];
 
 /**
@@ -22,14 +22,14 @@ export function DetailsCard({ details, onChange }: { details: Details; onChange:
   return (
     <Card className="grid grid-cols-1 gap-x-[18px] gap-y-5 sm:grid-cols-2">
       <h2 tabIndex={-1} className="text-[15px] font-medium sm:col-span-2">
-        The application
+        Die Bewerbung
       </h2>
       <Input
         className="sm:col-span-2"
         label={
           <span className="flex justify-between gap-3">
-            <span>Title</span>
-            <span className="text-muted">Suggested by AI. Change it if you like</span>
+            <span>Titel</span>
+            <span className="text-muted">Von der KI vorgeschlagen. Ändere ihn, wenn du magst</span>
           </span>
         }
         inputClassName="text-base font-medium"
@@ -40,11 +40,11 @@ export function DetailsCard({ details, onChange }: { details: Details; onChange:
         <Input key={field} label={label} placeholder={placeholder} value={details[field]} onChange={(event) => set(field, event.target.value)} />
       ))}
       <Input
-        label="Apply by"
+        label="Bewerben bis"
         type="date"
         value={details.deadline}
         onChange={(event) => set("deadline", event.target.value)}
-        hint={details.deadline ? undefined : "No deadline"}
+        hint={details.deadline ? undefined : "Keine Frist"}
       />
     </Card>
   );

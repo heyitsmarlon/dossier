@@ -70,6 +70,6 @@ export function afterFailure(
 export function tooManyAttemptsMessage(ms: number): string {
   const seconds = Math.ceil(ms / SECOND);
   const wait =
-    seconds < 120 ? `${seconds} ${seconds === 1 ? "second" : "seconds"}` : `${Math.ceil(seconds / 60)} minutes`;
-  return `Too many attempts. Try again in ${wait}.`;
+    seconds < 120 ? `${seconds} ${seconds === 1 ? "Sekunde" : "Sekunden"}` : `${Math.ceil(seconds / 60)} Minuten`;
+  return `Zu viele Versuche. Versuch es in ${wait} wieder.`;
 }

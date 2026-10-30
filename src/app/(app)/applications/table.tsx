@@ -13,12 +13,12 @@ import { STATUSES } from "@/lib/status";
 import { RowMenu } from "./row-menu";
 
 const COLUMNS: { key: SortKey; label: string; className: string }[] = [
-  { key: "role", label: "Role", className: "w-[34%]" },
+  { key: "role", label: "Stelle", className: "w-[34%]" },
   { key: "status", label: "Status", className: "w-[168px]" },
-  { key: "match", label: "Match", className: "w-[76px]" },
-  { key: "location", label: "Location", className: "w-[18%]" },
-  { key: "sent", label: "Sent", className: "w-[88px]" },
-  { key: "updated", label: "Updated", className: "w-[118px]" },
+  { key: "match", label: "Treffer", className: "w-[76px]" },
+  { key: "location", label: "Ort", className: "w-[18%]" },
+  { key: "sent", label: "Gesendet", className: "w-[88px]" },
+  { key: "updated", label: "Geändert", className: "w-[118px]" },
 ];
 
 /** A column's direction as `aria-sort` names it. */
@@ -72,7 +72,7 @@ export function Table({
               );
             })}
             <th scope="col" className="w-12 pr-3">
-              <span className="sr-only">Actions</span>
+              <span className="sr-only">Aktionen</span>
             </th>
           </tr>
         </thead>
@@ -93,14 +93,14 @@ export function Table({
                 </Link>
                 <span className="block truncate text-meta text-muted">
                   {row.company}
-                  {row.archived && <span className="ml-2 rounded-[6px] bg-track px-1.5 text-xs">Archived</span>}
+                  {row.archived && <span className="ml-2 rounded-[6px] bg-track px-1.5 text-xs">Archiviert</span>}
                 </span>
               </td>
               <td className="py-3.5 pr-4">
                 <span className="flex items-center gap-2">
                   <StatusDot status={row.status} />
                   <select
-                    aria-label={`Status of ${[row.role, row.company].filter(Boolean).join(", ")}`}
+                    aria-label={`Status von ${[row.role, row.company].filter(Boolean).join(", ")}`}
                     value={row.status}
                     onChange={(event) => onMove(row, event.target.value as ApplicationStatus)}
                     className="-ml-1.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-[6px] border border-transparent bg-transparent py-1 pr-2 pl-1.5 text-sm text-ink hover:border-line-field focus-visible:border-primary"
@@ -113,9 +113,9 @@ export function Table({
                   </select>
                 </span>
               </td>
-              <td className="py-3.5 pr-4 text-sm tabular-nums">{row.match ? `${row.match.hit}/${row.match.total}` : "Not matched"}</td>
-              <td className="truncate py-3.5 pr-4 text-sm text-muted">{row.location || "Not given"}</td>
-              <td className="py-3.5 pr-4 text-sm text-muted">{row.sent ?? "Not sent"}</td>
+              <td className="py-3.5 pr-4 text-sm tabular-nums">{row.match ? `${row.match.hit}/${row.match.total}` : "Nicht abgeglichen"}</td>
+              <td className="truncate py-3.5 pr-4 text-sm text-muted">{row.location || "Nicht angegeben"}</td>
+              <td className="py-3.5 pr-4 text-sm text-muted">{row.sent ?? "Nicht gesendet"}</td>
               <td className="py-3.5 pr-4 text-sm text-muted">{row.updated}</td>
               <td className="py-3.5 pr-3 text-right">
                 <RowMenu row={row} onMove={(to) => onMove(row, to)} />

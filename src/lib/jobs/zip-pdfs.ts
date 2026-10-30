@@ -30,7 +30,7 @@ export const zipFileName = (now: Date) => `dossier-pdfs-${now.getFullYear()}-${p
 /** A company as a folder name: no characters a file system refuses. */
 function folderName(company: string): string {
   const name = company.replace(/[\\/:*?"<>|\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().replace(/^\.+/, "");
-  return name || "No company";
+  return name || "Keine Firma";
 }
 
 /** Adds " (2)", " (3)"… before ".pdf" while a name is taken. */
@@ -97,18 +97,18 @@ export const zipPdfsJob = defineJob({
     const documents = applications.flatMap((application) => application.documents.map(({ kind }) => ({ application, kind })));
 
     let done = 0;
-    await step(`Rendering ${documents.length} documents`);
+    await step(`Erstelle ${documents.length} Dokumente`);
     const rendered = await Promise.all(
       documents.map(async ({ application, kind }) => {
         signal.throwIfAborted();
         const pdf = await renderPdf(`/print/${kind === DocumentKind.RESUME ? "resume" : "letter"}/${application.id}`);
         done += 1;
-        await step(`Rendered ${done} of ${documents.length}`);
+        await step(`${done} von ${documents.length} erstellt`);
         return { application, kind, pdf };
       }),
     );
 
-    await step("Zipping");
+    await step("Packe ZIP");
     const files: Zippable = {};
     const taken = new Map<string, Set<string>>();
     for (const { application, kind, pdf } of rendered) {

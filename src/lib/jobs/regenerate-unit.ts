@@ -38,7 +38,7 @@ export const regenerateUnitJob = defineJob({
     z.object({ outcome: z.literal("changed") }),
   ]),
   async run({ applicationId, document, unitId, from }, { step, signal }) {
-    await step("Rewriting");
+    await step("Schreibe neu");
     const application = await prisma.application.findUnique({
       where: { id: applicationId },
       include: { documents: { where: { kind: document } } },

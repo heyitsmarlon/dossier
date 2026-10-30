@@ -31,7 +31,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   after(() => rememberBrowserTimeZone(zone));
 
   const [name, settings, jar] = await Promise.all([loadProfileName(), loadSettings(), cookies()]);
-  const userName = name.trim() || "New user";
+  const userName = name.trim() || "Neuer Nutzer";
   // Replies waiting for an answer or a link, on the Inbox item; the job agent's finds and drafts on its own (E16-6).
   const [waiting, agent] = await Promise.all([inboxCount().catch(() => 0), countAgentQueue().catch(() => 0)]);
 
@@ -41,7 +41,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         href="#main"
         className="fixed top-3 left-3 z-50 -translate-y-[200%] rounded-control bg-primary px-4 py-2.5 text-sm font-medium text-on-primary hover:text-on-primary focus:translate-y-0"
       >
-        Skip to content
+        Zum Inhalt springen
       </a>
       <Sidebar
         userName={userName}

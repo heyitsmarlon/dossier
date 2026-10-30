@@ -21,15 +21,15 @@ export const PROVIDER_OPTIONS: readonly {
 }[] = [
   {
     value: AiProvider.LOCAL,
-    name: "Local model",
+    name: "Lokales Modell",
     vendor: null,
-    description: "Runs on your own hardware through Ollama or llama.cpp.",
-    tag: "Private · free · slower",
+    description: "Läuft auf deiner eigenen Hardware über Ollama oder llama.cpp.",
+    tag: "Privat · kostenlos · langsamer",
     local: true,
     defaultUrl: "http://localhost:11434",
     urlPlaceholder: "http://localhost:11434",
     urlHint:
-      "Dossier in Docker? There, localhost is Dossier's own container: use http://host.docker.internal:11434 for Ollama on this computer, or http://ollama:11434 for the Compose service.",
+      "Dossier in Docker? Dort ist localhost Dossiers eigener Container: Nutze http://host.docker.internal:11434 für Ollama auf diesem Rechner oder http://ollama:11434 für den Compose-Dienst.",
     defaultModel: "",
     apiKey: null,
   },
@@ -37,52 +37,52 @@ export const PROVIDER_OPTIONS: readonly {
     value: AiProvider.LMSTUDIO,
     name: "LM Studio",
     vendor: null,
-    description: "Models you run in LM Studio, on this computer or your network.",
-    tag: "Private · free · your hardware",
+    description: "Modelle, die du in LM Studio betreibst, auf diesem Rechner oder in deinem Netz.",
+    tag: "Privat · kostenlos · deine Hardware",
     local: true,
     // Dossier runs in Docker, where localhost is its own container.
     defaultUrl: "http://host.docker.internal:1234",
     urlPlaceholder: "http://host.docker.internal:1234",
     urlHint:
-      "That's LM Studio on the computer Dossier's Docker runs on; without Docker, use http://localhost:1234. Can't connect? Start the server in LM Studio's Developer tab, and turn on Serve on Local Network there.",
+      "Das ist LM Studio auf dem Rechner, auf dem Dossiers Docker läuft; ohne Docker nutze http://localhost:1234. Keine Verbindung? Starte den Server im Developer-Tab von LM Studio und schalte dort „Serve on Local Network“ ein.",
     defaultModel: "",
-    apiKey: { label: "API token", hint: "Only needed if you've turned on authentication in LM Studio's server settings." },
+    apiKey: { label: "API-Token", hint: "Nur nötig, wenn du in den Servereinstellungen von LM Studio Authentifizierung eingeschaltet hast." },
   },
   {
     value: AiProvider.OPENAI,
-    name: "OpenAI-compatible",
+    name: "OpenAI-kompatibel",
     vendor: null,
-    description: "Any server that speaks the OpenAI API, hosted or on your network.",
-    tag: "Bring your own endpoint",
+    description: "Jeder Server, der die OpenAI-API spricht, gehostet oder in deinem Netz.",
+    tag: "Eigener Endpunkt",
     local: false,
     defaultUrl: "",
     urlPlaceholder: "https://api.openai.com/v1",
     defaultModel: "",
-    apiKey: { label: "API key" },
+    apiKey: { label: "API-Schlüssel" },
   },
   {
     value: AiProvider.ANTHROPIC,
     name: "Anthropic",
     vendor: "Anthropic",
-    description: "Claude models through your own API key.",
-    tag: "Hosted · pay per use",
+    description: "Claude-Modelle über deinen eigenen API-Schlüssel.",
+    tag: "Gehostet · Abrechnung nach Nutzung",
     local: false,
     defaultUrl: "https://api.anthropic.com",
     urlPlaceholder: "https://api.anthropic.com",
     defaultModel: "claude-sonnet-5",
-    apiKey: { label: "API key" },
+    apiKey: { label: "API-Schlüssel" },
   },
   {
     value: AiProvider.MISTRAL,
     name: "Mistral",
     vendor: "Mistral",
-    description: "Mistral's models through your own API key.",
-    tag: "Hosted · free tier to start",
+    description: "Mistral-Modelle über deinen eigenen API-Schlüssel.",
+    tag: "Gehostet · kostenloser Einstieg",
     local: false,
     defaultUrl: "https://api.mistral.ai/v1",
     urlPlaceholder: "https://api.mistral.ai/v1",
     defaultModel: "mistral-medium-latest",
-    apiKey: { label: "API key" },
+    apiKey: { label: "API-Schlüssel" },
   },
 ];
 
@@ -91,7 +91,7 @@ export function providerOption(provider: AiProvider) {
 }
 
 /** What people see when a saved key can't be decrypted, e.g. after DOSSIER_SECRET changed. */
-export const API_KEY_UNREADABLE = "Your saved API key can't be read. Please enter it again.";
+export const API_KEY_UNREADABLE = "Dein gespeicherter API-Schlüssel ist nicht lesbar. Bitte gib ihn neu ein.";
 
 /** What Settings may know about the API key: never the key itself. */
 export type KeyState = "none" | "set" | "unreadable" | "env";

@@ -53,7 +53,7 @@ async function renderRequested(request: NextRequest): Promise<{ pdf: Uint8Array;
     };
   }
 
-  if (doc !== "resume" && doc !== "letter") return notFound("There's no such document to download.");
+  if (doc !== "resume" && doc !== "letter") return notFound("Dieses Dokument gibt es nicht zum Herunterladen.");
   const id = params.get("application") ?? "";
   const application = APPLICATION_ID.test(id)
     ? await prisma.application.findUnique({
@@ -61,9 +61,9 @@ async function renderRequested(request: NextRequest): Promise<{ pdf: Uint8Array;
         select: { company: true, role: true, documents: { where: { kind: TAILORED[doc] }, select: { id: true } } },
       })
     : null;
-  if (!application) return notFound("That application no longer exists.");
+  if (!application) return notFound("Diese Bewerbung gibt es nicht mehr.");
   if (application.documents.length === 0) {
-    return notFound(doc === "resume" ? "This application has no tailored resume." : "This application has no cover letter.");
+    return notFound(doc === "resume" ? "Diese Bewerbung hat keinen zugeschnittenen Lebenslauf." : "Diese Bewerbung hat kein Anschreiben.");
   }
 
   return {

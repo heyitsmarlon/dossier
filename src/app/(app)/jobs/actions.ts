@@ -38,7 +38,7 @@ export const showMorePostings = action(z.object({ searchId }), ({ searchId }) =>
 /** Removes a kept search and what it found; saved postings stay. */
 export const removeJobSearch = action(z.object({ id: searchId }), async ({ id }, { toast }) => {
   await removeSearch(id);
-  toast("Search removed. Saved postings from it stay in Saved.");
+  toast("Suche entfernt. Gemerkte Anzeigen daraus bleiben unter „Gemerkt“.");
   return null;
 });
 
@@ -47,13 +47,13 @@ export const loadFullText = action(z.object({ posting: foundPostingSchema }), as
 
 export const savePostingForLater = action(z.object({ posting: foundPostingSchema }), async ({ posting }, { toast }) => {
   const saved = await savePosting(posting);
-  toast("Saved for later.");
+  toast("Für später gemerkt.");
   return { postingId: saved.id };
 });
 
 export const unsavePosting = action(postingRef, async (ref, { toast }) => {
   await unmarkPosting(ref, "saved");
-  toast("Removed from Saved.");
+  toast("Aus „Gemerkt“ entfernt.");
   return null;
 });
 
@@ -83,7 +83,7 @@ export const restorePosting = action(postingRef.extend({ saved: z.boolean() }), 
  */
 export const startScoringPosting = action(z.object({ posting: foundPostingSchema }), async ({ posting }): Promise<{ jobId: string } | { handoff: string }> => {
   if (await handsOffToClaude(await isAiUsable())) return { handoff: await handOffFoundPosting(posting, "score") };
-  if (!(await isAiConfigured())) throw new ActionError("Choose an AI provider in Settings → AI provider first.");
+  if (!(await isAiConfigured())) throw new ActionError("Wähle zuerst einen KI-Anbieter unter Einstellungen → KI-Anbieter.");
   const key = scoreJobKey(posting);
   const [unfinished] = await findUnfinishedJobs(key);
   return { jobId: unfinished?.id ?? (await startJob(scorePostingJob, { posting }, { key })) };

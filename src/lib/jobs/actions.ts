@@ -8,7 +8,7 @@ import { cancelJob, retryJob } from "./runner";
 
 /** Runs a failed job again (E6-7): same job, same input, so nothing is duplicated. */
 export const retry = action(z.object({ id: z.string().min(1) }), async ({ id }) => {
-  if (!(await retryJob(id))) throw new ActionError("This can't be retried: it's still running or already done.");
+  if (!(await retryJob(id))) throw new ActionError("Das lässt sich nicht wiederholen: Es läuft noch oder ist schon fertig.");
   return null;
 });
 

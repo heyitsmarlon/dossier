@@ -32,16 +32,16 @@ export function formatDocumentDate(date: Date, format: DateFormat, locale = "en-
  * a resume's text, drafts not yet in an application.
  */
 export const JOB_RETENTION_OPTIONS: readonly { hours: number; label: string }[] = [
-  { hours: 1, label: "1 hour" },
-  { hours: 24, label: "24 hours" },
-  { hours: 24 * 7, label: "7 days" },
-  { hours: 24 * 30, label: "30 days" },
+  { hours: 1, label: "1 Stunde" },
+  { hours: 24, label: "24 Stunden" },
+  { hours: 24 * 7, label: "7 Tage" },
+  { hours: 24 * 30, label: "30 Tage" },
 ];
 export const DEFAULT_JOB_RETENTION_HOURS = 24;
 export const isJobRetention = (hours: number) => JOB_RETENTION_OPTIONS.some((option) => option.hours === hours);
 /** "24 hours" */
 export const jobRetentionLabel = (hours: number) =>
-  JOB_RETENTION_OPTIONS.find((option) => option.hours === hours)?.label ?? `${hours} hours`;
+  JOB_RETENTION_OPTIONS.find((option) => option.hours === hours)?.label ?? `${hours} Stunden`;
 
 const pageLimit = z.enum(["1", "2", "none"]);
 export type PageLimit = z.infer<typeof pageLimit>;
@@ -51,14 +51,14 @@ export type PageLimit = z.infer<typeof pageLimit>;
  * that runs over is trimmed when its application is created (E10-10).
  */
 export const PAGE_LIMITS: readonly { value: PageLimit; label: string; pages: number | null }[] = [
-  { value: "1", label: "One page", pages: 1 },
-  { value: "2", label: "Up to two pages", pages: 2 },
-  { value: "none", label: "No limit", pages: null },
+  { value: "1", label: "Eine Seite", pages: 1 },
+  { value: "2", label: "Bis zu zwei Seiten", pages: 2 },
+  { value: "none", label: "Kein Limit", pages: null },
 ];
 /** The most pages a resume may have, or null for no limit. */
 export const maxPages = (limit: PageLimit): number | null => PAGE_LIMITS.find((option) => option.value === limit)?.pages ?? null;
 /** "one page", "two pages" */
-export const pagesInWords = (pages: number) => (pages === 1 ? "one page" : pages === 2 ? "two pages" : `${pages} pages`);
+export const pagesInWords = (pages: number) => (pages === 1 ? "eine Seite" : pages === 2 ? "zwei Seiten" : `${pages} Seiten`);
 
 // ─── Stored settings ─────────────────────────────────────────────────────────
 // Settings are stored in the Setting table, one text row per key: enums by
@@ -117,8 +117,8 @@ export const settingsSchema = z.object({
   defaultTone: z.enum(Tone).catch(Tone.WARM),
   /** Language for generated documents; null means "the posting's language" (SET-7). */
   docLanguage: z.string().nullable().catch(null),
-  /** The base resume's language, for its headings and dates; null means English, with the direction read from the profile. */
-  resumeLanguage: z.string().nullable().catch(null),
+  /** The base resume's language, for its headings and dates; null means English, with the direction read from the profile. Unset is German in this fork. */
+  resumeLanguage: z.string().nullable().catch("German"),
   /** Languages added with "Other language…", kept in the list. */
   customLanguages: stringList.catch([]),
   fileNamePattern: z.string().catch("{name} – {company} – {doc}"),

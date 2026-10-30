@@ -30,7 +30,7 @@ import { MatchCard } from "./match-card";
 import { TailoringCard } from "./tailoring-card";
 import { JobProgress, jobStep } from "./job-progress";
 
-const STEPS = ["Paste the posting", "Check the details", "Tailored documents"] as const;
+const STEPS = ["Anzeige einfügen", "Details prüfen", "Zugeschnittene Unterlagen"] as const;
 
 /** The editable details of "The application" (NEW-3). */
 export type Details = {
@@ -93,7 +93,7 @@ const EMPTY_DETAILS: Details = { title: "", company: "", role: "", location: "",
 const draftStore = typeof window === "undefined" ? null : createDraftStore<Draft>();
 const noStore = () => () => {};
 
-const LEAVE_WARNING = "Leave now? I'll stop working on this application, and nothing will be created.";
+const LEAVE_WARNING = "Jetzt verlassen? Ich höre auf, an dieser Bewerbung zu arbeiten, und es wird nichts angelegt.";
 
 /**
  * While `active`, leaving the page asks first (E7-7): the browser's own
@@ -187,10 +187,10 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
     draftStore?.set({ ...initial, posting: fromPosting.text, postingUrl: fromPosting.url, postingId: fromPosting.id, startupId: fromPosting.startup?.id ?? null });
     toast(
       fromPosting.startup
-        ? `Here's what Startups knows about ${fromPosting.startup.company}, without its addresses. Add the role you're after if it doesn't say, then read it.`
+        ? `Das weiß „Startups“ über ${fromPosting.startup.company}, ohne die Adressen. Ergänze die gewünschte Stelle, falls sie fehlt, und lies es dann ein.`
         : fromPosting.complete
-          ? "Here's the posting from Find jobs. Check it, then read it."
-          : "Only the start of this posting came through. Paste the rest from the posting's page, then read it.",
+          ? "Hier ist die Anzeige aus „Jobs finden“. Prüf sie und lies sie dann ein."
+          : "Nur der Anfang dieser Anzeige ist angekommen. Füge den Rest von der Seite der Anzeige ein und lies sie dann ein.",
     );
     router.replace("/new");
   }, [fromPosting, initial, router]);
@@ -220,7 +220,7 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
 
   const read = async () => {
     if (!draft.posting.trim()) {
-      toast(samplePosting ? "Paste a job posting first, or try the sample." : "Paste a job posting first.");
+      toast(samplePosting ? "Füge zuerst eine Stellenanzeige ein, oder probier das Beispiel." : "Füge zuerst eine Stellenanzeige ein.");
       return;
     }
     // Back and on again with the same posting: keep what was read and edited.
@@ -237,7 +237,7 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
   // #221: Claude chat writes it on the user's own Claude plan, through the
   // connector, and saves it here as a Draft application.
   const writeWithClaude = async () => {
-    if (!draft.posting.trim()) return toast("Paste a job posting first.");
+    if (!draft.posting.trim()) return toast("Füge zuerst eine Stellenanzeige ein.");
     // Opened now, while the click still counts: a tab opened after waiting is blocked as a pop-up.
     const chat = openPendingTab();
     setStarting(true);
@@ -245,12 +245,12 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
     setStarting(false);
     if (!result.ok) return void chat?.close();
     sendPendingTab(chat, result.data.url);
-    toast("Writing it in Claude. It shows up under Applications as a Draft once Claude has saved it.");
+    toast("Wird in Claude geschrieben. Sie erscheint unter Bewerbungen als Entwurf, sobald Claude sie gespeichert hat.");
   };
 
   // E7-8: the posting's text from its link, to check before reading it.
   const fetchFromLink = async () => {
-    if (!draft.postingUrl.trim()) return toast("Enter the link to the posting first.");
+    if (!draft.postingUrl.trim()) return toast("Gib zuerst den Link zur Anzeige ein.");
     setFetching(true);
     const result = toastResult(await fetchPostingText({ link: draft.postingUrl }));
     setFetching(false);
@@ -259,8 +259,8 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
     update({ posting: result.data.text });
     const site = new URL(result.data.url).hostname.replace(/^www\./, "");
     toast(
-      `Fetched the posting from ${site}. Check it before reading it.`,
-      previous.trim() ? { action: { label: "Undo", onClick: () => update({ posting: previous }) } } : {},
+      `Anzeige von ${site} geholt. Prüf sie, bevor du sie einliest.`,
+      previous.trim() ? { action: { label: "Rückgängig", onClick: () => update({ posting: previous }) } } : {},
     );
   };
 
@@ -274,7 +274,7 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
       const items = current.read.match.items.map((item, position) => (position === index ? withSkillAdded(item, name) : item));
       return { ...current, read: { ...current.read, match: { items } } };
     });
-    toast(`Added “${name}” to your skills. Attach it to a role under Experience to make it count.`);
+    toast(`„${name}“ zu deinen Fähigkeiten hinzugefügt. Ordne es unter Berufserfahrung einer Stelle zu, damit es zählt.`);
   };
 
   // E7-6: write the documents, then create the application from them.
@@ -298,7 +298,7 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
       setSaveError(result.error);
       return;
     }
-    toast("Your application is ready. Nothing gets sent until you say so.");
+    toast("Deine Bewerbung ist fertig. Nichts wird verschickt, bevor du es sagst.");
     draftStore?.clear();
     router.push(`/applications/${result.data}`);
   };
@@ -342,14 +342,14 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
   return (
     <>
       <PageHeader
-        title="New application"
-        description="Paste a job posting. I'll pull out the details, check it against your profile, and draft a tailored resume and cover letter."
+        title="Neue Bewerbung"
+        description="Füge eine Stellenanzeige ein. Ich ziehe die Details heraus, gleiche sie mit deinem Profil ab und entwerfe einen zugeschnittenen Lebenslauf und ein Anschreiben."
       />
       <div className="flex max-w-[816px] flex-col gap-6 px-10 pb-20">
         <Stepper
           steps={STEPS}
           current={draft.step === "creating" ? 2 : draft.step === "review" ? 1 : 0}
-          aria-label="New application steps"
+          aria-label="Schritte der neuen Bewerbung"
         />
 
         <div ref={stepArea} className="contents">
@@ -357,27 +357,27 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
             <>
               {writeInClaude ? (
                 <p role="note" className="rounded-card border border-line-card bg-card px-4 py-3 text-meta text-muted">
-                  Dossier has no AI model of its own, so Claude writes this one: <strong className="text-ink">Write it with Claude</strong> opens a
-                  chat in Claude that uses your Claude plan and the Dossier connector, and saves the resume and cover letter here as a Draft. To
-                  have Dossier write it instead,{" "}
+                  Dossier hat kein eigenes KI-Modell, also schreibt Claude diese hier: <strong className="text-ink">Mit Claude schreiben</strong> öffnet einen
+                  Chat in Claude, der deinen Claude-Tarif und den Dossier-Connector nutzt, und speichert Lebenslauf und Anschreiben hier als Entwurf. Soll
+                  Dossier selbst schreiben,{" "}
                   <Link href="/settings?section=ai" className="font-medium text-ink underline underline-offset-2">
-                    choose a model in Settings → AI provider
+                    wähle ein Modell unter Einstellungen → KI-Anbieter
                   </Link>
                   .
                 </p>
               ) : !aiReady && (
                 <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-                  No AI provider is set up yet, so nothing can read the posting.{" "}
+                  Es ist noch kein KI-Anbieter eingerichtet, daher kann nichts die Anzeige lesen.{" "}
                   <Link href="/settings?section=ai" className="font-medium text-warning underline underline-offset-2">
-                    Choose one in Settings → AI provider
+                    Wähle einen unter Einstellungen → KI-Anbieter
                   </Link>
                 </p>
               )}
               <Card className="flex flex-col gap-5">
                 <Textarea
-                  label="Job posting"
+                  label="Stellenanzeige"
                   rows={14}
-                  placeholder="Paste the full posting here: title, company, requirements, the lot."
+                  placeholder="Füge hier die ganze Anzeige ein: Titel, Firma, Anforderungen, alles."
                   value={draft.posting}
                   onChange={(event) => update({ posting: event.target.value })}
                 />
@@ -387,7 +387,7 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
                       className="flex-1"
                       label={
                         <>
-                          Link to the posting <span className="text-muted">(optional, saved with the application)</span>
+                          Link zur Anzeige <span className="text-muted">(optional, wird mit der Bewerbung gespeichert)</span>
                         </>
                       }
                       type="url"
@@ -402,18 +402,18 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
                       aria-disabled={fetching || undefined}
                       onClick={() => void (fetching ? undefined : fetchFromLink())}
                     >
-                      {fetching ? "Fetching…" : "Fetch"}
+                      {fetching ? "Wird geholt…" : "Holen"}
                     </Button>
                   </div>
                   <p className="text-meta text-muted">
-                    Fetch asks the job site for the page from your server, so it needs internet access. Check what it brings before reading it.
+                    „Holen“ ruft die Seite der Jobbörse von deinem Server aus ab und braucht daher Internet. Prüf das Ergebnis, bevor du es einliest.
                   </p>
                 </div>
               </Card>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {samplePosting ? (
                   <Button variant="text" className="underline underline-offset-[3px]" onClick={() => update({ posting: samplePosting })}>
-                    Use a sample posting
+                    Beispielanzeige verwenden
                   </Button>
                 ) : (
                   <span />
@@ -422,7 +422,7 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
                   aria-disabled={!draft.posting.trim() || starting || undefined}
                   onClick={() => void (starting ? undefined : writeInClaude ? writeWithClaude() : read())}
                 >
-                  {writeInClaude ? "Write it with Claude →" : "Read the posting →"}
+                  {writeInClaude ? "Mit Claude schreiben →" : "Anzeige einlesen →"}
                 </Button>
               </div>
             </>
@@ -430,7 +430,7 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
 
           {draft.step === "reading" && (
             <JobProgress
-              title="Reading the posting…"
+              title="Lese die Anzeige…"
               steps={READ_POSTING_STEPS}
               current={jobStep(READ_POSTING_STEPS, readJob)}
               error={readJob?.status === "FAILED" ? readJob.error : null}
@@ -446,10 +446,10 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
               <TailoringCard tone={draft.tone} note={draft.note} onTone={(tone) => update({ tone })} onNote={(note) => update({ note })} />
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <Button variant="text" onClick={() => update({ step: "paste" })}>
-                  ← Back to the posting
+                  ← Zurück zur Anzeige
                 </Button>
                 <Button aria-disabled={starting || undefined} onClick={() => void create()}>
-                  Create application →
+                  Bewerbung anlegen →
                 </Button>
               </div>
             </>
@@ -457,14 +457,14 @@ export function NewApplication({ aiReady, writeInClaude = false, samplePosting, 
 
           {draft.step === "creating" && (
             <JobProgress
-              title="Putting your application together…"
+              title="Stelle deine Bewerbung zusammen…"
               steps={WRITE_DOCUMENTS_STEPS}
               // "Saving the application" is the last step, once the documents are written.
               current={writeJob?.status === "DONE" ? 2 : jobStep(WRITE_DOCUMENTS_STEPS, writeJob)}
               error={writeJob?.status === "FAILED" ? writeJob.error : saveError}
               onRetry={() => void retryCreating()}
               onBack={() => update({ step: "review" })}
-              backLabel="← Back to the details"
+              backLabel="← Zurück zu den Details"
             />
           )}
         </div>

@@ -1,7 +1,7 @@
 import type { LanguageLevel } from "@/generated/prisma/enums";
 import type { Unit } from "@/lib/application-data";
 import { publicationLabel } from "@/lib/citation";
-import { LANGUAGE_LEVELS, type DateSpan, type ProfileData } from "@/lib/profile";
+import { ENGLISH_LANGUAGE_LEVELS, type DateSpan, type ProfileData } from "@/lib/profile";
 
 import sample from "../../prisma/seed/prototype-sample.json";
 
@@ -31,7 +31,7 @@ export function dateSpan(start: string, end: string): DateSpan {
 
 /** Language levels by their label in the prototype, e.g. "Fluent (C2)". */
 export const LEVELS_BY_LABEL = new Map<string, LanguageLevel>(
-  LANGUAGE_LEVELS.map(({ value, label }) => [label, value]),
+  ENGLISH_LANGUAGE_LEVELS.map(({ value, label }) => [label, value]),
 );
 
 /** The sample profile as `loadProfile()` returns it, with the prototype's ids. */

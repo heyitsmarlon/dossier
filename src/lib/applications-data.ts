@@ -51,7 +51,7 @@ export async function loadApplicationRows({ archived, sort }: { archived: boolea
     return {
       id: application.id,
       company: application.company.trim(),
-      role: application.role.trim() || application.title.trim() || "Untitled application",
+      role: application.role.trim() || application.title.trim() || "Bewerbung ohne Titel",
       location: application.location.trim(),
       mode: application.mode.trim(),
       status: application.status,

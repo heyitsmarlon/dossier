@@ -25,16 +25,16 @@ type FieldSpec = {
 
 // PRO-1, in the prototype's order and layout.
 const FIELDS: FieldSpec[] = [
-  { field: "name", label: "Full name", wide: true, placeholder: "John Doe", autoComplete: "name" },
-  { field: "headline", label: "Headline", wide: true, placeholder: "Senior Product Designer" },
-  { field: "email", label: "Email", type: "email", placeholder: "john.doe@example.com", autoComplete: "email" },
-  { field: "phone", label: "Phone", type: "tel", placeholder: "+1 555 010 0000", autoComplete: "tel" },
-  { field: "dob", label: "Date of birth", type: "date", autoComplete: "bday" },
-  { field: "website", label: "Website", placeholder: "johndoe.example.com", autoComplete: "url" },
-  { field: "address", label: "Street address", wide: true, placeholder: "12 Main Street", autoComplete: "street-address" },
-  { field: "city", label: "City", placeholder: "Springfield", autoComplete: "address-level2" },
-  { field: "country", label: "Country", placeholder: "United States", autoComplete: "country-name" },
-  { field: "linkedin", label: "LinkedIn", wide: true, placeholder: "linkedin.com/in/johndoe" },
+  { field: "name", label: "Vollständiger Name", wide: true, placeholder: "Max Mustermann", autoComplete: "name" },
+  { field: "headline", label: "Berufsbezeichnung", wide: true, placeholder: "Senior Webdesigner" },
+  { field: "email", label: "E-Mail", type: "email", placeholder: "max.mustermann@example.com", autoComplete: "email" },
+  { field: "phone", label: "Telefon", type: "tel", placeholder: "+49 151 23456789", autoComplete: "tel" },
+  { field: "dob", label: "Geburtsdatum", type: "date", autoComplete: "bday" },
+  { field: "website", label: "Website", placeholder: "maxmustermann.de", autoComplete: "url" },
+  { field: "address", label: "Straße und Hausnummer", wide: true, placeholder: "Musterstraße 12", autoComplete: "street-address" },
+  { field: "city", label: "Ort", placeholder: "50667 Köln", autoComplete: "address-level2" },
+  { field: "country", label: "Land", placeholder: "Deutschland", autoComplete: "country-name" },
+  { field: "linkedin", label: "LinkedIn", wide: true, placeholder: "linkedin.com/in/maxmustermann" },
 ];
 
 // Gentle format hints: they never block saving.
@@ -44,9 +44,9 @@ const looksLikeWebAddress = (value: string) =>
 
 function formatHint(field: BasicsField, value: string): string | undefined {
   if (!value.trim()) return undefined;
-  if (field === "email" && !looksLikeEmail(value)) return "That doesn't look like an email address yet.";
+  if (field === "email" && !looksLikeEmail(value)) return "Das sieht noch nicht nach einer E-Mail-Adresse aus.";
   if ((field === "website" || field === "linkedin") && !looksLikeWebAddress(value)) {
-    return "That doesn't look like a web address yet, e.g. johndoe.example.com.";
+    return "Das sieht noch nicht nach einer Webadresse aus, z. B. maxmustermann.de.";
   }
   return undefined;
 }
@@ -103,8 +103,8 @@ export function BasicsSection({
       ))}
       <Textarea
         className="col-span-2"
-        label="A few lines about you"
-        placeholder="What you do, what you're good at, what you're looking for."
+        label="Ein paar Zeilen über dich"
+        placeholder="Was du machst, worin du gut bist, wonach du suchst."
         rows={4}
         value={basics.summary}
         onChange={(event) => set("summary", event.target.value)}
@@ -114,11 +114,11 @@ export function BasicsSection({
         className="col-span-2 pt-1"
         label={
           <>
-            Show my age on resumes{" "}
+            Mein Alter im Lebenslauf zeigen{" "}
             <span className="text-meta text-muted">
               {age === null
-                ? "(add your date of birth first)"
-                : `(you're ${age}; off by default, as many places advise leaving it out)`}
+                ? "(zuerst Geburtsdatum eintragen)"
+                : `(du bist ${age}; standardmäßig aus, da oft empfohlen wird, es wegzulassen)`}
             </span>
           </>
         }

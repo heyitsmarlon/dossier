@@ -57,7 +57,7 @@ function SkillsCard({ profile, update }: { profile: ProfileData; update: UpdateP
     const existing = profile.skills.find((skill) => sameName(skill.name, name));
     if (existing) {
       setDraft("");
-      toast(`“${existing.name}” is already in your skills.`);
+      toast(`„${existing.name}“ ist schon in deinen Fähigkeiten.`);
       return;
     }
     setDraft("");
@@ -100,16 +100,16 @@ function SkillsCard({ profile, update }: { profile: ProfileData; update: UpdateP
   };
 
   return (
-    <ChipCard title="Skills" count={profile.skills.length}>
+    <ChipCard title="Fähigkeiten" count={profile.skills.length}>
       {profile.skills.length > 0 && (
-        <ul className="flex flex-wrap gap-2" aria-label="Your skills">
+        <ul className="flex flex-wrap gap-2" aria-label="Deine Fähigkeiten">
           {profile.skills.map((skill) => {
             const roles = roleCount(skill.id);
             return (
               <li key={skill.id}>
                 <RemovableChip
-                  meta={roles > 0 ? `${roles} ${roles === 1 ? "role" : "roles"}` : undefined}
-                  removeLabel={`Remove ${skill.name}`}
+                  meta={roles > 0 ? `${roles} ${roles === 1 ? "Position" : "Positionen"}` : undefined}
+                  removeLabel={`${skill.name} entfernen`}
                   onRemove={() => void remove(skill.id)}
                 >
                   {skill.name}
@@ -120,7 +120,7 @@ function SkillsCard({ profile, update }: { profile: ProfileData; update: UpdateP
         </ul>
       )}
       <Input
-        aria-label="Add a skill"
+        aria-label="Fähigkeit hinzufügen"
         placeholder="e.g. Accessibility"
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
@@ -158,7 +158,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
           language.id === existing.id ? { ...language, level } : language,
         ),
       }));
-      toast(`Updated ${existing.name} to ${languageLevelLabel(level)}.`);
+      toast(`${existing.name} auf ${languageLevelLabel(level)} geändert.`);
     }
     const result = await track(addLanguage({ name: trimmed, level }));
     if (!result.ok) {
@@ -198,9 +198,9 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
   }
 
   return (
-    <ChipCard title="Languages" count={profile.languages.length} optional>
+    <ChipCard title="Sprachen" count={profile.languages.length} optional>
       {profile.languages.length > 0 && (
-        <ul className="flex flex-col border-t border-line" aria-label="Your languages">
+        <ul className="flex flex-col border-t border-line" aria-label="Deine Sprachen">
           {profile.languages.map((language) => (
             <li key={language.id} className="flex items-center gap-3 border-b border-line py-2.5">
               <span className="min-w-0 flex-1 text-field">{language.name}</span>
@@ -214,7 +214,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
               </Select>
               <button
                 type="button"
-                aria-label={`Remove ${language.name}`}
+                aria-label={`${language.name} entfernen`}
                 onClick={() => void remove(language.id)}
                 className="rounded-control px-1.5 py-1 text-base leading-none text-muted hover:text-ink"
               >
@@ -227,8 +227,8 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
       <div className="flex flex-wrap gap-2">
         <Input
           className="min-w-0 flex-[1_1_180px]"
-          aria-label="Language"
-          placeholder="Language, e.g. French"
+          aria-label="Sprache"
+          placeholder="Sprache, z. B. Französisch"
           value={name}
           onChange={(event) => setName(event.target.value)}
           onKeyDown={(event) => {
@@ -239,7 +239,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
         />
         <Select
           className="flex-[0_1_220px]"
-          aria-label="Level"
+          aria-label="Niveau"
           selectClassName="text-sm"
           value={level}
           onChange={(event) => setLevel(event.target.value as LanguageLevel)}
@@ -247,7 +247,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
           <LevelOptions />
         </Select>
         <Button variant="secondary" className="bg-input" onClick={() => void add()}>
-          Add
+          Hinzufügen
         </Button>
       </div>
     </ChipCard>

@@ -9,9 +9,9 @@ export const VIEWS = ["board", "table"] as const;
 export type View = (typeof VIEWS)[number];
 
 export const FILTERS = [
-  { value: "all", label: "All" },
-  { value: "active", label: "In progress" },
-  { value: "closed", label: "Closed" },
+  { value: "all", label: "Alle" },
+  { value: "active", label: "Laufend" },
+  { value: "closed", label: "Abgeschlossen" },
 ] as const;
 export type Filter = (typeof FILTERS)[number]["value"];
 
@@ -138,22 +138,22 @@ export function sortRows<T extends Sortable>(rows: readonly T[], { key, reversed
  * Interview and Offer.
  */
 export function listSummary(statuses: readonly ApplicationStatus[]): string {
-  if (statuses.length === 0) return "No applications yet. Paste a job posting and I'll tailor your resume and cover letter to it.";
+  if (statuses.length === 0) return "Noch keine Bewerbungen. Füge eine Stellenanzeige ein, dann schneide ich Lebenslauf und Anschreiben darauf zu.";
   const count = (...wanted: ApplicationStatus[]) => statuses.filter((status) => wanted.includes(status)).length;
   const waiting = count(ApplicationStatus.SENT, ApplicationStatus.SCREENING);
   const talking = count(ApplicationStatus.INTERVIEW, ApplicationStatus.OFFER);
-  const total = `${statuses.length} ${statuses.length === 1 ? "application" : "applications"}`;
-  return `${total}: ${waiting} waiting to hear back, ${talking} in conversation.${talking > 0 ? " Nice momentum." : ""}`;
+  const total = `${statuses.length} ${statuses.length === 1 ? "Bewerbung" : "Bewerbungen"}`;
+  return `${total}: ${waiting} warten auf Rückmeldung, ${talking} im Gespräch.${talking > 0 ? " Schöner Schwung." : ""}`;
 }
 
 /** "Today", "Yesterday", "3 days ago", "2 weeks ago", counting calendar days in the server's time zone. */
 export function updatedAgo(date: Date, now = new Date()): string {
   const day = (value: Date) => Date.UTC(value.getFullYear(), value.getMonth(), value.getDate());
   const days = Math.max(0, Math.round((day(now) - day(date)) / 86_400_000));
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 14) return `${days} days ago`;
-  return `${Math.round(days / 7)} weeks ago`;
+  if (days === 0) return "Heute";
+  if (days === 1) return "Gestern";
+  if (days < 14) return `vor ${days} Tagen`;
+  return `vor ${Math.round(days / 7)} Wochen`;
 }
 
 export const statusLabel = (status: ApplicationStatus) => statusInfo(status).label;

@@ -152,7 +152,7 @@ export abstract class BaseProvider implements AIProvider {
   }
 
   private requireModel(): string {
-    if (!this.model) throw AiError.config("Choose a model in Settings → AI provider first.");
+    if (!this.model) throw AiError.config("Wähle zuerst ein Modell unter Einstellungen → KI-Anbieter.");
     return this.model;
   }
 

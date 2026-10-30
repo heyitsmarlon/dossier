@@ -4,17 +4,17 @@ import { DocumentKind } from "@/generated/prisma/enums";
 
 /** The tokens a pattern can use, with what they stand for (Settings shows these). */
 export const FILE_NAME_TOKENS = [
-  { token: "{name}", description: "Your full name" },
-  { token: "{first}", description: "First name" },
-  { token: "{company}", description: "Company" },
-  { token: "{role}", description: "Job title" },
-  { token: "{doc}", description: "Resume or Cover letter" },
-  { token: "{date}", description: "Download date" },
+  { token: "{name}", description: "Dein vollständiger Name" },
+  { token: "{first}", description: "Vorname" },
+  { token: "{company}", description: "Firma" },
+  { token: "{role}", description: "Stellentitel" },
+  { token: "{doc}", description: "Lebenslauf oder Anschreiben" },
+  { token: "{date}", description: "Downloaddatum" },
 ] as const;
 
 export const DOCUMENT_LABELS: Record<DocumentKind, string> = {
-  [DocumentKind.RESUME]: "Resume",
-  [DocumentKind.COVER_LETTER]: "Cover letter",
+  [DocumentKind.RESUME]: "Lebenslauf",
+  [DocumentKind.COVER_LETTER]: "Anschreiben",
   // Never a file, but named like the others (the history, toasts).
   [DocumentKind.EMAIL]: "Email",
 };

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { heldPdf, pdfDownload } from "@/lib/pdf/downloads";
 import { route } from "@/lib/route";
 
-const GONE = "That PDF isn't here any more. Download it again.";
+const GONE = "Dieses PDF ist nicht mehr da. Lade es erneut herunter.";
 
 /** Hands over a PDF that `POST /api/pdf` rendered and held for a few minutes. */
 export const GET = route<RouteContext<"/api/pdf/[id]">>(async (_request, { params }) => {

@@ -14,7 +14,7 @@ export type JobSearchSettingsView = {
   freehire: { host: string };
 };
 
-export const JOB_KEY_UNREADABLE = "Your saved key can't be read. Please enter it again.";
+export const JOB_KEY_UNREADABLE = "Dein gespeicherter Schlüssel ist nicht lesbar. Bitte gib ihn neu ein.";
 
 /** Where to get a JSearch key, by where it's from. */
 export const JSEARCH_KEY_URLS: Record<JSearchHost, string> = {
@@ -50,10 +50,10 @@ export type SourceInfo = {
 export const SOURCE_INFO: Record<JobSource, SourceInfo> = {
   JSEARCH: {
     name: "JSearch",
-    description: "Postings from LinkedIn, Indeed, Glassdoor and company sites, through Google for Jobs.",
-    tag: "Most countries · free key with 200 searches a month",
+    description: "Anzeigen von LinkedIn, Indeed, Glassdoor und Firmenseiten, über Google for Jobs.",
+    tag: "Die meisten Länder · kostenloser Schlüssel mit 200 Suchen im Monat",
     keyUrl: "https://www.openwebninja.com/api/jsearch",
-    quotaPeriod: "this month",
+    quotaPeriod: "diesen Monat",
     attribution: null,
     attributionLink: null,
     countries: null,
@@ -61,10 +61,10 @@ export const SOURCE_INFO: Record<JobSource, SourceInfo> = {
   },
   ADZUNA: {
     name: "Adzuna",
-    description: "Adzuna's own job index in 19 countries. It only shares the start of each posting.",
-    tag: "19 countries · free key, about 250 searches a day",
+    description: "Adzunas eigener Jobindex in 19 Ländern. Liefert nur den Anfang jeder Anzeige.",
+    tag: "19 Länder · kostenloser Schlüssel, etwa 250 Suchen am Tag",
     keyUrl: "https://developer.adzuna.com/signup",
-    quotaPeriod: "today",
+    quotaPeriod: "heute",
     attribution: "Jobs by Adzuna",
     // Its terms: "Adzuna" on each displayed advert, at least 116 × 23 px, linked to adzuna.co.uk or the local site.
     attributionLink: { home: "https://www.adzuna.co.uk", local: /^www\.adzuna\.(?:[a-z]{2,3}|co\.[a-z]{2}|com\.[a-z]{2})$/ },
@@ -73,19 +73,19 @@ export const SOURCE_INFO: Record<JobSource, SourceInfo> = {
   },
   ARBEITSAGENTUR: {
     name: "Bundesagentur für Arbeit",
-    description: "Germany's federal job board, with full postings. Unofficial: you choose it on your own responsibility.",
-    tag: "Germany only · free, no key · unofficial",
+    description: "Die Jobbörse der Bundesagentur für Arbeit, mit vollständigen Anzeigen. Inoffiziell: Nutzung auf eigene Verantwortung.",
+    tag: "Nur Deutschland · kostenlos, kein Schlüssel · inoffiziell",
     keyUrl: null,
     quotaPeriod: null,
-    attribution: "Source: Bundesagentur für Arbeit",
+    attribution: "Quelle: Bundesagentur für Arbeit",
     attributionLink: null,
     countries: ["de"],
     radius: true,
   },
   FREEHIRE: {
     name: "FreeHire",
-    description: "Mostly tech postings, read straight from company career pages (Greenhouse, Lever, Workday and more), with full postings.",
-    tag: "Most countries · free, no key · no distance filter",
+    description: "Vor allem Tech-Anzeigen, direkt von Karriereseiten (Greenhouse, Lever, Workday und mehr), mit vollständigen Anzeigen.",
+    tag: "Die meisten Länder · kostenlos, kein Schlüssel · kein Umkreisfilter",
     keyUrl: null,
     quotaPeriod: null,
     attribution: "Jobs by FreeHire",
@@ -115,8 +115,8 @@ export const ARBEITSAGENTUR_TERMS_URL = "https://www.arbeitsagentur.de/datei/nut
 
 /** What "I understand" agrees to, in Settings, in Find jobs and in the server log. */
 export const ARBEITSAGENTUR_NOTE =
-  "The Bundesagentur für Arbeit has no official API. Dossier searches it through the access its own job search uses, without its permission, " +
-  "and the BA's terms of use don't allow automated access. You choose this source on your own responsibility, and it can stop working at any time.";
+  "Die Bundesagentur für Arbeit hat keine offizielle API. Dossier durchsucht sie über den Zugang, den ihre eigene Jobsuche nutzt, ohne ihre Erlaubnis, " +
+  "und die Nutzungsbedingungen der BA erlauben keinen automatisierten Zugriff. Du wählst diese Quelle auf eigene Verantwortung, und sie kann jederzeit aufhören zu funktionieren.";
 
 /** A BA posting's own page on arbeitsagentur.de, which its results always link to, even when they have a link of their own. */
 export function arbeitsagenturPage(posting: { source: JobSource; externalId: string }): string | null {

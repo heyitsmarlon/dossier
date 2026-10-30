@@ -16,7 +16,7 @@ export type SearchFieldErrors = { keywords?: string; country?: string };
 export function uncoveredCountry(source: JobSource | null, query: SearchQuery, countries: readonly Country[]): string | undefined {
   if (!source || !query.country || sourceCovers(source, query.country)) return undefined;
   const name = countries.find((country) => country.code === query.country)?.name ?? query.country.toUpperCase();
-  return `${SOURCE_INFO[source].name} doesn't list jobs in ${name}.`;
+  return `${SOURCE_INFO[source].name} listet keine Jobs in ${name}.`;
 }
 
 /** What, Where, Country, Within and Posted, for a grid; Remote only is RemoteOnlyField. */
@@ -41,17 +41,17 @@ export function SearchFields({
   return (
     <>
       <Input
-        label="What"
+        label="Was"
         className="sm:col-span-2 lg:col-span-1"
         value={value.keywords}
-        placeholder="Job title, skill or company"
+        placeholder="Berufsbezeichnung, Fähigkeit oder Firma"
         error={errors.keywords}
         onChange={(event) => onChange({ keywords: event.target.value })}
         onBlur={onBlur}
       />
-      <Input label="Where" value={value.place} placeholder="City or region" onChange={(event) => onChange({ place: event.target.value })} onBlur={onBlur} />
-      <Select label="Country" value={value.country} error={errors.country ?? uncovered} onChange={(event) => onChange({ country: event.target.value })}>
-        <option value="">Choose a country</option>
+      <Input label="Wo" value={value.place} placeholder="Stadt oder Region" onChange={(event) => onChange({ place: event.target.value })} onBlur={onBlur} />
+      <Select label="Land" value={value.country} error={errors.country ?? uncovered} onChange={(event) => onChange({ country: event.target.value })}>
+        <option value="">Land wählen</option>
         {countries.map((country) => (
           <option key={country.code} value={country.code}>
             {country.name}
@@ -59,10 +59,10 @@ export function SearchFields({
         ))}
       </Select>
       <Select
-        label="Within"
+        label="Umkreis"
         value={String(value.radiusKm)}
         disabled={noRadius || !value.place.trim()}
-        hint={noRadius ? `${SOURCE_INFO[source].name} has no distance filter` : value.place.trim() ? undefined : "Add a place first"}
+        hint={noRadius ? `${SOURCE_INFO[source].name} hat keinen Umkreisfilter` : value.place.trim() ? undefined : "Zuerst einen Ort angeben"}
         onChange={(event) => onChange({ radiusKm: Number(event.target.value) as RadiusKm })}
       >
         {RADII_KM.map((km) => (
@@ -71,7 +71,7 @@ export function SearchFields({
           </option>
         ))}
       </Select>
-      <Select label="Posted" value={value.postedWithin} onChange={(event) => onChange({ postedWithin: event.target.value as SearchQuery["postedWithin"] })}>
+      <Select label="Veröffentlicht" value={value.postedWithin} onChange={(event) => onChange({ postedWithin: event.target.value as SearchQuery["postedWithin"] })}>
         {POSTED_WITHIN.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
@@ -86,10 +86,10 @@ export function SearchFields({
 export function RemoteOnlyField({ value, onChange, source }: { value: SearchQuery; onChange: (patch: Partial<SearchQuery>) => void; source: JobSource | null }) {
   return (
     <Checkbox
-      label="Remote only"
+      label="Nur remote"
       checked={value.remoteOnly}
       onChange={(event) => onChange({ remoteOnly: event.target.checked })}
-      hint={source === "ADZUNA" && value.remoteOnly ? "Adzuna has no remote filter, so this adds “remote” to your search." : undefined}
+      hint={source === "ADZUNA" && value.remoteOnly ? "Adzuna hat keinen Remote-Filter, daher wird „remote“ zu deiner Suche hinzugefügt." : undefined}
     />
   );
 }

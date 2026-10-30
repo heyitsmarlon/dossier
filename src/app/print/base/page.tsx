@@ -7,7 +7,7 @@ import { loadSettings } from "@/lib/settings-data";
 import { loadTheme } from "@/lib/theme-data";
 import { BUILT_IN_THEMES, printCss } from "@/lib/themes";
 
-export const metadata: Metadata = { title: "Base resume", robots: { index: false } };
+export const metadata: Metadata = { title: "Basis-Lebenslauf", robots: { index: false } };
 
 /** The base resume on its own, for the PDF renderer (E5-5) to print. */
 export default async function PrintBaseResumePage() {

@@ -38,7 +38,7 @@ export async function refreshStartups(
     { source: "HN", fetch: () => fetchHnStartups(place, signal) },
   ];
 
-  await step("Asking Y Combinator and Hacker News");
+  await step("Frage Y Combinator und Hacker News");
   const results = await Promise.allSettled(sources.map((entry) => entry.fetch()));
   signal.throwIfAborted();
   const outcomes = results.map((result, index) => {
@@ -50,13 +50,13 @@ export async function refreshStartups(
   });
   const found = results.flatMap((result) => (result.status === "fulfilled" ? result.value : []));
 
-  await step(`Scoring ${found.length} ${found.length === 1 ? "startup" : "startups"} against your profile`);
+  await step(`Bewerte ${found.length} ${found.length === 1 ? "Startup" : "Startups"} anhand deines Profils`);
   const added = await upsertStartups(found, now);
   // Ones this refresh didn't find again are scored against today's profile too.
   await rescoreStartups(now);
   await sweepStartups(now);
 
-  await step("Looking for application addresses on their own sites");
+  await step("Suche Bewerbungsadressen auf ihren Websites");
   const toCheck = await prisma.startup.findMany({
     where: { status: { in: ["NEW", "SAVED"] }, emailsCheckedAt: null, website: { not: "" }, noApplicationsFrom: "" },
     orderBy: { score: "desc" },

@@ -60,9 +60,9 @@ export function FactList({
     }
     // A blank one is gone without a word.
     if (!fact.text.trim()) return;
-    toast("Removed a fact.", {
+    toast("Fakt entfernt.", {
       action: {
-        label: "Undo",
+        label: "Rückgängig",
         onClick: async () => {
           const restored = await track(restoreFact({ id: fact.id, applicationId, text: fact.text, sort: result.data.sort }));
           if (!restored.ok) return toast(restored.error);
@@ -75,7 +75,7 @@ export function FactList({
   return (
     <div className="flex flex-col gap-3">
       {facts.length > 0 && (
-        <ol aria-label="Facts" className="flex flex-col gap-2.5">
+        <ol aria-label="Fakten" className="flex flex-col gap-2.5">
           {facts.map((fact, index) => (
             <FactRow
               key={fact.id}
@@ -91,7 +91,7 @@ export function FactList({
       )}
       <div>
         <Button variant="secondary" size="sm" onClick={() => void add()} disabled={adding}>
-          + Add a fact
+          + Fakt hinzufügen
         </Button>
       </div>
     </div>
@@ -118,7 +118,7 @@ function FactRow({
   return (
     <li className="flex items-start gap-3">
       <textarea
-        aria-label={`Fact ${number}`}
+        aria-label={`Fakt ${number}`}
         // Only a fact that was just added takes focus.
         autoFocus={autoFocus}
         rows={1}
@@ -129,8 +129,8 @@ function FactRow({
         onBlur={flush}
         className={cn(controlClassName, "min-h-[42px] resize-none px-3 py-[9px] leading-[1.5] [field-sizing:content] placeholder:text-muted")}
       />
-      <Button variant="danger-text" size="sm" className="mt-1.5" aria-label={`Remove fact ${number}`} onClick={onRemove}>
-        Remove
+      <Button variant="danger-text" size="sm" className="mt-1.5" aria-label={`Fakt ${number} entfernen`} onClick={onRemove}>
+        Entfernen
       </Button>
     </li>
   );

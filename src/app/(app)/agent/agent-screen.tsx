@@ -20,9 +20,9 @@ type ScanResult = { message: string };
 type DraftResult = { applicationId: string };
 
 const SETTINGS: Record<NonNullable<AgentView["setupSection"]>, { href: string; label: string }> = {
-  agent: { href: "/settings?section=agent", label: "Settings → Job agent" },
-  ai: { href: "/settings?section=ai", label: "Settings → AI provider" },
-  jobs: { href: "/settings?section=jobs", label: "Settings → Job search" },
+  agent: { href: "/settings?section=agent", label: "Einstellungen → Job-Agent" },
+  ai: { href: "/settings?section=ai", label: "Einstellungen → KI-Anbieter" },
+  jobs: { href: "/settings?section=jobs", label: "Einstellungen → Jobsuche" },
 };
 
 /**
@@ -41,7 +41,7 @@ export function AgentScreen({ view }: { view: AgentView }) {
   const run = useJob<ScanResult>(runJobId, 0, (job) => {
     if (job.status !== "DONE" && job.status !== "FAILED") return;
     setRunJobId(null);
-    toast(job.status === "DONE" ? (job.result?.message ?? "The run is done.") : (job.error ?? "The run didn't finish."));
+    toast(job.status === "DONE" ? (job.result?.message ?? "Der Durchlauf ist fertig.") : (job.error ?? "Der Durchlauf wurde nicht abgeschlossen."));
     router.refresh();
   });
   const running = Boolean(runJobId) && (!run || run.status === "QUEUED" || run.status === "RUNNING");
@@ -69,10 +69,10 @@ export function AgentScreen({ view }: { view: AgentView }) {
         return toast(result.error);
       }
       const undo = result.data.undo;
-      if (!undo) return toast("Dismissed, with its draft. It won't come back.");
-      toast("Dismissed. It won't come back.", {
+      if (!undo) return toast("Verworfen, samt Entwurf. Die Anzeige kommt nicht wieder.");
+      toast("Verworfen. Die Anzeige kommt nicht wieder.", {
         action: {
-          label: "Undo",
+          label: "Rückgängig",
           onClick: () =>
             void restoreAgentCandidate({ ...undo, reasons: stringList(undo.reasons), redFlags: stringList(undo.redFlags) }).then((restored) => {
               if (!toastResult(restored).ok) return;
@@ -92,11 +92,11 @@ export function AgentScreen({ view }: { view: AgentView }) {
   return (
     <>
       <PageHeader
-        title="Job agent"
-        description="Once a day it searches for new postings, scores them against your profile, and keeps the best here for you. Drafts wait for your review, and nothing is ever sent."
+        title="Job-Agent"
+        description="Einmal am Tag sucht er nach neuen Stellenanzeigen, bewertet sie anhand deines Profils und legt dir die besten hier ab. Entwürfe warten auf deine Prüfung, und nichts wird je verschickt."
         actions={
           <Button aria-disabled={running || pending || undefined} onClick={() => !running && !pending && runNow()}>
-            {running ? "Running…" : "Run now"}
+            {running ? "Läuft…" : "Jetzt starten"}
           </Button>
         }
       />
@@ -105,32 +105,32 @@ export function AgentScreen({ view }: { view: AgentView }) {
 
         <Card padding="none" className="px-7 py-2">
           <dl>
-            <Fact label="Searches for">{view.search ?? "Nothing yet"}</Fact>
-            <Fact label="Last run">
+            <Fact label="Sucht nach">{view.search ?? "Noch nichts"}</Fact>
+            <Fact label="Letzter Durchlauf">
               {view.lastRun ? (
                 <>
                   {view.lastRun.at}
                   {view.lastRun.message && <span className="block text-muted">{view.lastRun.message}</span>}
                 </>
               ) : (
-                "Not yet"
+                "Noch nicht"
               )}
             </Fact>
-            <Fact label="Next run">{view.nextRun ?? "Off"}</Fact>
+            <Fact label="Nächster Durchlauf">{view.nextRun ?? "Aus"}</Fact>
           </dl>
           {running && (
             <p role="status" className="border-t border-line py-3.5 text-sm text-muted">
-              {run?.step ?? "Starting the run…"}
+              {run?.step ?? "Durchlauf startet…"}
             </p>
           )}
         </Card>
 
-        <Section title="Drafts to review" count={drafts.length}>
+        <Section title="Entwürfe zur Prüfung" count={drafts.length}>
           {drafts.length === 0 ? (
             <Empty>
               {view.autoDraft
-                ? "No drafts yet. After a run, the best new postings get a draft here."
-                : "No drafts yet. Prepare one from a scored posting, or let the agent prepare them in Settings → Job agent."}
+                ? "Noch keine Entwürfe. Nach einem Durchlauf bekommen die besten neuen Anzeigen hier einen Entwurf."
+                : "Noch keine Entwürfe. Bereite einen aus einer bewerteten Anzeige vor, oder lass den Agenten das tun (Einstellungen → Job-Agent)."}
             </Empty>
           ) : (
             <ul className="flex flex-col gap-3">
@@ -138,7 +138,7 @@ export function AgentScreen({ view }: { view: AgentView }) {
                 <li key={candidate.id}>
                   <CandidateCard candidate={candidate}>
                     <Link href={`/applications/${candidate.applicationId}`} className={buttonClassName("primary", "sm", "hover:text-on-primary")}>
-                      Review draft
+                      Entwurf prüfen
                     </Link>
                     <Button
                       variant="secondary"
@@ -149,11 +149,11 @@ export function AgentScreen({ view }: { view: AgentView }) {
                         })
                       }
                     >
-                      Approve
+                      Übernehmen
                     </Button>
                     <OpenPosting url={candidate.url} />
                     <Button variant="danger-text" size="sm" className="ml-auto" onClick={() => setConfirming(candidate)}>
-                      Dismiss
+                      Verwerfen
                     </Button>
                   </CandidateCard>
                 </li>
@@ -162,9 +162,9 @@ export function AgentScreen({ view }: { view: AgentView }) {
           )}
         </Section>
 
-        <Section title="Scored postings" count={scored.length}>
+        <Section title="Bewertete Anzeigen" count={scored.length}>
           {scored.length === 0 ? (
-            <Empty>{empty ? "Nothing waiting yet. A run puts the postings that fit you best here." : "No postings waiting for a draft."}</Empty>
+            <Empty>{empty ? "Noch nichts da. Ein Durchlauf legt die passendsten Anzeigen hier ab." : "Keine Anzeigen, die auf einen Entwurf warten."}</Empty>
           ) : (
             <ul className="flex flex-col gap-3">
               {scored.map((candidate) => (
@@ -177,7 +177,7 @@ export function AgentScreen({ view }: { view: AgentView }) {
           {below.length > 0 && (
             <div className="flex flex-col gap-3">
               <button type="button" aria-expanded={showBelow} onClick={() => setShowBelow(!showBelow)} className="w-fit text-meta text-muted underline underline-offset-2 hover:text-ink">
-                {below.length} below your minimum score of {view.minScore} · {showBelow ? "Hide" : "Show"}
+                {below.length} unter deiner Mindestpunktzahl von {view.minScore} · {showBelow ? "Ausblenden" : "Anzeigen"}
               </button>
               {showBelow && (
                 <ul className="flex flex-col gap-3">
@@ -196,9 +196,9 @@ export function AgentScreen({ view }: { view: AgentView }) {
       <ConfirmDialog
         open={confirming !== null}
         onOpenChange={(open) => !open && setConfirming(null)}
-        title="Dismiss this draft?"
-        description="Its resume, cover letter and chat are deleted, and the posting won't come back."
-        confirmLabel="Dismiss draft"
+        title="Diesen Entwurf verwerfen?"
+        description="Lebenslauf, Anschreiben und Chat werden gelöscht, und die Anzeige kommt nicht wieder."
+        confirmLabel="Entwurf verwerfen"
         onConfirm={() => {
           if (confirming) dismiss(confirming);
           setConfirming(null);
@@ -220,25 +220,25 @@ function Notices({ view }: { view: AgentView }) {
   if (!view.enabled) {
     return note(
       <>
-        The job agent is off.{" "}
+        Der Job-Agent ist aus.{" "}
         <Link href={SETTINGS.agent.href} className="font-medium text-warning underline underline-offset-2">
-          Turn it on in Settings → Job agent
+          Einschalten unter Einstellungen → Job-Agent
         </Link>
-        {view.drafts.length + view.scored.length > 0 && ". What it found before is still here."}
+        {view.drafts.length + view.scored.length > 0 && ". Was er vorher gefunden hat, ist noch da."}
       </>,
     );
   }
   if (view.setupProblem && view.setupSection) {
     return note(
       <>
-        {view.setupProblem.replace(/ in Settings → [^.]+ first\.$/, ".")}{" "}
+        {view.setupProblem.replace(/ \(Einstellungen → [^)]+\)\.$/, ".")}{" "}
         <Link href={SETTINGS[view.setupSection].href} className="font-medium text-warning underline underline-offset-2">
-          Go to {SETTINGS[view.setupSection].label}
+          Zu {SETTINGS[view.setupSection].label}
         </Link>
       </>,
     );
   }
-  if (view.limitReached) return note("The agent has run 3 times in the past 24 hours, as many as it may. It runs again once a day has passed since the first.");
+  if (view.limitReached) return note("Der Agent ist in den letzten 24 Stunden 3-mal gelaufen, mehr ist nicht erlaubt. Er läuft wieder, wenn seit dem ersten Durchlauf ein Tag vergangen ist.");
   return null;
 }
 
@@ -274,7 +274,7 @@ function OpenPosting({ url }: { url: string }) {
   if (!url) return null;
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className={buttonClassName("secondary", "sm")}>
-      Open posting <span className="sr-only">(opens in a new tab)</span>
+      Anzeige öffnen <span className="sr-only">(öffnet in neuem Tab)</span>
     </a>
   );
 }
@@ -295,7 +295,7 @@ function CandidateCard({ candidate, children }: { candidate: AgentCandidateView;
         <ScoreBadge score={candidate.score} />
       </div>
       {candidate.reasons.length > 0 && (
-        <ul aria-label="Why it fits" className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted">
+        <ul aria-label="Warum es passt" className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted">
           {candidate.reasons.map((reason, index) => (
             <li key={index}>{reason}</li>
           ))}
@@ -303,7 +303,7 @@ function CandidateCard({ candidate, children }: { candidate: AgentCandidateView;
       )}
       {candidate.redFlags.length > 0 && (
         <div className="rounded-card bg-warning-surface px-3.5 py-2.5 text-meta text-warning">
-          <p className="font-medium">Worth knowing</p>
+          <p className="font-medium">Gut zu wissen</p>
           <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-4">
             {candidate.redFlags.map((flag, index) => (
               <li key={index}>{flag}</li>
@@ -329,11 +329,11 @@ function ScoredCard({ candidate, onDismiss }: { candidate: AgentCandidateView; o
   const job = useJob<DraftResult>(jobId, 0, (update) => {
     if (update.status === "DONE") {
       setJobId(null);
-      toast("The draft is ready for your review.");
+      toast("Der Entwurf ist bereit zur Prüfung.");
       router.refresh();
     } else if (update.status === "FAILED") {
       setJobId(null);
-      toast(update.error ?? "The draft couldn't be prepared.");
+      toast(update.error ?? "Der Entwurf konnte nicht vorbereitet werden.");
       router.refresh();
     }
   });
@@ -350,7 +350,7 @@ function ScoredCard({ candidate, onDismiss }: { candidate: AgentCandidateView; o
   return (
     <CandidateCard candidate={candidate}>
       <Button size="sm" aria-disabled={preparing || undefined} onClick={() => !preparing && prepare()}>
-        {preparing ? "Preparing draft…" : "Prepare draft"}
+        {preparing ? "Entwurf wird vorbereitet…" : "Entwurf vorbereiten"}
       </Button>
       <OpenPosting url={candidate.url} />
       {preparing && job?.step && (
@@ -359,7 +359,7 @@ function ScoredCard({ candidate, onDismiss }: { candidate: AgentCandidateView; o
         </span>
       )}
       <Button variant="danger-text" size="sm" className="ml-auto" onClick={onDismiss}>
-        Dismiss
+        Verwerfen
       </Button>
     </CandidateCard>
   );

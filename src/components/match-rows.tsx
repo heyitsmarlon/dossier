@@ -6,9 +6,9 @@ import { matchScore } from "@/lib/application-data";
 import { cn } from "@/lib/cn";
 
 const MARKS: Record<MatchResult, { mark: string; label: string; className: string }> = {
-  covered: { mark: "✓", label: "Covered", className: "border-primary bg-primary text-on-primary" },
-  partial: { mark: "~", label: "Partly covered", className: "border-warning-line bg-warning-surface text-warning" },
-  gap: { mark: "–", label: "Not covered", className: "border-line-strong text-muted" },
+  covered: { mark: "✓", label: "Erfüllt", className: "border-primary bg-primary text-on-primary" },
+  partial: { mark: "~", label: "Teilweise erfüllt", className: "border-warning-line bg-warning-surface text-warning" },
+  gap: { mark: "–", label: "Nicht erfüllt", className: "border-line-strong text-muted" },
 };
 
 /**
@@ -30,12 +30,12 @@ export function MatchRows({
   return (
     <div className="flex flex-col">
       <div className="flex flex-wrap items-baseline justify-between gap-3 pb-3.5">
-        <h2 className="text-[15px] font-medium">How you match</h2>
+        <h2 className="text-[15px] font-medium">Wie du passt</h2>
         <p className="text-meta text-muted">
-          {hit} of {total} covered by your profile
+          {hit} von {total} durch dein Profil abgedeckt
         </p>
       </div>
-      <ul aria-label="Requirements">
+      <ul aria-label="Anforderungen">
         {match.items.map((item, index) => {
           const { mark, label, className } = MARKS[item.result];
           const skill = requirements[index]?.kind === "skill" ? requirements[index].skill : null;
@@ -53,7 +53,7 @@ export function MatchRows({
               </div>
               {item.result === "gap" && skill && (
                 <Button variant="secondary" size="sm" className="flex-none" onClick={() => onAddSkill(index, skill)}>
-                  + Add to profile
+                  + Zum Profil hinzufügen
                 </Button>
               )}
             </li>

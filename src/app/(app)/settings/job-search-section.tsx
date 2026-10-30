@@ -21,7 +21,7 @@ type Choice = JobSource | "OFF";
 
 const CHOICES: readonly { value: Choice; name: string; description: string; tag: string }[] = [
   ...JOB_SOURCES.map((source) => ({ value: source, ...SOURCE_INFO[source] })),
-  { value: "OFF", name: "Off", description: "Find jobs stays off, and no search leaves your server.", tag: "Nothing is sent anywhere" },
+  { value: "OFF", name: "Aus", description: "„Jobs finden“ bleibt aus, und keine Suche verlässt deinen Server.", tag: "Nichts wird verschickt" },
 ];
 
 type Connection =
@@ -91,12 +91,12 @@ export function JobSearchSection({ initial }: { initial: JobSearchSettingsView }
 
   return (
     <>
-      <SettingsSectionIntro title="Job search">
-        Where Find jobs looks for postings. Pick one source; you can switch any time, and each keeps its own key.
+      <SettingsSectionIntro title="Jobsuche">
+        Wo „Jobs finden“ nach Anzeigen sucht. Wähle eine Quelle; du kannst jederzeit wechseln, und jede behält ihren eigenen Schlüssel.
       </SettingsSectionIntro>
 
       <RadioGroup.Root
-        aria-label="Job source"
+        aria-label="Jobquelle"
         value={source}
         onValueChange={(value) => void choose(value as Choice)}
         className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3"
@@ -129,7 +129,7 @@ export function JobSearchSection({ initial }: { initial: JobSearchSettingsView }
       {source !== "OFF" && (
         <>
           <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-            Your searches (keywords, place and filters) go to {SOURCE_INFO[source].name}. Nothing from your profile does.
+            Deine Suchen (Suchbegriffe, Ort und Filter) gehen an {SOURCE_INFO[source].name}. Nichts aus deinem Profil.
           </p>
 
           <Card className="flex flex-col gap-5">
@@ -137,10 +137,10 @@ export function JobSearchSection({ initial }: { initial: JobSearchSettingsView }
               <>
                 <HostChoice host={view.jsearch.host} onChange={(host) => void chooseHost(host)} />
                 <KeyField
-                  label="API key"
+                  label="API-Schlüssel"
                   keyState={view.jsearch.keyState}
                   envName="DOSSIER_JSEARCH_KEY"
-                  getKey={{ href: JSEARCH_KEY_URLS[view.jsearch.host], text: view.jsearch.host === "rapidapi" ? "JSearch on RapidAPI" : "OpenWeb Ninja" }}
+                  getKey={{ href: JSEARCH_KEY_URLS[view.jsearch.host], text: view.jsearch.host === "rapidapi" ? "JSearch auf RapidAPI" : "OpenWeb Ninja" }}
                   onSave={(change) => saveKey("JSEARCH", change)}
                 />
               </>
@@ -157,10 +157,10 @@ export function JobSearchSection({ initial }: { initial: JobSearchSettingsView }
                   onBlur={() => void saveAppId()}
                 />
                 <KeyField
-                  label="App key"
+                  label="App-Schlüssel"
                   keyState={view.adzuna.keyState}
                   envName="DOSSIER_ADZUNA_KEY"
-                  getKey={{ href: SOURCE_INFO.ADZUNA.keyUrl!, text: "Adzuna's developer site" }}
+                  getKey={{ href: SOURCE_INFO.ADZUNA.keyUrl!, text: "der Entwicklerseite von Adzuna" }}
                   onSave={(change) => saveKey("ADZUNA", change)}
                 />
               </div>
@@ -168,21 +168,21 @@ export function JobSearchSection({ initial }: { initial: JobSearchSettingsView }
             {source === "ARBEITSAGENTUR" && (
               <>
                 <ArbeitsagenturNote accepted={Boolean(view.arbeitsagentur.acceptedAt)} onAccept={acceptArbeitsagentur} />
-                <p className="text-sm text-muted">No key needed. The job agent doesn&apos;t search this source; choose JSearch, Adzuna or FreeHire for it.</p>
+                <p className="text-sm text-muted">Kein Schlüssel nötig. Der Job-Agent durchsucht diese Quelle nicht; wähle dafür JSearch, Adzuna oder FreeHire.</p>
               </>
             )}
             {source === "FREEHIRE" && (
               <p className="text-sm text-muted">
                 {view.freehire.host === new URL(FREEHIRE_URL).host
-                  ? `No key needed. Dossier searches FreeHire's public catalogue at ${view.freehire.host}.`
-                  : `No key needed. Dossier searches your own FreeHire at ${view.freehire.host}.`}
+                  ? `Kein Schlüssel nötig. Dossier durchsucht den öffentlichen Katalog von FreeHire unter ${view.freehire.host}.`
+                  : `Kein Schlüssel nötig. Dossier durchsucht dein eigenes FreeHire unter ${view.freehire.host}.`}
               </p>
             )}
 
             {testable && (
               <div className="flex flex-wrap items-center gap-3.5 pt-1">
                 <Button variant="secondary" onClick={() => void test()} disabled={connection.status === "testing"}>
-                  {connection.status === "testing" ? "Testing…" : "Test connection"}
+                  {connection.status === "testing" ? "Teste…" : "Verbindung testen"}
                 </Button>
                 <ConnectionStatus connection={connection} source={source} />
               </div>
@@ -199,7 +199,7 @@ function HostChoice({ host, onChange }: { host: JSearchHost; onChange: (host: JS
   return (
     <div className="flex flex-col gap-[7px]">
       <span id={labelId} className="text-label text-muted">
-        Key from
+        Schlüssel von
       </span>
       <SegmentedControl<JSearchHost>
         aria-labelledby={labelId}
@@ -242,13 +242,13 @@ function KeyField({
         autoComplete="off"
         value={value}
         placeholder={
-          keyState === "set" ? "Saved · type a new key to replace it" : keyState === "env" ? `Using ${envName} · type one to save it here` : "Stored encrypted on your server"
+          keyState === "set" ? "Gespeichert · neuen Schlüssel eingeben, um ihn zu ersetzen" : keyState === "env" ? `Nutzt ${envName} · eingeben, um hier einen zu speichern` : "Verschlüsselt auf deinem Server gespeichert"
         }
         error={keyState === "unreadable" ? JOB_KEY_UNREADABLE : undefined}
         hint={
           keyState === "none" ? (
             <>
-              Get one from{" "}
+              Zu bekommen bei{" "}
               <a href={getKey.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">
                 {getKey.text}
               </a>
@@ -267,7 +267,7 @@ function KeyField({
       />
       {(keyState === "set" || keyState === "unreadable") && (
         <Button variant="text" size="sm" className="self-start" onClick={() => void onSave({ action: "clear" })}>
-          Remove saved key
+          Gespeicherten Schlüssel entfernen
         </Button>
       )}
     </div>
@@ -277,12 +277,12 @@ function KeyField({
 function ConnectionStatus({ connection, source }: { connection: Connection; source: JobSource }) {
   const [dot, text, message] =
     connection.status === "connected"
-      ? ["bg-success", "text-success", `Connected · ${SOURCE_INFO[source].name} answered in ${connection.seconds.toLocaleString("en-US")} s`]
+      ? ["bg-success", "text-success", `Verbunden · ${SOURCE_INFO[source].name} hat in ${connection.seconds.toLocaleString("de-DE")} s geantwortet`]
       : connection.status === "failed"
         ? ["bg-error", "text-error", connection.message]
         : connection.status === "testing"
-          ? ["bg-status-offer", "text-muted", "Sending a small search…"]
-          : ["bg-faint", "text-muted", source === "JSEARCH" ? "Not tested since your last change · a test uses one search from your plan" : "Not tested since your last change"];
+          ? ["bg-status-offer", "text-muted", "Sende eine kleine Suche…"]
+          : ["bg-faint", "text-muted", source === "JSEARCH" ? "Seit deiner letzten Änderung nicht getestet · ein Test verbraucht eine Suche deines Tarifs" : "Seit deiner letzten Änderung nicht getestet"];
   return (
     <p role="status" className={cn("flex items-center gap-2 text-control", text)}>
       <span aria-hidden className={cn("size-2 flex-none rounded-full", dot)} />

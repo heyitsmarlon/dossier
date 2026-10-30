@@ -7,14 +7,14 @@ import { buttonClassName } from "@/components/ui/button";
 export default function ApplicationNotFound() {
   return (
     <ScreenMessage
-      title="We couldn't find that application"
+      title="Diese Bewerbung wurde nicht gefunden"
       actions={
         <Link href="/applications" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-          Back to Applications
+          Zurück zu den Bewerbungen
         </Link>
       }
     >
-      <p>It may have been deleted, or the link is incomplete. Your other applications are all still there.</p>
+      <p>Sie wurde vielleicht gelöscht, oder der Link ist unvollständig. Deine anderen Bewerbungen sind alle noch da.</p>
     </ScreenMessage>
   );
 }
