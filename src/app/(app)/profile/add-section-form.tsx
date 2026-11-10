@@ -15,12 +15,12 @@ import { createCustomSection } from "./actions";
 
 /** Common sections, each with the format it usually takes; picking one fills in both. */
 const SUGGESTIONS: readonly { title: string; format: CustomSectionFormat }[] = [
-  { title: "Awards", format: "LINES" },
-  { title: "Courses", format: "LINES" },
-  { title: "Talks", format: "LINES" },
-  { title: "Leadership", format: "ENTRIES" },
-  { title: "Memberships", format: "LINES" },
-  { title: "Interests", format: "INLINE" },
+  { title: "Auszeichnungen", format: "LINES" },
+  { title: "Kurse", format: "LINES" },
+  { title: "Vorträge", format: "LINES" },
+  { title: "Führung", format: "ENTRIES" },
+  { title: "Mitgliedschaften", format: "LINES" },
+  { title: "Interessen", format: "INLINE" },
 ];
 
 /** "Add a section" (#298, #338): a name and a format, then on to its page for its items. */
@@ -41,7 +41,7 @@ export function AddSectionForm({ onAdded, onCancel }: { onAdded: (section: Custo
   return (
     <Card>
       <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-5">
-        <Input label="Section name" placeholder="Awards" value={title} onChange={(event) => setTitle(event.target.value)} autoFocus required maxLength={100} />
+        <Input label="Name des Abschnitts" placeholder="Auszeichnungen" value={title} onChange={(event) => setTitle(event.target.value)} autoFocus required maxLength={100} />
         <div className="flex flex-wrap gap-1.5">
           {SUGGESTIONS.map((suggestion) => (
             <ToggleChip
@@ -58,17 +58,17 @@ export function AddSectionForm({ onAdded, onCancel }: { onAdded: (section: Custo
         </div>
         <div className="flex flex-col gap-2">
           <span id="new-section-format" className="text-label font-medium">
-            How it looks on resumes
+            So erscheint es im Lebenslauf
           </span>
           <SegmentedControl aria-labelledby="new-section-format" options={CUSTOM_SECTION_FORMATS.map(({ value, label }) => ({ value, label }))} value={format} onValueChange={setFormat} />
-          <p className="text-label text-muted">{hint} You can switch later.</p>
+          <p className="text-label text-muted">{hint} Du kannst später wechseln.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button type="submit" disabled={saving || !title.trim()}>
-            Add section
+            Abschnitt hinzufügen
           </Button>
           <Button variant="text" onClick={onCancel}>
-            Cancel
+            Abbrechen
           </Button>
         </div>
       </form>

@@ -40,11 +40,11 @@ type Summary = { applications: number; roles: number; skills: number; themes: nu
 type Preview = { file: File; incoming: Summary; current: Summary; exportedAt: string };
 
 const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
-/** "8 applications, 3 roles, 12 skills and 1 custom theme" */
+/** "8 Bewerbungen, 3 Positionen, 12 Fähigkeiten und 1 eigenes Design" */
 function describe({ applications, roles, skills, themes }: Summary): string {
-  const parts = [count(applications, "application", "applications"), count(roles, "role", "roles"), count(skills, "skill", "skills")];
-  if (themes > 0) parts.push(count(themes, "custom theme", "custom themes"));
-  return `${parts.slice(0, -1).join(", ")} and ${parts.at(-1)}`;
+  const parts = [count(applications, "Bewerbung", "Bewerbungen"), count(roles, "Position", "Positionen"), count(skills, "Fähigkeit", "Fähigkeiten")];
+  if (themes > 0) parts.push(count(themes, "eigenes Design", "eigene Designs"));
+  return `${parts.slice(0, -1).join(", ")} und ${parts.at(-1)}`;
 }
 
 /** An import request's answer: the JSON, or a plain error. */
@@ -56,11 +56,11 @@ async function send(file: File, preview: boolean): Promise<{ ok: true; data: Rec
       body: file,
     });
     const body = (await response.json().catch(() => null)) as Record<string, unknown> | null;
-    if (response.status === 413) return { ok: false, error: typeof body?.error === "string" ? body.error : "That file is too big for this server to accept." };
-    if (!response.ok || !body) return { ok: false, error: typeof body?.error === "string" ? body.error : "The import didn't work. Try again." };
+    if (response.status === 413) return { ok: false, error: typeof body?.error === "string" ? body.error : "Diese Datei ist zu groß für diesen Server." };
+    if (!response.ok || !body) return { ok: false, error: typeof body?.error === "string" ? body.error : "Der Import hat nicht geklappt. Versuch es noch einmal." };
     return { ok: true, data: body };
   } catch {
-    return { ok: false, error: "You seem to be offline. Try again when you're connected." };
+    return { ok: false, error: "Du scheinst offline zu sein. Versuch es noch einmal, wenn du verbunden bist." };
   }
 }
 
@@ -93,10 +93,10 @@ export function DataSection({
 
   // E10-5: follow the zip; when it's ready, offer it.
   const zip = useJob<ZipResult>(zipJob, 0, (job: JobView<ZipResult>) => {
-    if (job.status === "FAILED") toast(job.error ?? "The zip couldn't be made. Try again.");
+    if (job.status === "FAILED") toast(job.error ?? "Das ZIP konnte nicht erstellt werden. Versuch es noch einmal.");
     if (job.status === "DONE" && job.result) {
-      toast(`${job.result.fileName} is ready.`, {
-        action: { label: "Download", onClick: () => downloadFrom(`/api/downloads/${job.id}`) },
+      toast(`${job.result.fileName} ist fertig.`, {
+        action: { label: "Herunterladen", onClick: () => downloadFrom(`/api/downloads/${job.id}`) },
       });
     }
   });
@@ -116,11 +116,11 @@ export function DataSection({
 
   const runImport = async (file: File) => {
     setImporting(true);
-    toast("Backing up your data, then importing…");
+    toast("Sichere deine Daten, dann wird importiert…");
     const result = await send(file, false);
     setImporting(false);
     if (!result.ok) return toast(result.error);
-    toast(`Imported. Your previous data is backed up as ${String(result.data.backup)}.`);
+    toast(`Importiert. Deine bisherigen Daten sind gesichert als ${String(result.data.backup)}.`);
     router.refresh();
   };
 
@@ -151,51 +151,51 @@ export function DataSection({
     setStarting(false);
     if (!result.ok) return toast(result.error);
     setZipJob(result.data.jobId);
-    toast(`Zipping ${result.data.documents} documents. This takes a moment.`);
+    toast(`Packe ${result.data.documents} Dokumente als ZIP. Das dauert einen Moment.`);
   };
 
   return (
     <>
-      <SettingsSectionIntro title="Your data">
-        Everything you enter lives in one database on your server, and nothing is sold: there&apos;s no one to sell it to. What leaves it goes to
-        the AI provider and job source you choose, Google if you connect Gmail, and the daily usage ping and update check (see About).
+      <SettingsSectionIntro title="Deine Daten">
+        Alles, was du eingibst, liegt in einer Datenbank auf deinem Server, und nichts wird verkauft: Es gibt niemanden, an den. Was ihn verlässt, geht an
+        den KI-Anbieter und die Jobquelle deiner Wahl, an Google, wenn du Gmail verbindest, und an den täglichen Nutzungs-Ping und die Update-Prüfung (siehe Über).
       </SettingsSectionIntro>
       <Card padding="none" className="flex flex-col px-7 pt-1.5 pb-2.5">
         <DataRow
-          title="Export everything"
-          description="Profile, applications, documents and themes in one JSON file. Handy for backups or moving servers."
+          title="Alles exportieren"
+          description="Profil, Bewerbungen, Unterlagen und Designs in einer JSON-Datei. Praktisch für Backups oder einen Serverumzug."
           action={
             <DownloadPdfButton
               variant="secondary"
               size="sm"
               href={`/api/export${includeKey ? "?apiKey=1" : ""}`}
               held={false}
-              progress={`Preparing ${exportName}…`}
+              progress={`Bereite ${exportName} vor…`}
             >
-              Export
+              Exportieren
             </DownloadPdfButton>
           }
         >
           {hasApiKey && (
             <Checkbox
               className="pt-1"
-              label="Include my API keys"
+              label="Meine API-Schlüssel einschließen"
               checked={includeKey}
               onChange={(event) => setIncludeKey(event.target.checked)}
               hint={
                 includeKey
-                  ? "Your API keys (AI provider and job search) go into the file in plain text, so anyone with the file can use them. Keep it somewhere safe."
-                  : "Left out by default: another server couldn't read the encrypted copy anyway."
+                  ? "Deine API-Schlüssel (KI-Anbieter und Jobsuche) landen im Klartext in der Datei, jeder mit der Datei kann sie nutzen. Bewahr sie sicher auf."
+                  : "Standardmäßig ausgelassen: Ein anderer Server könnte die verschlüsselte Kopie ohnehin nicht lesen."
               }
             />
           )}
         </DataRow>
         <DataRow
-          title="Download all PDFs"
-          description="Every tailored resume and cover letter, zipped and sorted by company."
+          title="Alle PDFs herunterladen"
+          description="Jeder zugeschnittene Lebenslauf und jedes Anschreiben, als ZIP nach Firma sortiert."
           action={
             <Button variant="secondary" size="sm" aria-disabled={zipping || undefined} onClick={() => !zipping && void zipAll()}>
-              {zipping ? "Zipping…" : "Download"}
+              {zipping ? "Packe…" : "Herunterladen"}
             </Button>
           }
         >
@@ -207,14 +207,14 @@ export function DataSection({
           {zip?.status === "DONE" && zip.result && (
             <p>
               <a href={`/api/downloads/${zip.id}`} download className={buttonClassName("text", "sm", "underline underline-offset-2")}>
-                Download {zip.result.fileName}
+                {zip.result.fileName} herunterladen
               </a>
             </p>
           )}
         </DataRow>
         <DataRow
-          title="Import"
-          description="Restore from an export file. Your current data is backed up first."
+          title="Importieren"
+          description="Aus einer Exportdatei wiederherstellen. Deine aktuellen Daten werden vorher gesichert."
           action={
             <>
               <input
@@ -227,17 +227,17 @@ export function DataSection({
                 onChange={(event) => void chooseFile(event.target.files?.[0])}
               />
               <Button variant="secondary" size="sm" aria-disabled={importing || undefined} onClick={() => !importing && fileInput.current?.click()}>
-                {importing ? "Importing…" : "Choose file"}
+                {importing ? "Importiere…" : "Datei wählen"}
               </Button>
             </>
           }
         />
         <DataRow
-          title="Keep task data for"
-          description="What the AI was given and wrote for a task: a posting, your resume's text, drafts you didn't turn into an application. It's kept for reloads and Undo, then deleted. Applications keep their own documents until you delete them."
+          title="Aufgabendaten aufbewahren für"
+          description="Was die KI für eine Aufgabe bekommen und geschrieben hat: eine Anzeige, den Text deines Lebenslaufs, Entwürfe, aus denen keine Bewerbung wurde. Es wird für Neuladen und Rückgängig aufbewahrt, dann gelöscht. Bewerbungen behalten ihre eigenen Unterlagen, bis du sie löschst."
           action={
             <Select
-              aria-label="Keep task data for"
+              aria-label="Aufgabendaten aufbewahren für"
               value={retention}
               onChange={(event) => changeRetention(Number(event.target.value))}
             >
@@ -251,20 +251,20 @@ export function DataSection({
         />
         <div className="flex flex-col gap-2 border-t border-line py-4">
           <Toggle
-            label="Nightly backups"
+            label="Nächtliche Backups"
             description={
               nightly
-                ? `Kept for ${backups.retentionDays} days in ${backups.dir}. ${
-                    backups.lastRun ? `Last one ran ${backups.lastRun}.` : "The first one runs tonight at 03:00."
-                  }${backups.onlyWhileOpen ? " On this computer, they only run while Dossier is open: a night it was closed is made up soon after you open it." : ""}`
-                : "Off. You'll only have what you export yourself."
+                ? `${backups.retentionDays} Tage aufbewahrt in ${backups.dir}. ${
+                    backups.lastRun ? `Das letzte lief ${backups.lastRun}.` : "Das erste läuft heute Nacht um 03:00."
+                  }${backups.onlyWhileOpen ? " Auf diesem Rechner laufen sie nur, solange Dossier offen ist: Eine verpasste Nacht wird kurz nach dem Öffnen nachgeholt." : ""}`
+                : "Aus. Du hast nur, was du selbst exportierst."
             }
             checked={nightly}
             onCheckedChange={switchBackups}
           />
           {nightly && backups.problem && (
             <p role="alert" className="rounded-control bg-danger-surface px-3 py-2 text-meta text-error">
-              The last backup failed: {backups.problem}
+              Das letzte Backup ist fehlgeschlagen: {backups.problem}
             </p>
           )}
         </div>
@@ -274,15 +274,15 @@ export function DataSection({
         <ConfirmDialog
           open
           onOpenChange={(open) => !open && setPreview(null)}
-          title="Replace everything with this export?"
+          title="Alles durch diesen Export ersetzen?"
           description={
             <>
-              The file, exported {new Date(preview.exportedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}, has{" "}
-              {describe(preview.incoming)}. It replaces your profile, settings and {describe(preview.current)}. Your current data is
-              backed up first.
+              Die Datei, exportiert am {new Date(preview.exportedAt).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" })}, enthält{" "}
+              {describe(preview.incoming)}. Sie ersetzt dein Profil, deine Einstellungen und {describe(preview.current)}. Deine aktuellen Daten werden
+              vorher gesichert.
             </>
           }
-          confirmLabel="Import and replace"
+          confirmLabel="Importieren und ersetzen"
           onConfirm={() => void runImport(preview.file)}
         />
       )}
@@ -326,7 +326,7 @@ function DangerZone() {
   const ready = typed === CONFIRMATION;
 
   const deleteAll = async () => {
-    if (!ready) return toast("Type DELETE in capitals to confirm.");
+    if (!ready) return toast("Tippe zur Bestätigung DELETE in Großbuchstaben.");
     setDeleting(true);
     // On success the action takes you to the empty dashboard.
     const result = await deleteEverything({ confirm: CONFIRMATION });
@@ -341,18 +341,18 @@ function DangerZone() {
     >
       <div className="flex flex-col gap-1">
         <h3 id="danger-heading" className="text-[15px] font-medium text-error-strong">
-          Delete everything
+          Alles löschen
         </h3>
         <p className="text-control text-muted">
-          Removes your profile, all applications and documents, your settings and the backups from this server. This can&apos;t be
-          undone, so export first if you might want it back.
+          Entfernt dein Profil, alle Bewerbungen und Unterlagen, deine Einstellungen und die Backups von diesem Server. Das lässt sich nicht
+          rückgängig machen, exportiere also vorher, falls du es zurückhaben willst.
         </p>
       </div>
       {confirming ? (
         <div className="flex flex-wrap items-center gap-2">
           <input
-            aria-label="Type DELETE to confirm"
-            placeholder="Type DELETE to confirm"
+            aria-label="Zur Bestätigung DELETE tippen"
+            placeholder="Zur Bestätigung DELETE tippen"
             // Opened on request, so the box takes focus.
             autoFocus
             autoComplete="off"
@@ -372,7 +372,7 @@ function DangerZone() {
             onClick={() => !deleting && void deleteAll()}
             className={ready ? undefined : "bg-danger-disabled hover:bg-danger-disabled"}
           >
-            {deleting ? "Deleting…" : "Delete for good"}
+            {deleting ? "Lösche…" : "Endgültig löschen"}
           </Button>
           <Button
             variant="text"
@@ -383,13 +383,13 @@ function DangerZone() {
               setTyped("");
             }}
           >
-            Cancel
+            Abbrechen
           </Button>
         </div>
       ) : (
         <div>
           <Button variant="danger-outline" size="sm" onClick={() => setConfirming(true)}>
-            Delete everything…
+            Alles löschen…
           </Button>
         </div>
       )}

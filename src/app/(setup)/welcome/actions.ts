@@ -28,11 +28,11 @@ const choiceIds = AI_CHOICES.map((choice) => choice.id) as [AiChoiceId, ...AiCho
  */
 export const connectAi = action(z.object({ choice: z.enum(choiceIds), key: z.string().trim().max(1000).optional() }), async ({ choice: id, key }) => {
   const choice = aiChoice(id);
-  if (!choice.key) throw new ActionError(`${choice.name} runs on your computer, so there's no key to check.`);
+  if (!choice.key) throw new ActionError(`${choice.name} läuft auf deinem Rechner, es gibt also keinen Schlüssel zu prüfen.`);
   const saved = await loadSettings();
   const same = saved.provider === choice.provider && saved.baseUrl === choice.baseUrl;
   const apiKeyEnc = key ? applyApiKeyChange(null, { action: "set", value: key }) : same ? saved.apiKeyEnc : null;
-  if (!apiKeyEnc) return { connected: false as const, kind: "auth" as const, message: `Paste your ${choice.key.label} first.` };
+  if (!apiKeyEnc) return { connected: false as const, kind: "auth" as const, message: `Füge zuerst deinen ${choice.key.label} ein.` };
   await saveSettings({ provider: choice.provider, baseUrl: choice.baseUrl, model: choice.models[0], apiKeyEnc });
 
   const config = { ...(await loadAiConfig()), timeoutMs: CHECK_TIMEOUT_MS };
@@ -46,7 +46,7 @@ export const connectAi = action(z.object({ choice: z.enum(choiceIds), key: z.str
     }
     const model = pickModel(choice.models, served);
     if (!model) {
-      return { connected: false as const, kind: "model" as const, message: `Your ${choice.name} account doesn't offer the models Dossier uses: ${choice.models.join(" or ")}.` };
+      return { connected: false as const, kind: "model" as const, message: `Dein ${choice.name}-Konto bietet die Modelle nicht an, die Dossier nutzt: ${choice.models.join(" oder ")}.` };
     }
     await saveSettings({ model });
     const { latencyMs } = await createProvider({ ...config, model }).test(AbortSignal.timeout(CHECK_TIMEOUT_MS));

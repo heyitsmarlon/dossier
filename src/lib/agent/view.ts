@@ -88,10 +88,10 @@ export async function countAgentQueue(): Promise<number> {
 }
 
 /** "Today" and "Yesterday" in a sentence; "2 days ago" or "15 Oct" as they are. */
-const posted = (ago: string) => (ago === "Today" || ago === "Yesterday" ? ago.toLowerCase() : ago);
+const posted = (ago: string) => (ago === "Heute" || ago === "Gestern" ? ago.toLowerCase() : ago);
 
 const sectionOf = (problem: string): AgentView["setupSection"] =>
-  problem.includes("AI provider") ? "ai" : problem.includes("Scoring") ? "scoring" : problem.includes("Job search") ? "jobs" : "agent";
+  problem.includes("KI-Anbieter") ? "ai" : problem.includes("Bewertung") ? "scoring" : problem.includes("Jobsuche") ? "jobs" : "agent";
 
 export async function loadAgentView(now = new Date()): Promise<AgentView> {
   const [settings, timeZone, candidates, draftJobs, runJobs, searches] = await Promise.all([
@@ -123,12 +123,12 @@ export async function loadAgentView(now = new Date()): Promise<AgentView> {
   const view = (candidate: (typeof candidates)[number]): AgentCandidateView => ({
     searches: candidate.searches,
     id: candidate.id,
-    title: candidate.title.trim() || "Untitled posting",
+    title: candidate.title.trim() || "Anzeige ohne Titel",
     company: candidate.company.trim(),
     facts: [candidate.place, candidate.remote ? "Remote" : "", candidate.salary].filter(Boolean).join(" · "),
     origin: [
-      candidate.postedAt ? `Posted ${posted(postedAgo(candidate.postedAt.toISOString(), now))}` : "",
-      [candidate.via ? `via ${candidate.via}` : "", `on ${SOURCE_INFO[candidate.source].name}`].filter(Boolean).join(" "),
+      candidate.postedAt ? `Veröffentlicht ${posted(postedAgo(candidate.postedAt.toISOString(), now))}` : "",
+      [candidate.via ? `via ${candidate.via}` : "", `auf ${SOURCE_INFO[candidate.source].name}`].filter(Boolean).join(" "),
     ]
       .filter(Boolean)
       .join(" · "),
@@ -150,7 +150,7 @@ export async function loadAgentView(now = new Date()): Promise<AgentView> {
   return {
     searches,
     sourceRequestsUsed: sourceRequestsInPastDay(settings.agentRuns, now),
-    nextEligibility: eligible > now ? formatDateTime(eligible, timeZone, now) : "Now",
+    nextEligibility: eligible > now ? formatDateTime(eligible, timeZone, now) : "Jetzt",
     timeZone,
     searchHistory: searches.flatMap((search) => {
       const run = settings.agentRuns.find((run) => run.searches?.some((result) => result.searchId === search.id));

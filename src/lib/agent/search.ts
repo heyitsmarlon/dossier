@@ -5,8 +5,8 @@ import { EMPTY_QUERY, searchQuerySchema, type SearchQuery } from "@/lib/job-sear
 /** Fixed product and source-budget cap, shared by forms and server writes. */
 export { MAX_AGENT_SEARCHES } from "./limits";
 export const agentSearchInputSchema = z.object({
-  name: z.string().trim().min(1, "Give the search a name.").max(100),
-  query: searchQuerySchema.refine((query) => Boolean(query.keywords), "Add what to look for."),
+  name: z.string().trim().min(1, "Gib der Suche einen Namen.").max(100),
+  query: searchQuerySchema.refine((query) => Boolean(query.keywords), "Gib an, wonach gesucht werden soll."),
   enabled: z.boolean().default(true),
   sort: z.number().int().min(0).default(0),
 });
@@ -15,13 +15,13 @@ export type SavedAgentSearch = { id: string; name: string; query: SearchQuery; e
 
 /** Shared setup wording for the engine and the master enable action. */
 export function agentSearchSetupProblem(searches: readonly SavedAgentSearch[]): string | null {
-  if (!searches.length) return "Add what to look for in Settings → Job agent first.";
+  if (!searches.length) return "Gib zuerst an, wonach gesucht werden soll (Einstellungen → Job-Agent).";
   const enabled = searches.filter((search) => search.enabled);
-  if (!enabled.length) return "Enable an Agent search in Settings → Job agent first.";
+  if (!enabled.length) return "Schalte zuerst eine Agent-Suche ein (Einstellungen → Job-Agent).";
   const empty = enabled.find((search) => !search.query.keywords.trim());
-  if (empty) return `Add what to look for in “${empty.name}” in Settings → Job agent first.`;
+  if (empty) return `Gib zuerst an, wonach „${empty.name}“ suchen soll (Einstellungen → Job-Agent).`;
   const missingCountry = enabled.find((search) => !search.query.country);
-  if (missingCountry) return `Choose a country for “${missingCountry.name}” in Settings → Job agent first.`;
+  if (missingCountry) return `Wähle zuerst ein Land für „${missingCountry.name}“ (Einstellungen → Job-Agent).`;
   return null;
 }
 

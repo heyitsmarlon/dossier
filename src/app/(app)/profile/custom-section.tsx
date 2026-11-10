@@ -47,7 +47,7 @@ function CustomItemForm({
       className="col-span-2"
       label={optional("Link")}
       placeholder="example.org/award"
-      hint="On a PDF, the link can be clicked."
+      hint="Im PDF ist der Link anklickbar."
       value={entry.link}
       onChange={(event) => set({ link: event.target.value })}
     />
@@ -57,18 +57,18 @@ function CustomItemForm({
     <div className="grid grid-cols-2 gap-[18px]" onBlur={flush}>
       {format === "ENTRIES" && (
         <>
-          <Input className="col-span-2" label="Title" placeholder="Mentor" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />
-          <Input className="col-span-2" label={optional("Where or with whom")} placeholder="Code Club" value={entry.subtitle} onChange={(event) => set({ subtitle: event.target.value })} />
-          <MonthYearField label="Started" value={{ month: entry.startMonth, year: entry.startYear }} onChange={({ month, year }) => set({ startMonth: month, startYear: year })} />
+          <Input className="col-span-2" label="Titel" placeholder="Mentorin" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />
+          <Input className="col-span-2" label={optional("Wo oder mit wem")} placeholder="Jugendzentrum Köln" value={entry.subtitle} onChange={(event) => set({ subtitle: event.target.value })} />
+          <MonthYearField label="Beginn" value={{ month: entry.startMonth, year: entry.startYear }} onChange={({ month, year }) => set({ startMonth: month, startYear: year })} />
           <div className="flex flex-col gap-2.5">
-            <MonthYearField label="Finished" value={{ month: entry.endMonth, year: entry.endYear }} onChange={({ month, year }) => set({ endMonth: month, endYear: year })} disabled={entry.current} />
-            <Checkbox label="Still going" checked={entry.current} onChange={(event) => set({ current: event.target.checked })} />
+            <MonthYearField label="Ende" value={{ month: entry.endMonth, year: entry.endYear }} onChange={({ month, year }) => set({ endMonth: month, endYear: year })} disabled={entry.current} />
+            <Checkbox label="Läuft noch" checked={entry.current} onChange={(event) => set({ current: event.target.checked })} />
           </div>
           <Textarea
             className="col-span-2"
             label={optional("Details")}
-            hint="One bullet per line."
-            placeholder="Taught 40 pupils to build their first website"
+            hint="Ein Stichpunkt pro Zeile."
+            placeholder="40 Jugendlichen beigebracht, ihre erste Website zu bauen"
             rows={4}
             value={entry.details}
             onChange={(event) => set({ details: event.target.value })}
@@ -81,8 +81,8 @@ function CustomItemForm({
           <Textarea
             className="col-span-2"
             label="Text"
-            hint="As long as you like. Write **bold** or *italic* with asterisks."
-            placeholder="Best Paper Award, CHI 2023"
+            hint="So lang du willst. **Fett** oder *kursiv* mit Sternchen."
+            placeholder="Fotopreis der Stadt Köln, 2023"
             rows={3}
             value={entry.title}
             onChange={(event) => set({ title: event.target.value })}
@@ -91,11 +91,11 @@ function CustomItemForm({
           {link}
         </>
       )}
-      {format === "INLINE" && <Input className="col-span-2" label="Item" placeholder="Climbing" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />}
+      {format === "INLINE" && <Input className="col-span-2" label="Eintrag" placeholder="Klettern" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />}
       <Checkbox
         className="col-span-2"
-        label="Show on resumes"
-        hint="Off keeps it in your profile, but leaves it off every resume and out of what the AI reads."
+        label="Im Lebenslauf zeigen"
+        hint="Aus: bleibt im Profil, fehlt aber in jedem Lebenslauf und in dem, was die KI liest."
         checked={entry.onResumes}
         onChange={(event) => set({ onResumes: event.target.checked })}
       />
@@ -133,7 +133,7 @@ export function CustomSectionEditor({
     onDeleted(section);
     toast(`Deleted “${section.title}”.`, {
       action: {
-        label: "Undo",
+        label: "Rückgängig",
         onClick: async () => {
           if (!toastResult(await restoreCustomSection(section)).ok) return;
           onRestored(section);
@@ -157,8 +157,8 @@ export function CustomSectionEditor({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-[18px]" onBlur={flush}>
         <Input
-          label="Section name"
-          hint="Resumes print it as you write it here."
+          label="Name des Abschnitts"
+          hint="Lebensläufe übernehmen ihn genau so."
           value={title}
           onChange={(event) => {
             setTitle(event.target.value);
@@ -167,7 +167,7 @@ export function CustomSectionEditor({
         />
         <div className="flex flex-col gap-2">
           <span id={`format-${section.id}`} className="text-label font-medium">
-            How it looks on resumes
+            So erscheint es im Lebenslauf
           </span>
           <SegmentedControl
             aria-labelledby={`format-${section.id}`}
@@ -180,9 +180,9 @@ export function CustomSectionEditor({
       </div>
       {section.format === "INLINE" && (
         <Input
-          label="Add an item"
-          hint="Type one and press Enter."
-          placeholder="Climbing"
+          label="Eintrag hinzufügen"
+          hint="Eingeben und Enter drücken."
+          placeholder="Klettern"
           value={quick}
           onChange={(event) => setQuick(event.target.value)}
           onKeyDown={(event) => {
@@ -195,12 +195,12 @@ export function CustomSectionEditor({
       <EntryList
         items={section.items}
         setItems={setItems}
-        addLabel="Add an item"
+        addLabel="Eintrag hinzufügen"
         ordering={{ mode: "manual", save: (ids) => reorderCustomItems({ sectionId: section.id, ids }) }}
         summary={(entry) => ({
-          title: citationExcerpt(entry.title) || (entry.details.trim() ? section.title : "New item"),
-          subtitle: section.format === "ENTRIES" ? entry.subtitle.trim() : section.format === "LINES" ? entry.link.trim() : "Inline",
-          meta: entry.onResumes ? (section.format === "ENTRIES" && formatDateRange(entry)) || undefined : "Not on resumes",
+          title: citationExcerpt(entry.title) || (entry.details.trim() ? section.title : "Neuer Eintrag"),
+          subtitle: section.format === "ENTRIES" ? entry.subtitle.trim() : section.format === "LINES" ? entry.link.trim() : "In einer Zeile",
+          meta: entry.onResumes ? (section.format === "ENTRIES" && formatDateRange(entry)) || undefined : "Nicht im Lebenslauf",
         })}
         create={() => createCustomItem({ sectionId: section.id })}
         remove={(entry) => removeCustomItem({ id: entry.id })}
@@ -210,7 +210,7 @@ export function CustomSectionEditor({
         )}
       />
       <Button variant="danger-text" size="sm" className="self-start" onClick={() => void remove()}>
-        Delete this section
+        Diesen Abschnitt löschen
       </Button>
     </div>
   );

@@ -10,7 +10,7 @@ import { DOCUMENTS_TO_WRITE, type DocumentsToWrite } from "@/lib/settings";
 import { TONES } from "@/lib/tones";
 
 const TONE_OPTIONS = Object.values(Tone).map((tone) => ({ value: tone, label: TONES[tone].label }));
-const WRITE_LABELS: Record<DocumentsToWrite, string> = { both: "Resume and letter", resume: "Resume", letter: "Cover letter" };
+const WRITE_LABELS: Record<DocumentsToWrite, string> = { both: "Lebenslauf und Anschreiben", resume: "Lebenslauf", letter: "Anschreiben" };
 const WRITE_OPTIONS = DOCUMENTS_TO_WRITE.map((value) => ({ value, label: WRITE_LABELS[value] }));
 
 /** "Tailoring" (E7-5, NEW-6): what to write (#367), the cover letter's tone, and a note for the AI. */
@@ -37,11 +37,11 @@ export function TailoringCard({
       <h2 className="text-[15px] font-medium">Zuschnitt</h2>
       <div className="flex flex-col gap-[9px]">
         <span id={writeId} className="text-label text-muted">
-          Write
+          Schreiben
         </span>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <SegmentedControl aria-labelledby={writeId} options={WRITE_OPTIONS} value={write} onValueChange={onWrite} />
-          {write !== "both" && <span className="text-meta text-muted">The other can be written later, from the application.</span>}
+          {write !== "both" && <span className="text-meta text-muted">Das andere kannst du später in der Bewerbung schreiben lassen.</span>}
         </div>
       </div>
       {write !== "resume" && (

@@ -82,7 +82,7 @@ export async function syncInbox({ signal }: { signal?: AbortSignal } = {}): Prom
   try {
     const result = await runSync(account.historyId, account.email, settings.gmailScope, signal);
     const { unread } = result.counts;
-    const problem = unread ? `${unread} ${unread === 1 ? "message" : "messages"} couldn't be read from Gmail. The next check tries again.` : null;
+    const problem = unread ? `${unread} ${unread === 1 ? "Nachricht konnte" : "Nachrichten konnten"} nicht aus Gmail gelesen werden. Die nächste Prüfung versucht es erneut.` : null;
     await prisma.googleAccount.update({ where: { id: account.id }, data: { lastSyncAt: new Date(), syncProblem: problem, historyId: result.historyId } });
     return result.counts;
   } catch (error) {

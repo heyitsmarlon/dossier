@@ -93,12 +93,12 @@ export async function importExport(db: PrismaClient, data: DossierExport): Promi
   let agentSearches = data.agentSearches ?? [];
   if (data.schemaVersion <= 10 && agentSearches.length === 0) {
     const query = legacyAgentQuery(settings.find((setting) => setting.key === "agentQuery")?.value ?? "null");
-    if (query) agentSearches = [{ id: "agent-search-legacy", name: "My search", query, enabled: true, sort: 0, createdAt: data.exportedAt, updatedAt: data.exportedAt }];
+    if (query) agentSearches = [{ id: "agent-search-legacy", name: "Meine Suche", query, enabled: true, sort: 0, createdAt: data.exportedAt, updatedAt: data.exportedAt }];
   }
-  if (agentSearches.length > MAX_AGENT_SEARCHES) throw new ActionError("Keep at most three Agent searches.");
+  if (agentSearches.length > MAX_AGENT_SEARCHES) throw new ActionError("Höchstens drei Agent-Suchen.");
   agentSearches = agentSearches.map((search) => {
     const parsed = agentSearchInputSchema.safeParse(search);
-    if (!parsed.success) throw new ActionError(`That export has an invalid Agent search: ${parsed.error.issues[0].message}`);
+    if (!parsed.success) throw new ActionError(`Dieser Export enthält eine ungültige Agent-Suche: ${parsed.error.issues[0].message}`);
     return { ...search, ...parsed.data };
   });
   await db.$transaction(

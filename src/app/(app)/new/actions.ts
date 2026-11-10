@@ -17,7 +17,7 @@ import { prisma } from "@/lib/prisma";
 
 /** "Read the posting →": starts reading it in the background and returns the job's id (E7-2). */
 export const startReadingPosting = action(
-  z.object({ posting: z.string().trim().min(1, "Paste a job posting first.").max(100_000) }),
+  z.object({ posting: z.string().trim().min(1, "Füge zuerst eine Stellenanzeige ein.").max(100_000) }),
   ({ posting }) => startJob(readPostingJob, { posting }),
 );
 
@@ -29,7 +29,7 @@ export const startReadingPosting = action(
  */
 export const handOffToClaude = action(
   z.object({
-    posting: z.string().trim().min(1, "Paste a job posting first.").max(100_000),
+    posting: z.string().trim().min(1, "Füge zuerst eine Stellenanzeige ein.").max(100_000),
     postingUrl: z.string().trim().max(2000),
   }),
   async ({ posting, postingUrl }) => ({ url: await handOffPastedPosting({ text: posting, url: /^https?:\/\//i.test(postingUrl) ? postingUrl : "" }) }),
@@ -51,7 +51,7 @@ export const startScoringPosting = action(
   ({ posting, details }) => startJob(scorePastedPostingJob, { posting, ...details }),
 );
 
-const STALE = "That reading of the posting is no longer available. Read the posting again.";
+const STALE = "Diese Auswertung der Anzeige ist nicht mehr verfügbar. Lies die Anzeige erneut ein.";
 
 /** The finished job that read the posting, with its input and result. */
 async function finishedReading(id: string) {
@@ -96,7 +96,7 @@ export const startWritingDocuments = action(
  */
 export const fetchPostingText = action(z.object({ link: z.string().max(2000) }), async ({ link }) => {
   const url = postingLink(link);
-  if (!url) throw new ActionError("Enter the link to the posting first.");
+  if (!url) throw new ActionError("Gib zuerst den Link zur Anzeige ein.");
   const fetched = await fetchPosting(url);
   if (!fetched.ok) throw new ActionError(fetched.error);
   return { text: fetched.text, url: fetched.url };
@@ -113,7 +113,7 @@ function postingLink(value: string): string {
   } catch {
     // Not a link.
   }
-  throw new ActionError("The link to the posting doesn't look like a web address. Fix it or leave it empty.");
+  throw new ActionError("Der Link zur Anzeige sieht nicht nach einer Webadresse aus. Korrigiere ihn oder lass das Feld leer.");
 }
 
 /** A write-documents job's key once an application was made from it: "application:<id>". */
@@ -138,7 +138,7 @@ export const createApplication = action(
   async ({ writeJobId, details, postingUrl, postingId, startupId }) => {
     const job = await prisma.job.findUnique({ where: { id: writeJobId } });
     if (!job || job.type !== writeDocumentsJob.type || job.status !== JobStatus.DONE) {
-      throw new ActionError("Those documents aren't ready. Try creating the application again.");
+      throw new ActionError("Diese Unterlagen sind nicht fertig. Leg die Bewerbung noch einmal an.");
     }
     if (job.key?.startsWith(CLAIMED)) return job.key.slice(CLAIMED.length);
 

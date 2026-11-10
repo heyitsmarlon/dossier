@@ -54,7 +54,7 @@ export function UpdateNotice({
   if (hidden) return null;
 
   if (collapsed) {
-    const label = `Dossier ${release.version} is out`;
+    const label = `Dossier ${release.version} ist erschienen`;
     return (
       <button
         type="button"
@@ -86,33 +86,33 @@ export function UpdateNotice({
   return (
     <section ref={notice} aria-labelledby={titleId} className="flex flex-col gap-1.5 rounded-control border border-line-card bg-card px-3 py-2.5">
       <h2 id={titleId} className="text-meta font-medium">
-        Dossier {release.version} is out
+        Dossier {release.version} ist erschienen
       </h2>
       <p className="text-xs text-muted">
         {desktop
-          ? `You have ${currentVersion}. Download the new one and install it over this one: your data stays as it is.`
-          : `You have ${currentVersion}. Update to get its fixes and features.`}
+          ? `Du hast ${currentVersion}. Lade die neue Version und installiere sie über diese: deine Daten bleiben erhalten.`
+          : `Du hast ${currentVersion}. Aktualisiere für die neuen Korrekturen und Funktionen.`}
       </p>
       <div className="flex flex-wrap gap-x-3 text-xs">
         {desktop ? (
           <a href={release.url} target="_blank" rel="noopener noreferrer" className={LINK}>
             Download {release.version}{" "}
-            <span className="sr-only">(opens in your browser)</span>
+            <span className="sr-only">(öffnet in deinem Browser)</span>
           </a>
         ) : (
           <>
             <a href={release.url} target="_blank" rel="noopener noreferrer" className={LINK}>
-              What&apos;s new{" "}
-              <span className="sr-only">(opens in a new tab)</span>
+              Was ist neu{" "}
+              <span className="sr-only">(öffnet in neuem Tab)</span>
             </a>
             <a href={UPGRADE_GUIDE_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
-              How to update{" "}
-              <span className="sr-only">(opens in a new tab)</span>
+              So aktualisierst du{" "}
+              <span className="sr-only">(öffnet in neuem Tab)</span>
             </a>
           </>
         )}
         <button type="button" onClick={() => void notNow()} className={`${TARGET} text-muted hover:text-ink`}>
-          Not now
+          Nicht jetzt
         </button>
       </div>
     </section>

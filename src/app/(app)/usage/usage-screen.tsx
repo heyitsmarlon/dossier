@@ -27,20 +27,20 @@ export function UsageScreen({
   return (
     <>
       <PageHeader
-        title="Usage"
-        description="The tokens each kind of AI request used, as your AI provider and Jev counted them. Input is what Dossier sent, output what came back, thinking included."
+        title="Verbrauch"
+        description="Die Tokens, die jede Art von KI-Anfrage verbraucht hat, wie dein KI-Anbieter und Jev sie gezählt haben. Eingabe ist, was Dossier gesendet hat, Ausgabe, was zurückkam, Denkschritte eingeschlossen."
       />
       <PeriodFilter period={period} path="/usage" remember={false}>
         <PeriodScoped className="flex max-w-[960px] flex-col gap-3 px-10 pb-[72px]">
           <div className="relative overflow-x-auto rounded-panel border border-line-card bg-card">
             <table className="w-full min-w-[640px] border-collapse text-left">
-              <caption className="sr-only">Tokens by task, {within}</caption>
+              <caption className="sr-only">Tokens nach Aufgabe, {within}</caption>
               <thead>
                 <tr className="border-b border-line">
                   <th scope="col" className={cn(head, "pl-5")}>
-                    Task
+                    Aufgabe
                   </th>
-                  {["Requests", "Input", "Output", "Total"].map((label) => (
+                  {["Anfragen", "Eingabe", "Ausgabe", "Gesamt"].map((label) => (
                     <th key={label} scope="col" className={cn(head, "w-[124px] text-right")}>
                       {label}
                     </th>
@@ -61,7 +61,7 @@ export function UsageScreen({
               <tfoot>
                 <tr>
                   <th scope="row" className="py-3 pr-5 pl-5 text-left align-top text-field font-medium">
-                    All tasks
+                    Alle Aufgaben
                   </th>
                   <Figures totals={figures.total} strong />
                 </tr>
@@ -69,7 +69,7 @@ export function UsageScreen({
             </table>
           </div>
           <p className="text-meta text-muted">
-            {countingSince ? `Counting since ${formatDay(countingSince, timeZone)}.` : "Nothing counted yet. Every AI request counts from now on."}
+            {countingSince ? `Gezählt seit ${formatDay(countingSince, timeZone)}.` : "Noch nichts gezählt. Ab jetzt zählt jede KI-Anfrage."}
             {unreported && " “Not reported” means the server didn't say how many tokens a request used."}
           </p>
         </PeriodScoped>
@@ -110,5 +110,5 @@ function Tokens({ sum }: { sum: TokenSum }) {
 }
 
 function NotReported() {
-  return <span className="font-normal text-muted">Not reported</span>;
+  return <span className="font-normal text-muted">Nicht gemeldet</span>;
 }

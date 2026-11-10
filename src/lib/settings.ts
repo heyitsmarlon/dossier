@@ -37,21 +37,21 @@ export function formatDocumentDate(date: Date, format: DateFormat, locale = "en-
  * a resume's text, drafts not yet in an application.
  */
 export const JOB_RETENTION_OPTIONS: readonly { hours: number; label: string }[] = [
-  { hours: 1, label: "1 hour" },
-  { hours: 24, label: "24 hours" },
-  { hours: 24 * 7, label: "7 days" },
-  { hours: 24 * 30, label: "30 days" },
+  { hours: 1, label: "1 Stunde" },
+  { hours: 24, label: "24 Stunden" },
+  { hours: 24 * 7, label: "7 Tage" },
+  { hours: 24 * 30, label: "30 Tage" },
 ];
 export const DEFAULT_JOB_RETENTION_HOURS = 24;
 export const isJobRetention = (hours: number) => JOB_RETENTION_OPTIONS.some((option) => option.hours === hours);
 /** "24 hours" */
 export const jobRetentionLabel = (hours: number) =>
-  JOB_RETENTION_OPTIONS.find((option) => option.hours === hours)?.label ?? `${hours} hours`;
+  JOB_RETENTION_OPTIONS.find((option) => option.hours === hours)?.label ?? `${hours} Stunden`;
 
 /** Which documents New application writes (#367): many job sites ask for only one. */
 export const DOCUMENTS_TO_WRITE = ["both", "resume", "letter"] as const;
 export type DocumentsToWrite = (typeof DOCUMENTS_TO_WRITE)[number];
-export const DOCUMENTS_TO_WRITE_LABELS: Record<DocumentsToWrite, string> = { both: "Resume and cover letter", resume: "Resume only", letter: "Cover letter only" };
+export const DOCUMENTS_TO_WRITE_LABELS: Record<DocumentsToWrite, string> = { both: "Lebenslauf und Anschreiben", resume: "Nur Lebenslauf", letter: "Nur Anschreiben" };
 
 // ─── Stored settings ─────────────────────────────────────────────────────────
 // Settings are stored in the Setting table, one text row per key: enums by

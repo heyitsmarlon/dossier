@@ -10,7 +10,7 @@ import type { WritableKind } from "@/lib/jobs/write-document";
 
 import { startWritingDocument } from "./actions";
 
-const NAMES: Record<WritableKind, string> = { RESUME: "tailored resume", COVER_LETTER: "cover letter" };
+const NAMES: Record<WritableKind, string> = { RESUME: "zugeschnittenen Lebenslauf", COVER_LETTER: "Anschreiben" };
 
 /**
  * In place of a document the application was created without (#367): it
@@ -35,7 +35,7 @@ export function WriteMissingDocument({
   const job = useJob(jobId, 0, (update) => {
     if (update.status === "DONE") router.refresh();
     if (update.status === "FAILED") {
-      toast(update.error ?? "Writing it didn't work. Try again.");
+      toast(update.error ?? "Das Schreiben hat nicht geklappt. Versuch es noch einmal.");
       setJobId(null);
     }
   });
@@ -53,12 +53,12 @@ export function WriteMissingDocument({
       <div className="flex max-w-[420px] flex-col items-center gap-4 text-center">
         <p className="text-muted">
           {busy
-            ? `${job?.step ?? `Writing the ${NAMES[kind]}`}…`
-            : `This application was created without a ${NAMES[kind]}.${aiReady ? "" : " Writing one needs an AI provider, in Settings → AI provider."}`}
+            ? `${job?.step ?? `Schreibe ${NAMES[kind]}`}…`
+            : `Diese Bewerbung wurde ohne ${NAMES[kind]} angelegt.${aiReady ? "" : " Zum Schreiben brauchst du einen KI-Anbieter (Einstellungen → KI-Anbieter)."}`}
         </p>
         {aiReady && (
           <Button variant="secondary" disabled={busy} onClick={write}>
-            {busy ? "Writing…" : `Write the ${NAMES[kind]}`}
+            {busy ? "Schreibe…" : `${kind === "RESUME" ? "Lebenslauf" : "Anschreiben"} schreiben`}
           </Button>
         )}
       </div>

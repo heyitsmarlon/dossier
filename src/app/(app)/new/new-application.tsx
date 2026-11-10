@@ -256,7 +256,7 @@ export function NewApplication({
   // Public issue 66: the posting's score, with its reasons, before anything is written.
   const scoreJob = useJob<PostingFit>(draft.scoreJobId ?? null, 0, (job) => {
     if (job.status !== "DONE" && job.status !== "FAILED") return;
-    if (job.status === "FAILED") toast(job.error ?? "The posting couldn't be scored.");
+    if (job.status === "FAILED") toast(job.error ?? "Die Anzeige konnte nicht bewertet werden.");
     update({ scoreJobId: null, ...(job.status === "DONE" && job.result ? { score: job.result } : {}) });
   });
   const scoring = Boolean(draft.scoreJobId) && (!scoreJob || scoreJob.status === "QUEUED" || scoreJob.status === "RUNNING");

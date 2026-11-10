@@ -131,7 +131,7 @@ function SkillsCard({ profile, update, order }: { profile: ProfileData; update: 
   async function add(name: string, group: string): Promise<boolean> {
     const existing = profile.skills.find((skill) => sameName(skill.name, name));
     if (existing && existing.group === group) {
-      toast(`“${existing.name}” is already ${group ? `in ${group}` : "in your skills"}.`);
+      toast(`„${existing.name}“ ist schon ${group ? `in ${group}` : "in deinen Fähigkeiten"}.`);
       return true;
     }
     if (existing) {
@@ -195,9 +195,9 @@ function SkillsCard({ profile, update, order }: { profile: ProfileData; update: 
         accessibility={{
           announcements: {
             onDragStart: ({ active }) => `Picked up “${skills[indexIn(skills, active.id)]?.name}”.`,
-            onDragOver: ({ over }) => (over ? `Over position ${indexIn(skills, over.id) + 1} of ${skills.length}.` : "Not over the list."),
-            onDragEnd: ({ over }) => (over ? `Dropped at position ${indexIn(skills, over.id) + 1} of ${skills.length}.` : "Dropped back where it was."),
-            onDragCancel: () => "Moving cancelled.",
+            onDragOver: ({ over }) => (over ? `Über Position ${indexIn(skills, over.id) + 1} von ${skills.length}.` : "Nicht über der Liste."),
+            onDragEnd: ({ over }) => (over ? `Auf Position ${indexIn(skills, over.id) + 1} von ${skills.length} abgelegt.` : "Zurück an den alten Platz gelegt."),
+            onDragCancel: () => "Verschieben abgebrochen.",
           },
         }}
       >
@@ -209,7 +209,7 @@ function SkillsCard({ profile, update, order }: { profile: ProfileData; update: 
                 <SortableChip key={skill.id} id={skill.id}>
                   <RemovableChip
                     meta={roles > 0 ? `${roles} ${roles === 1 ? "role" : "roles"}` : undefined}
-                    removeLabel={`Remove ${skill.name}`}
+                    removeLabel={`${skill.name} entfernen`}
                     onRemove={() => void remove(skill.id)}
                   >
                     <SkillMenu
@@ -230,28 +230,28 @@ function SkillsCard({ profile, update, order }: { profile: ProfileData; update: 
     );
 
   return (
-    <ChipCard title="Skills" count={profile.skills.length}>
+    <ChipCard title="Fähigkeiten" count={profile.skills.length}>
       {profile.skills.length > 1 && (
         <div className="flex min-h-8 flex-wrap items-center justify-between gap-x-4 gap-y-1 text-meta text-muted">
           {mode === "manual" ? (
             <>
-              <span>In your own order, which tailored resumes keep.</span>
+              <span>In deiner eigenen Reihenfolge, die zugeschnittene Lebensläufe übernehmen.</span>
               <Button variant="text" size="sm" onClick={() => void relevanceFirst()}>
-                Most relevant first
+                Relevanteste zuerst
               </Button>
             </>
           ) : (
-            <span>Drag a skill, or move it from its menu, to set your own order. Tailored resumes put the most relevant first until you do.</span>
+            <span>Zieh eine Fähigkeit oder verschieb sie über ihr Menü, um eine eigene Reihenfolge festzulegen. Bis dahin stellen zugeschnittene Lebensläufe die relevantesten nach vorn.</span>
           )}
         </div>
       )}
-      {chips("", ungrouped, "Your skills")}
-      <AddSkillField label="Add a skill" placeholder="e.g. Accessibility" onAdd={(name) => add(name, "")} />
+      {chips("", ungrouped, "Deine Fähigkeiten")}
+      <AddSkillField label="Fähigkeit hinzufügen" placeholder="z. B. Barrierefreiheit" onAdd={(name) => add(name, "")} />
       {named.map(({ group, skills }) => (
         <div key={group} className="flex flex-col gap-3 border-t border-line pt-4">
           <GroupHeading name={group} others={groupNames.filter((name) => name !== group)} onRename={(to) => void rename(group, to)} />
-          {chips(group, skills, `Skills in ${group}`)}
-          <AddSkillField label={`Add to ${group}`} placeholder={`A skill for ${group}`} onAdd={(name) => add(name, group)} />
+          {chips(group, skills, `Fähigkeiten in ${group}`)}
+          <AddSkillField label={`Zu ${group} hinzufügen`} placeholder={`Eine Fähigkeit für ${group}`} onAdd={(name) => add(name, group)} />
         </div>
       ))}
       <NewGroup existing={groupNames} onCreate={(name) => setEmptyGroups((current) => [...current, name])} />
@@ -274,10 +274,10 @@ function SortableChip({ id, children }: { id: string; children: ReactNode }) {
 
 /** Why `name` can't name a group, or null: it leads a line on resumes, so no ":" or "·" (#280). */
 function groupNameProblem(name: string, others: readonly string[]): string | null {
-  if (!name) return "Give the group a name.";
+  if (!name) return "Gib der Gruppe einen Namen.";
   if (/[:·]/.test(name)) return "A group's name can't have “:” or “·” in it.";
-  if (name.length > 60) return "Keep a group's name under 60 characters.";
-  if (others.some((other) => sameName(other, name))) return `There's a group called ${name} already.`;
+  if (name.length > 60) return "Der Name einer Gruppe darf höchstens 60 Zeichen haben.";
+  if (others.some((other) => sameName(other, name))) return `Es gibt schon eine Gruppe namens ${name}.`;
   return null;
 }
 
@@ -323,23 +323,23 @@ function SkillMenu({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label={`${skill.name}: move it${groups.length > 0 ? ", or change its group" : ""}`} className="rounded-full text-left hover:text-primary-text">
+      <DropdownMenuTrigger aria-label={`${skill.name}: verschieben${groups.length > 0 ? " oder Gruppe ändern" : ""}`} className="rounded-full text-left hover:text-primary-text">
         {skill.name}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuLabel>{skill.name}</DropdownMenuLabel>
         <DropdownMenuItem disabled={first} onSelect={() => onMove(-1)}>
-          Move left
+          Nach links
         </DropdownMenuItem>
         <DropdownMenuItem disabled={last} onSelect={() => onMove(1)}>
-          Move right
+          Nach rechts
         </DropdownMenuItem>
         {groups.length > 0 && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel>Group</DropdownMenuLabel>
+            <DropdownMenuLabel>Gruppe</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={skill.group} onValueChange={onGroup}>
-              <DropdownMenuRadioItem value="">No group</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="">Keine Gruppe</DropdownMenuRadioItem>
               {groups.map((group) => (
                 <DropdownMenuRadioItem key={group} value={group}>
                   {group}
@@ -372,7 +372,7 @@ function GroupHeading({ name, others, onRename }: { name: string; others: readon
   if (editing) {
     return (
       <Input
-        aria-label={`New name for ${name}`}
+        aria-label={`Neuer Name für ${name}`}
         value={draft}
         autoFocus
         onChange={(event) => setDraft(event.target.value)}
@@ -434,7 +434,7 @@ function NewGroup({ existing, onCreate }: { existing: readonly string[]; onCreat
   }
   return (
     <Input
-      aria-label="Name of the new group"
+      aria-label="Name der neuen Gruppe"
       placeholder="e.g. Tools"
       value={draft}
       autoFocus
@@ -449,7 +449,7 @@ function NewGroup({ existing, onCreate }: { existing: readonly string[]; onCreat
           setNaming(false);
         }
       }}
-      hint="Resumes print each group as a line of its own, led by its name."
+      hint="Lebensläufe zeigen jede Gruppe als eigene Zeile, mit ihrem Namen vorne."
     />
   );
 }
@@ -481,7 +481,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
           language.id === existing.id ? { ...language, level } : language,
         ),
       }));
-      toast(`Updated ${existing.name} to ${languageLevelLabel(level)}.`);
+      toast(`${existing.name} auf ${languageLevelLabel(level)} geändert.`);
     }
     const result = await track(addLanguage({ name: trimmed, level }));
     if (!result.ok) {
@@ -521,9 +521,9 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
   }
 
   return (
-    <ChipCard title="Languages" count={profile.languages.length}>
+    <ChipCard title="Sprachen" count={profile.languages.length}>
       {profile.languages.length > 0 && (
-        <ul className="flex flex-col border-t border-line" aria-label="Your languages">
+        <ul className="flex flex-col border-t border-line" aria-label="Deine Sprachen">
           {profile.languages.map((language) => (
             <li key={language.id} className="flex items-center gap-3 border-b border-line py-2.5">
               <span className="min-w-0 flex-1 text-field">{language.name}</span>
@@ -537,7 +537,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
               </Select>
               <button
                 type="button"
-                aria-label={`Remove ${language.name}`}
+                aria-label={`${language.name} entfernen`}
                 onClick={() => void remove(language.id)}
                 className="rounded-control px-1.5 py-1 text-base leading-none text-muted hover:text-ink"
               >
@@ -550,8 +550,8 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
       <div className="flex flex-wrap gap-2">
         <Input
           className="min-w-0 flex-[1_1_180px]"
-          aria-label="Language"
-          placeholder="Language, e.g. French"
+          aria-label="Sprache"
+          placeholder="Sprache, z. B. Französisch"
           value={name}
           onChange={(event) => setName(event.target.value)}
           onKeyDown={(event) => {
@@ -562,7 +562,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
         />
         <Select
           className="flex-[0_1_220px]"
-          aria-label="Level"
+          aria-label="Niveau"
           selectClassName="text-sm"
           value={level}
           onChange={(event) => setLevel(event.target.value as LanguageLevel)}
@@ -570,7 +570,7 @@ function LanguagesCard({ profile, update }: { profile: ProfileData; update: Upda
           <LevelOptions />
         </Select>
         <Button variant="secondary" className="bg-input" onClick={() => void add()}>
-          Add
+          Hinzufügen
         </Button>
       </div>
     </ChipCard>

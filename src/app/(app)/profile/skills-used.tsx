@@ -82,12 +82,12 @@ export function SkillsUsed({
     <div role="group" aria-labelledby={labelId} className="flex flex-col gap-2.5 pt-1">
       <div className="flex items-baseline justify-between gap-3">
         <span id={labelId} className="text-label text-muted">
-          Skills you used here
+          Fähigkeiten, die du hier genutzt hast
         </span>
         <span className="text-xs text-muted">
           {skills.length > 0
-            ? `${attached} of ${skills.length} attached`
-            : "Add skills under Skills, or type one below"}
+            ? `${attached} von ${skills.length} zugeordnet`
+            : "Füge Fähigkeiten unter „Fähigkeiten“ hinzu, oder gib unten eine ein"}
         </span>
       </div>
       {skills.length > 0 && (
@@ -105,8 +105,8 @@ export function SkillsUsed({
         </div>
       )}
       <Input
-        aria-label={`Add a new skill to this ${noun}`}
-        placeholder="New skill? Type it and press Enter to add it to your profile too"
+        aria-label={`Neue Fähigkeit zu diesem Eintrag (${noun}) hinzufügen`}
+        placeholder="Neue Fähigkeit? Eingeben und Enter drücken, dann kommt sie auch in dein Profil"
         inputClassName="py-[9px] text-control"
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
@@ -117,7 +117,7 @@ export function SkillsUsed({
         }}
       />
       <p className="text-label text-muted">
-        The AI uses these links to show where you actually applied a skill when it tailors a resume.
+        Die KI nutzt diese Zuordnungen, um beim Zuschneiden eines Lebenslaufs zu zeigen, wo du eine Fähigkeit tatsächlich eingesetzt hast.
       </p>
     </div>
   );

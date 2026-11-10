@@ -35,28 +35,28 @@ function CertificationForm({
     <div className="grid grid-cols-2 gap-[18px]" onBlur={flush}>
       <Input
         className="col-span-2"
-        label="Certification"
-        placeholder="Certified Accessibility Specialist"
+        label="Zertifikat"
+        placeholder="Zertifizierte Barrierefreiheits-Expertin"
         value={entry.name}
         onChange={(event) => set({ name: event.target.value })}
         autoFocus={autoFocus}
       />
       <Input
         className="col-span-2"
-        label="Issued by"
-        placeholder="Inclusive Design Institute"
+        label="Ausgestellt von"
+        placeholder="IHK Köln"
         value={entry.issuer}
         onChange={(event) => set({ issuer: event.target.value })}
       />
-      <MonthYearField label="Obtained" value={{ month: entry.month, year: entry.year }} onChange={({ month, year }) => set({ month, year })} />
+      <MonthYearField label="Erworben" value={{ month: entry.month, year: entry.year }} onChange={({ month, year }) => set({ month, year })} />
       <MonthYearField
-        label="Expires"
+        label="Gültig bis"
         value={{ month: entry.expiryMonth, year: entry.expiryYear }}
         onChange={({ month, year }) => set({ expiryMonth: month, expiryYear: year })}
       />
-      <p className="col-span-2 -mt-2.5 text-label text-muted">Leave Expires empty when it doesn&apos;t run out. Resumes say how long it&apos;s valid.</p>
+      <p className="col-span-2 -mt-2.5 text-label text-muted">Lass „Gültig bis“ leer, wenn es nicht abläuft. Lebensläufe nennen die Gültigkeit.</p>
       <Input
-        label={optional("Credential ID")}
+        label={optional("Zertifikats-ID")}
         placeholder="IDI-20481"
         value={entry.credentialId}
         onChange={(event) => set({ credentialId: event.target.value })}
@@ -64,14 +64,14 @@ function CertificationForm({
       <Input
         label={optional("Link")}
         placeholder="verify.example.org/IDI-20481"
-        hint="Where an employer can check it. On a PDF, the link can be clicked."
+        hint="Wo ein Arbeitgeber es prüfen kann. Im PDF ist der Link anklickbar."
         value={entry.link}
         onChange={(event) => set({ link: event.target.value })}
       />
       <Checkbox
         className="col-span-2"
-        label="Show on resumes"
-        hint="Off keeps it in your profile, but leaves it off every resume and out of what the AI reads."
+        label="Im Lebenslauf zeigen"
+        hint="Aus: bleibt im Profil, fehlt aber in jedem Lebenslauf und in dem, was die KI liest."
         checked={entry.onResumes}
         onChange={(event) => set({ onResumes: event.target.checked })}
       />
@@ -88,12 +88,12 @@ export function CertificationsSection({ profile, update }: { profile: ProfileDat
     <EntryList
       items={profile.certifications}
       setItems={(change) => update((current) => ({ ...current, certifications: change(current.certifications) }))}
-      addLabel="Add a certification"
+      addLabel="Zertifikat hinzufügen"
       ordering={{ mode: "manual", save: (ids) => reorderCertifications({ ids }) }}
       summary={(entry) => ({
-        title: entry.name.trim() || "New certification",
+        title: entry.name.trim() || "Neues Zertifikat",
         subtitle: entry.issuer.trim(),
-        meta: entry.onResumes ? formatMonthYear(entry.year, entry.month) || undefined : "Not on resumes",
+        meta: entry.onResumes ? formatMonthYear(entry.year, entry.month) || undefined : "Nicht im Lebenslauf",
       })}
       create={() => createCertification({})}
       remove={(entry) => removeCertification({ id: entry.id })}

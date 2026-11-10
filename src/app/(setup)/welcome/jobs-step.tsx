@@ -39,14 +39,14 @@ export function JobsStep({ initial }: { initial: JobSearchSettingsView }) {
   return (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h2 className="text-lead font-medium">What kind of jobs are you looking for?</h2>
-        <ChoiceCards label="What kind of jobs are you looking for?" options={JOB_KINDS} value={kind} onChange={(next) => void chooseKind(next)} />
+        <h2 className="text-lead font-medium">Was für Jobs suchst du?</h2>
+        <ChoiceCards label="Was für Jobs suchst du?" options={JOB_KINDS} value={kind} onChange={(next) => void chooseKind(next)} />
       </section>
       {kind === "any" && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-lead font-medium">Pick one</h2>
+          <h2 className="text-lead font-medium">Wähle eine</h2>
           <ChoiceCards
-            label="Pick a job source"
+            label="Jobquelle wählen"
             options={choices.map((choice) => ({ value: choice.source, name: choice.name, description: choice.about }))}
             value={source}
             onChange={setSource}
@@ -93,12 +93,12 @@ function SourcePanel({ choice, initial, onConnected }: { choice: JobChoice; init
         <p className="text-sm text-pretty text-muted">{choice.about}</p>
       </div>
       <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[140px_1fr]">
-        <dt className="font-medium">What it costs</dt>
+        <dt className="font-medium">Was es kostet</dt>
         <dd className="text-pretty text-muted">{choice.cost}</dd>
-        <dt className="font-medium">Your data</dt>
-        <dd className="text-pretty text-muted">Your searches (keywords, place and filters) go to {choice.name}. Nothing from your profile does.</dd>
+        <dt className="font-medium">Deine Daten</dt>
+        <dd className="text-pretty text-muted">Deine Suchen (Suchbegriffe, Ort und Filter) gehen an {choice.name}. Nichts aus deinem Profil.</dd>
       </dl>
-      <InstructionList steps={choice.steps} label={`Setting up ${choice.name}`} />
+      <InstructionList steps={choice.steps} label={`${choice.name} einrichten`} />
       <form
         className="flex flex-col gap-3"
         onSubmit={(event) => {
@@ -109,25 +109,25 @@ function SourcePanel({ choice, initial, onConnected }: { choice: JobChoice; init
         {choice.source === "ADZUNA" && <Input label="Application ID" autoComplete="off" value={appId} onChange={(event) => setAppId(event.target.value)} />}
         {choice.source !== "FREEHIRE" && (
           <Input
-            label={choice.source === "ADZUNA" ? "Application key" : "JSearch API key"}
+            label={choice.source === "ADZUNA" ? "Application Key" : "JSearch-API-Schlüssel"}
             type="password"
             autoComplete="off"
-            placeholder={savedKey === "set" ? "Saved · paste a new one to replace it" : "Paste it here"}
-            hint="Stored encrypted on your server, and never shown again."
+            placeholder={savedKey === "set" ? "Gespeichert · neuen einfügen, um ihn zu ersetzen" : "Hier einfügen"}
+            hint="Wird verschlüsselt auf deinem Server gespeichert und nie wieder angezeigt."
             value={key}
             onChange={(event) => setKey(event.target.value)}
           />
         )}
         <Button type="submit" className="self-start" aria-disabled={status.state === "checking" || undefined}>
-          {status.state === "checking" ? "Checking…" : choice.source === "FREEHIRE" ? "Use FreeHire" : "Check it"}
+          {status.state === "checking" ? "Prüfe…" : choice.source === "FREEHIRE" ? "FreeHire verwenden" : "Prüfen"}
         </Button>
       </form>
       <div role="status" className="text-sm empty:hidden">
-        {status.state === "connected" && <p className="text-success">It works: Dossier can search {choice.name}.</p>}
+        {status.state === "connected" && <p className="text-success">Es klappt: Dossier kann {choice.name} durchsuchen.</p>}
         {status.state === "failed" && <p className="rounded-card bg-warning-surface px-4 py-3 font-medium text-warning">{status.message}</p>}
       </div>
       <a href={JOB_SOURCES_HELP} target="_blank" rel="noopener noreferrer" className="self-start text-meta text-muted underline underline-offset-2 hover:text-ink">
-        More help on the wiki <span className="sr-only">(opens in a new tab)</span>
+        Mehr Hilfe im Wiki (englisch) <span className="sr-only">(öffnet in neuem Tab)</span>
       </a>
     </Card>
   );

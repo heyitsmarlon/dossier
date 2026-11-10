@@ -96,7 +96,7 @@ const skillName = z.string().trim().min(1, "Gib zuerst eine Fähigkeit ein.").ma
 const skillGroup = z
   .string()
   .trim()
-  .max(60, "Keep a group's name under 60 characters.")
+  .max(60, "Der Name einer Gruppe darf höchstens 60 Zeichen haben.")
   .refine((name) => !/[:·\n]/.test(name), "A group's name can't have “:” or “·” in it.");
 
 /** Adds a skill, in a group or none; one that's there already moves to that group (#280). */
@@ -110,7 +110,7 @@ export const setSkillGroup = action(z.object({ id, group: skillGroup }), async (
 
 /** Renames a group: its skills move with it, into another group of that name if there is one (#280). */
 export const renameSkillGroup = action(
-  z.object({ from: skillGroup.pipe(z.string().min(1)), to: skillGroup.pipe(z.string().min(1, "Give the group a name.")) }),
+  z.object({ from: skillGroup.pipe(z.string().min(1)), to: skillGroup.pipe(z.string().min(1, "Gib der Gruppe einen Namen.")) }),
   async ({ from, to }) => {
     await prisma.skill.updateMany({ where: { group: from }, data: { group: to } });
     return null;
@@ -123,7 +123,7 @@ export const reorderSkills = action(z.object({ ids: z.array(id) }), async ({ ids
   await prisma.$transaction(async (tx) => {
     const known = new Set((await tx.skill.findMany({ select: { id: true } })).map((entry) => entry.id));
     if (ids.length !== known.size || new Set(ids).size !== ids.length || !ids.every((entryId) => known.has(entryId))) {
-      throw new ActionError("The list changed in the meantime. Reload the page and try again.");
+      throw new ActionError("Die Liste hat sich zwischenzeitlich geändert. Lade die Seite neu und versuch es noch einmal.");
     }
     for (const [sort, entryId] of ids.entries()) await tx.skill.update({ where: { id: entryId }, data: { sort } });
     await saveSettings({ skillOrder: "manual" }, tx);
@@ -467,7 +467,7 @@ export const reorderCertifications = action(z.object({ ids: z.array(id) }), asyn
   await prisma.$transaction(async (tx) => {
     const known = new Set((await tx.certification.findMany({ select: { id: true } })).map((entry) => entry.id));
     if (ids.length !== known.size || new Set(ids).size !== ids.length || !ids.every((entryId) => known.has(entryId))) {
-      throw new ActionError("The list changed in the meantime. Reload the page and try again.");
+      throw new ActionError("Die Liste hat sich zwischenzeitlich geändert. Lade die Seite neu und versuch es noch einmal.");
     }
     for (const [sort, entryId] of ids.entries()) await tx.certification.update({ where: { id: entryId }, data: { sort } });
   });
@@ -511,7 +511,7 @@ const revalidateSections = () => {
   revalidatePath("/resume");
 };
 
-const customSectionFields = { title: z.string().trim().min(1, "Give the section a name.").max(100), format: z.enum(CustomSectionFormat) };
+const customSectionFields = { title: z.string().trim().min(1, "Gib dem Abschnitt einen Namen.").max(100), format: z.enum(CustomSectionFormat) };
 
 /** "Add a section" (#298, #338), on the Profile page. */
 export const createCustomSection = action(z.object(customSectionFields), async (data) => {
@@ -559,7 +559,7 @@ export const restoreCustomSection = action(
   },
 );
 
-const SECTION_GONE = "That section no longer exists. Reload the page to see your sections.";
+const SECTION_GONE = "Diesen Abschnitt gibt es nicht mehr. Lade die Seite neu, um deine Abschnitte zu sehen.";
 
 /** Autosaves a section's name and format. A blank name isn't saved: a resume's heading needs one. */
 export const saveCustomSection = action(
@@ -608,7 +608,7 @@ export const reorderCustomItems = action(z.object({ sectionId: id, ids: z.array(
   await prisma.$transaction(async (tx) => {
     const known = new Set((await tx.customItem.findMany({ where: { sectionId }, select: { id: true } })).map((entry) => entry.id));
     if (ids.length !== known.size || new Set(ids).size !== ids.length || !ids.every((entryId) => known.has(entryId))) {
-      throw new ActionError("The list changed in the meantime. Reload the page and try again.");
+      throw new ActionError("Die Liste hat sich zwischenzeitlich geändert. Lade die Seite neu und versuch es noch einmal.");
     }
     for (const [sort, entryId] of ids.entries()) await tx.customItem.update({ where: { id: entryId }, data: { sort } });
   });
@@ -733,7 +733,7 @@ export const applyProfileImport = action(
     await applyImportedProfile(prisma, profile, mode);
     await prisma.job.deleteMany({ where: { id: jobId } });
     revalidatePath("/", "layout");
-    toast(`${mode === "replace" ? "Your profile now holds" : "Added to your profile"}: ${importCounts(profile)}.`);
+    toast(`${mode === "replace" ? "Dein Profil enthält jetzt" : "Zu deinem Profil hinzugefügt"}: ${importCounts(profile)}.`);
     return null;
   },
 );

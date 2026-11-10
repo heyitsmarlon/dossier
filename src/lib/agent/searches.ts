@@ -23,8 +23,8 @@ export async function saveAgentSearch(input: AgentSearchInput, id?: string, db: 
   const data = agentSearchInputSchema.parse(input);
   return db.$transaction(async (tx) => {
     await lockAgentSearches(tx);
-    if (id && !await tx.agentSearch.findUnique({ where: { id }, select: { id: true } })) throw new ActionError("That Agent search no longer exists.");
-    if (!id && await tx.agentSearch.count() >= MAX_AGENT_SEARCHES) throw new ActionError("Keep at most three Agent searches.");
+    if (id && !await tx.agentSearch.findUnique({ where: { id }, select: { id: true } })) throw new ActionError("Diese Agent-Suche gibt es nicht mehr.");
+    if (!id && await tx.agentSearch.count() >= MAX_AGENT_SEARCHES) throw new ActionError("Höchstens drei Agent-Suchen.");
     const row = id
       ? await tx.agentSearch.update({ where: { id }, data })
       : await tx.agentSearch.create({ data });
@@ -37,7 +37,7 @@ export async function setAgentSearchEnabled(id: string, enabled: boolean, db: Pr
   return db.$transaction(async (tx) => {
     await lockAgentSearches(tx);
     const current = await tx.agentSearch.findUnique({ where: { id } });
-    if (!current) throw new ActionError("That Agent search no longer exists.");
+    if (!current) throw new ActionError("Diese Agent-Suche gibt es nicht mehr.");
     const query = searchQuerySchema.parse(current.query);
     if (enabled && !query.country) throw new ActionError(`Choose a country for “${current.name}”.`);
     const row = await tx.agentSearch.update({ where: { id }, data: { enabled } });
@@ -59,7 +59,7 @@ export async function moveAgentSearch(id: string, direction: "up" | "down", db: 
     await lockAgentSearches(tx);
     const rows = await tx.agentSearch.findMany({ orderBy: [{ sort: "asc" }, { createdAt: "asc" }, { id: "asc" }] });
     const index = rows.findIndex((row) => row.id === id);
-    if (index < 0) throw new ActionError("That Agent search no longer exists.");
+    if (index < 0) throw new ActionError("Diese Agent-Suche gibt es nicht mehr.");
     const target = index + (direction === "up" ? -1 : 1);
     if (target < 0 || target >= rows.length) return;
     [rows[index], rows[target]] = [rows[target], rows[index]];

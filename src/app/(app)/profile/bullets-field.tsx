@@ -42,13 +42,13 @@ export function BulletsField({ value, onChange, placeholder }: { value: string; 
     <div className="col-span-2 flex flex-col gap-[7px]">
       <div className="flex items-end justify-between gap-3">
         <label htmlFor={id} className="text-label font-medium text-ink">
-          What you did
+          Was du gemacht hast
         </label>
         <button
           type="button"
           className="grid size-7 place-items-center rounded-[6px] border border-line-input bg-input text-sm font-bold text-ink hover:bg-hover focus-visible:outline-offset-1"
-          title="Bold (Ctrl+B)"
-          aria-label="Bold"
+          title="Fett (Strg+B)"
+          aria-label="Fett"
           onClick={bold}
         >
           B
@@ -66,7 +66,7 @@ export function BulletsField({ value, onChange, placeholder }: { value: string; 
         className={cn(controlClassName, "resize-y px-3 py-[11px] leading-[1.6]")}
       />
       <p id={`${id}-hint`} className="text-label text-muted">
-        Select words and press B to set them in bold, like a result: here they show as **bold**.
+        Markiere Wörter und drück B, um sie fett zu setzen, etwa ein Ergebnis: hier erscheinen sie als **fett**.
       </p>
     </div>
   );

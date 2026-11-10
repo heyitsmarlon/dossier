@@ -33,10 +33,10 @@ export async function requestOrigin(): Promise<string> {
 /** "today at 03:00", "yesterday at 03:00" or "on 25 Sep at 03:00", in the server's time zone. */
 export function whenRan(date: Date | null, now = new Date()): string | null {
   if (!date) return null;
-  const time = date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  const time = date.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
   const day = (value: Date) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
   const days = Math.round((day(now) - day(date)) / 86_400_000);
-  if (days === 0) return `today at ${time}`;
-  if (days === 1) return `yesterday at ${time}`;
-  return `on ${formatShortDate(date, now)} at ${time}`;
+  if (days === 0) return `heute um ${time}`;
+  if (days === 1) return `gestern um ${time}`;
+  return `am ${formatShortDate(date, now)} um ${time}`;
 }

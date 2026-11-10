@@ -20,17 +20,17 @@ const one = (value: string | string[] | undefined) => (Array.isArray(value) ? va
  * redirect must never send the browser anywhere.
  */
 export async function checkAuthorizeRequest(params: Record<string, string | string[] | undefined>): Promise<AuthorizeRequest | { error: string }> {
-  if (!(await connectorSince())) return { error: "The MCP connector is off. Turn it on in Settings → MCP connector, then connect again from the app." };
+  if (!(await connectorSince())) return { error: "Der MCP-Connector ist aus. Schalte ihn unter Einstellungen → MCP-Connector ein und verbinde dich dann erneut aus der App." };
   const client = await readClient(one(params.client_id));
-  if (!client) return { error: "This sign-in link isn't valid any more. Remove Dossier in the app and add it again." };
+  if (!client) return { error: "Dieser Anmeldelink ist nicht mehr gültig. Entferne Dossier in der App und füge es neu hinzu." };
   const redirectUri = one(params.redirect_uri);
   if (!allowedRedirect(redirectUri, await addedRedirects()) || !clientAllows(client, redirectUri)) {
-    return { error: "This sign-in would send you to an address Dossier doesn't know, so it was stopped. Add the app's callback address in Settings → MCP connector first." };
+    return { error: "Diese Anmeldung würde dich an eine Adresse schicken, die Dossier nicht kennt, deshalb wurde sie gestoppt. Trag zuerst die Callback-Adresse der App unter Einstellungen → MCP-Connector ein." };
   }
-  if (one(params.response_type) !== "code") return { error: "The app asked for a kind of sign-in Dossier doesn't offer." };
+  if (one(params.response_type) !== "code") return { error: "Die App hat eine Anmeldeart angefragt, die Dossier nicht anbietet." };
   const codeChallenge = one(params.code_challenge);
   if (one(params.code_challenge_method) !== "S256" || !/^[A-Za-z0-9_-]{43,128}$/.test(codeChallenge)) {
-    return { error: "The app's sign-in request is missing its PKCE challenge." };
+    return { error: "Der Anmeldeanfrage der App fehlt die PKCE-Challenge." };
   }
   return { clientId: one(params.client_id), clientName: client.name, redirectUri, codeChallenge, state: one(params.state), resource: one(params.resource) };
 }

@@ -23,7 +23,7 @@ export function QuietDays({ days }: { days: number }) {
 
   return (
     <p className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-line pt-3.5 pb-1.5 text-meta text-muted">
-      <label htmlFor="quiet-days">Suggest a follow-up after</label>
+      <label htmlFor="quiet-days">Nachfassen vorschlagen nach</label>
       <SelectControl
         compact
         id="quiet-days"
@@ -39,11 +39,11 @@ export function QuietDays({ days }: { days: number }) {
       >
         {choices.map((choice) => (
           <option key={choice} value={choice}>
-            {choice} {choice === 1 ? "day" : "days"}
+            {choice} {choice === 1 ? "Tag" : "Tagen"}
           </option>
         ))}
       </SelectControl>
-      <span>without news</span>
+      <span>ohne Neuigkeiten</span>
     </p>
   );
 }

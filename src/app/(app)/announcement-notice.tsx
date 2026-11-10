@@ -10,9 +10,9 @@ import { cn } from "@/lib/cn";
 
 /** What each severity says and looks like. The word is there so it's never only a colour. */
 const SEVERITY: Record<Severity, { word: string; icon: LucideIcon; tone: string }> = {
-  security: { word: "Security notice", icon: ShieldAlert, tone: "text-notice-security" },
+  security: { word: "Sicherheitshinweis", icon: ShieldAlert, tone: "text-notice-security" },
   important: { word: "Important", icon: TriangleAlert, tone: "text-notice-important" },
-  info: { word: "From Dossier", icon: Megaphone, tone: "text-on-inverse-muted" },
+  info: { word: "Von Dossier", icon: Megaphone, tone: "text-on-inverse-muted" },
 };
 
 const never = () => () => {};
@@ -74,7 +74,7 @@ export function AnnouncementNotice({ announcement }: { announcement: Announcemen
               >
                 <span className="wrap-anywhere">
                   {link.label}{" "}
-                  <span className="sr-only">(opens in a new tab)</span>
+                  <span className="sr-only">(öffnet in neuem Tab)</span>
                 </span>
                 <ArrowUpRight size={15} aria-hidden="true" className="shrink-0" />
               </a>
@@ -84,7 +84,7 @@ export function AnnouncementNotice({ announcement }: { announcement: Announcemen
               onClick={() => void dismiss()}
               className="inline-flex min-h-6 items-center text-sm font-medium text-on-inverse-muted hover:text-on-inverse focus-visible:outline-on-inverse"
             >
-              Dismiss
+              Ausblenden
             </button>
           </div>
         </section>

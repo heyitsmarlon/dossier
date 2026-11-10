@@ -5,19 +5,19 @@ import { DASHBOARD_PERIODS, type DashboardPeriod } from "@/lib/dashboard";
 
 /** Everything that asks the AI model, or Jev, for an answer, in the order the screen lists them at rest. */
 export const USAGE_TASKS = [
-  { task: "extract-profile", label: "Importing a profile", hint: "A resume read into your profile" },
-  { task: "score-posting", label: "Scoring postings", hint: "Score in Find jobs, and the job agent" },
-  { task: "score-posting-jev", label: "Scoring postings with Jev", hint: "The same, by TypeSafe's Jev" },
-  { task: "extract-posting", label: "Reading postings", hint: "What a posting asks for, when you start an application" },
-  { task: "match-requirements", label: "Matching requirements", hint: "Your profile against what a posting asks for" },
-  { task: "tailor-resume", label: "Writing resumes", hint: "Each application's tailored resume" },
-  { task: "write-cover-letter", label: "Writing cover letters", hint: "Each application's cover letter" },
-  { task: "write-email", label: "Writing emails", hint: "The email to send with an application" },
-  { task: "regenerate-unit", label: "Rewriting parts", hint: "One part of a resume or letter, written again" },
-  { task: "refine-chat", label: "Refining in chat", hint: "Changes you ask for in an application's chat" },
-  { task: "classify-reply", label: "Reading replies", hint: "Employers' mail from Gmail, read in the background" },
-  { task: "draft-reply", label: "Drafting answers", hint: "Your answers to employers' replies" },
-  { task: "connection-check", label: "Connection checks", hint: "Test connection in Settings" },
+  { task: "extract-profile", label: "Profil importieren", hint: "Ein Lebenslauf, ins Profil eingelesen" },
+  { task: "score-posting", label: "Anzeigen bewerten", hint: "„Bewerten“ in „Jobs finden“ und der Job-Agent" },
+  { task: "score-posting-jev", label: "Anzeigen mit Jev bewerten", hint: "Dasselbe, mit Jev von TypeSafe" },
+  { task: "extract-posting", label: "Anzeigen lesen", hint: "Was eine Anzeige verlangt, wenn du eine Bewerbung startest" },
+  { task: "match-requirements", label: "Anforderungen abgleichen", hint: "Dein Profil im Vergleich zu den Anforderungen einer Anzeige" },
+  { task: "tailor-resume", label: "Lebensläufe schreiben", hint: "Der angepasste Lebenslauf jeder Bewerbung" },
+  { task: "write-cover-letter", label: "Anschreiben schreiben", hint: "Das Anschreiben jeder Bewerbung" },
+  { task: "write-email", label: "E-Mails schreiben", hint: "Die E-Mail, die mit einer Bewerbung rausgeht" },
+  { task: "regenerate-unit", label: "Teile neu schreiben", hint: "Ein Teil eines Lebenslaufs oder Anschreibens, neu geschrieben" },
+  { task: "refine-chat", label: "Im Chat verfeinern", hint: "Änderungen, um die du im Chat einer Bewerbung bittest" },
+  { task: "classify-reply", label: "Antworten lesen", hint: "Mails von Arbeitgebern aus Gmail, im Hintergrund gelesen" },
+  { task: "draft-reply", label: "Antworten entwerfen", hint: "Deine Antworten auf Mails von Arbeitgebern" },
+  { task: "connection-check", label: "Verbindungstests", hint: "„Verbindung testen“ in den Einstellungen" },
 ] as const;
 
 export type UsageTask = (typeof USAGE_TASKS)[number]["task"];

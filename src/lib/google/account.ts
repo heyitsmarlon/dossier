@@ -30,8 +30,8 @@ export type GoogleConnection =
 
 /** Stored in place of the refresh token once Google refuses it, so nothing asks Google again until a new sign-in. */
 const REFUSED = "";
-const SIGN_IN_AGAIN = "Google no longer accepts Dossier's access. Connect your Google account again.";
-const UNREADABLE = "The saved Google access can't be read, probably since DOSSIER_SECRET changed. Connect your Google account again.";
+const SIGN_IN_AGAIN = "Google akzeptiert den Zugriff von Dossier nicht mehr. Verbinde dein Google-Konto neu.";
+const UNREADABLE = "Der gespeicherte Google-Zugriff ist nicht lesbar, vermutlich weil sich DOSSIER_SECRET geändert hat. Verbinde dein Google-Konto neu.";
 
 /**
  * Why the saved refresh token can't be used: Google refused it, or it can't
@@ -75,7 +75,7 @@ export async function googleConnection(): Promise<GoogleConnection> {
 export async function saveGoogleAccount({ email, refreshToken, scopes }: { email: string; refreshToken: string | undefined; scopes: string }) {
   const existing = await loadGoogleAccount();
   const refreshTokenEnc = refreshToken ? encryptSecret(GOOGLE_TOKEN, refreshToken) : existing?.refreshTokenEnc;
-  if (!refreshTokenEnc) throw new GoogleError("rejected", "Google didn't give Dossier lasting access. Remove Dossier at myaccount.google.com/permissions and connect again.");
+  if (!refreshTokenEnc) throw new GoogleError("rejected", "Google hat Dossier keinen dauerhaften Zugriff gegeben. Entferne Dossier unter myaccount.google.com/permissions und verbinde dich neu.");
   // Another account replaces the old one, and its sync starts afresh.
   const sameAccount = existing?.email.toLowerCase() === email.toLowerCase();
   const merged = sameAccount ? [...new Set([...existing!.scopes.split(/\s+/), ...scopes.split(/\s+/)])].filter(Boolean).join(" ") : scopes;
@@ -114,9 +114,9 @@ const tokens = (globalForTokens.googleTokens ??= new Map());
 /** A valid access token for the connected account, refreshed when it's about to expire. */
 export async function accessToken(group: ScopeGroup, signal?: AbortSignal): Promise<string> {
   const account = await loadGoogleAccount();
-  if (!account) throw new GoogleError("not-connected", "Connect your Google account in Settings → Google first.");
+  if (!account) throw new GoogleError("not-connected", "Verbinde zuerst dein Google-Konto unter Einstellungen → Google.");
   if (!hasScopes(account.scopes, group)) {
-    throw new GoogleError("scope", "Dossier doesn't have that permission yet. Allow it in Settings → Google.");
+    throw new GoogleError("scope", "Dossier hat diese Berechtigung noch nicht. Erlaube sie unter Einstellungen → Google.");
   }
   if (account.refreshTokenEnc === REFUSED) throw new GoogleError("revoked", SIGN_IN_AGAIN);
   const cached = tokens.get(ACCOUNT_ID);
@@ -148,7 +148,7 @@ async function refused(error: GoogleError): Promise<GoogleError> {
 }
 
 const MAX_BYTES = 30 * 1024 * 1024;
-const SLOW_DOWN = "Google asks Dossier to slow down. Try again in a few minutes.";
+const SLOW_DOWN = "Google bittet Dossier, langsamer zu machen. Versuch es in ein paar Minuten noch einmal.";
 /** Before the second, third and fourth try, when the error passes (public issue 68). */
 const RETRY_DELAYS_MS = [1000, 3000, 9000];
 
@@ -213,24 +213,24 @@ async function googleFetchOnce<T>(
       cache: "no-store",
     });
   } catch {
-    throw new GoogleError("unavailable", "Couldn't reach Google. Try again in a moment.");
+    throw new GoogleError("unavailable", "Google war nicht erreichbar. Versuch es gleich noch einmal.");
   }
   const path = new URL(url).pathname;
   if (response.status === 401) {
     tokens.delete(ACCOUNT_ID);
-    throw new GoogleError("revoked", "Google no longer accepts Dossier's access. Connect your Google account again.", `${path}: 401`);
+    throw new GoogleError("revoked", "Google akzeptiert den Zugriff von Dossier nicht mehr. Verbinde dein Google-Konto neu.", `${path}: 401`);
   }
   if (response.status === 403) {
     // Gmail says 403 for its per-user rate limit too, not only for a missing permission: the reason tells them apart.
     const reason = await refusalReason(response);
     if (/rateLimit|quota|dailyLimit/i.test(reason)) throw new GoogleError("quota", SLOW_DOWN, `${path}: 403 ${reason}`, 403, retryAfterMs(response));
-    throw new GoogleError("scope", "Google refused that. Check the permissions in Settings → Google.", `${path}: 403${reason ? ` ${reason}` : ""}`, 403);
+    throw new GoogleError("scope", "Google hat das abgelehnt. Prüf die Berechtigungen unter Einstellungen → Google.", `${path}: 403${reason ? ` ${reason}` : ""}`, 403);
   }
   if (response.status === 429) throw new GoogleError("quota", SLOW_DOWN, `${path}: 429`, 429, retryAfterMs(response));
   if (response.status === 404 || response.status === 410) {
-    throw new GoogleError("unavailable", "Google couldn't find that. It may have been deleted.", `${path}: ${response.status}`, response.status);
+    throw new GoogleError("unavailable", "Google hat das nicht gefunden. Vielleicht wurde es gelöscht.", `${path}: ${response.status}`, response.status);
   }
-  if (!response.ok) throw new GoogleError("unavailable", "Google had a problem with that. Try again in a moment.", `${path}: HTTP ${response.status}`, response.status);
+  if (!response.ok) throw new GoogleError("unavailable", "Google hatte damit ein Problem. Versuch es gleich noch einmal.", `${path}: HTTP ${response.status}`, response.status);
   if (response.status === 204) return undefined as T;
   const length = Number(response.headers.get("content-length") ?? 0);
   if (length > MAX_BYTES) throw new GoogleError("unavailable", "Google's answer was too big.", `${path}: ${length} bytes`);

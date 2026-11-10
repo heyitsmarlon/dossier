@@ -12,18 +12,18 @@ export type ScoringView = { scorer: Scorer; keyState: ScoringKeyState };
 
 export const SCORER_INFO: Record<Scorer, { name: string; description: string; tag: string }> = {
   AI: {
-    name: "Your AI model",
-    description: "The AI provider in Settings → AI provider scores each posting and writes why it fits, in its own words.",
-    tag: "Uses your AI provider",
+    name: "Dein KI-Modell",
+    description: "Der KI-Anbieter aus Einstellungen → KI-Anbieter bewertet jede Anzeige und begründet in eigenen Worten, warum sie passt.",
+    tag: "Nutzt deinen KI-Anbieter",
   },
   JEV: {
-    name: "Jev by TypeSafe",
-    description: "A model made for quick judgments. It answers questions about the posting, and Dossier builds the score and the reasons from the posting's own lines.",
-    tag: "Needs a TypeSafe key",
+    name: "Jev von TypeSafe",
+    description: "Ein Modell für schnelle Urteile. Es beantwortet Fragen zur Anzeige, und Dossier baut Bewertung und Begründung aus Zeilen der Anzeige.",
+    tag: "Braucht einen TypeSafe-Schlüssel",
   },
 };
 
 export const TYPESAFE_KEY_URL = "https://console.typesafe.ai/keys";
 
-export const SCORING_KEY_MISSING = "Enter your TypeSafe key in Settings → Scoring first.";
-export const SCORING_KEY_UNREADABLE = "Your saved TypeSafe key can't be read. Enter it again in Settings → Scoring.";
+export const SCORING_KEY_MISSING = "Gib zuerst deinen TypeSafe-Schlüssel ein (Einstellungen → Bewertung).";
+export const SCORING_KEY_UNREADABLE = "Dein gespeicherter TypeSafe-Schlüssel ist nicht lesbar. Gib ihn neu ein (Einstellungen → Bewertung).";

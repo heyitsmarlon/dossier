@@ -44,7 +44,7 @@ export function ConnectorSection({
     if (!result.ok) setOn(!next);
   };
 
-  const copy = async () => toast((await copyText(address)) ? "Address copied." : "Couldn't copy it. Select the address and copy it instead.");
+  const copy = async () => toast((await copyText(address)) ? "Adresse kopiert." : "Kopieren hat nicht geklappt. Markiere die Adresse und kopiere sie selbst.");
 
   const addRedirect = async () => {
     const uri = draft.trim();
@@ -62,25 +62,25 @@ export function ConnectorSection({
 
   return (
     <>
-      <SettingsSectionIntro title="MCP connector">
-        Use Dossier from AI apps that speak MCP: Claude, in chats on claude.ai, in the Desktop and mobile apps and in its command-line app, or another app such as
-        n8n. They can search for jobs, read your profile and applications, and save the applications and fit scores they write. They never send or delete anything.
+      <SettingsSectionIntro title="MCP-Connector">
+        Nutze Dossier aus KI-Apps, die MCP sprechen: Claude in Chats auf claude.ai, in den Desktop- und Mobil-Apps und in seiner Kommandozeilen-App, oder andere Apps wie
+        n8n. Sie können Jobs suchen, dein Profil und deine Bewerbungen lesen und die Bewerbungen und Bewertungen speichern, die sie schreiben. Sie verschicken und löschen nie etwas.
       </SettingsSectionIntro>
 
       {inDesktopApp && (
         <p className="text-meta text-muted">
-          On this computer, an app asks you to allow it in your browser. When it does, choose Help → Sign in my browser in this window, and the
-          browser carries on.
+          Auf diesem Rechner fragt eine App im Browser nach deiner Erlaubnis. Wähle dann in diesem Fenster Hilfe → Im Browser anmelden, und der
+          Browser macht weiter.
         </p>
       )}
 
       <Card padding="none" className="px-7 py-4">
         <Toggle
-          label="Let apps connect"
+          label="Apps verbinden lassen"
           description={
             on
-              ? "On. Apps connect at the address below, once you've signed in to Dossier and allowed them."
-              : "Off. The connector's addresses aren't open on this server."
+              ? "An. Apps verbinden sich über die Adresse unten, sobald du dich bei Dossier angemeldet und sie erlaubt hast."
+              : "Aus. Die Adressen des Connectors sind auf diesem Server nicht offen."
           }
           checked={on}
           onCheckedChange={(checked) => void turn(checked)}
@@ -91,57 +91,57 @@ export function ConnectorSection({
         <>
           <Card className="flex flex-col gap-4">
             <div className="flex flex-col gap-[7px]">
-              <span className="text-label text-muted">Address to add in an app</span>
+              <span className="text-label text-muted">Adresse zum Hinzufügen in einer App</span>
               <div className="flex flex-wrap items-center gap-3">
                 <code className="min-w-0 flex-1 rounded-control border border-line-input bg-input px-3 py-2 font-mono text-[13px] [overflow-wrap:anywhere]">
                   {address}
                 </code>
                 <Button variant="secondary" size="sm" onClick={() => void copy()}>
-                  Copy
+                  Kopieren
                 </Button>
               </div>
             </div>
             <h3 className="text-control font-medium">In Claude</h3>
             <ol className="flex list-decimal flex-col gap-1.5 pl-5 text-sm text-pretty">
               <li>
-                Open <strong>Settings → Connectors</strong> and choose <strong>Add custom connector</strong>.
+                Öffne <strong>Einstellungen → Connectors</strong> und wähle <strong>Benutzerdefinierten Connector hinzufügen</strong>.
               </li>
               <li>
-                Name it <strong>Dossier</strong>, paste the address and press <strong>Add</strong>, then <strong>Connect</strong>.
+                Nenn ihn <strong>Dossier</strong>, füge die Adresse ein und drück <strong>Hinzufügen</strong>, dann <strong>Verbinden</strong>.
               </li>
               <li>
-                Claude opens Dossier: sign in if it asks, check what Claude may do, and press <strong>Allow</strong>.
+                Claude öffnet Dossier: Melde dich an, falls gefragt, prüf, was Claude darf, und drück <strong>Erlauben</strong>.
               </li>
             </ol>
             <p className="text-meta text-muted">
-              In Claude&apos;s command-line app: <code className="font-mono text-label">claude mcp add --transport http dossier {address}</code>, then{" "}
-              <code className="font-mono text-label">/mcp</code> to sign in.
+              In Claudes Kommandozeilen-App: <code className="font-mono text-label">claude mcp add --transport http dossier {address}</code>, dann{" "}
+              <code className="font-mono text-label">/mcp</code> zum Anmelden.
             </p>
             {!publicHttps && (
               <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-                {local ? "This is a local address. " : "This address isn't HTTPS. "}
-                Claude on the web, Desktop and mobile, and apps in the cloud such as n8n Cloud, reach Dossier from their own servers, so they need a public HTTPS
-                address (set <code className="font-mono text-label">DOSSIER_PUBLIC_URL</code> if Dossier is reached at another one). Claude&apos;s command-line
-                app on the computer Dossier runs on can use this one.
+                {local ? "Das ist eine lokale Adresse. " : "Diese Adresse ist kein HTTPS. "}
+                Claude im Web, auf dem Desktop und mobil sowie Cloud-Apps wie n8n Cloud erreichen Dossier von ihren eigenen Servern und brauchen daher eine öffentliche HTTPS-Adresse
+                (setze <code className="font-mono text-label">DOSSIER_PUBLIC_URL</code>, falls Dossier unter einer anderen erreichbar ist). Claudes Kommandozeilen-App
+                auf dem Rechner, auf dem Dossier läuft, kann diese nutzen.
               </p>
             )}
           </Card>
 
           <Card className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <h3 className="text-control font-medium">Other apps</h3>
+              <h3 className="text-control font-medium">Andere Apps</h3>
               <p className="text-sm text-pretty text-muted">
-                After you allow an app, Dossier sends you back to the app&apos;s own address. Claude&apos;s are known; for any other app, add its address here
-                exactly as the app shows it (n8n calls it the OAuth Redirect URL). Whoever uses an app you add can read and change your Dossier through it.
+                Nachdem du eine App erlaubt hast, schickt Dossier dich an die Adresse der App zurück. Die von Claude sind bekannt; für jede andere App trag ihre Adresse hier
+                genau so ein, wie die App sie anzeigt (bei n8n heißt sie OAuth Redirect URL). Wer eine hinzugefügte App nutzt, kann darüber dein Dossier lesen und ändern.
               </p>
             </div>
             {redirects.length > 0 && (
-              <ul aria-label="Apps' callback addresses" className="flex flex-col gap-2">
+              <ul aria-label="Callback-Adressen der Apps" className="flex flex-col gap-2">
                 {redirects.map((uri) => (
                   <li key={uri} className="flex flex-wrap items-center gap-3">
                     <code className="min-w-0 flex-1 font-mono text-[13px] [overflow-wrap:anywhere]">{uri}</code>
                     <Button variant="text" size="sm" onClick={() => void removeRedirect(uri)}>
-                      Remove <span className="sr-only">{uri}</span>
+                      Entfernen <span className="sr-only">{uri}</span>
                     </Button>
                   </li>
                 ))}
@@ -149,7 +149,7 @@ export function ConnectorSection({
             )}
             <div className="flex flex-wrap items-end gap-3">
               <Input
-                label="Callback address"
+                label="Callback-Adresse"
                 className="min-w-0 flex-1"
                 inputClassName="font-mono text-[13.5px]"
                 placeholder="https://your-app.example/oauth/callback"
@@ -165,30 +165,30 @@ export function ConnectorSection({
                 }}
               />
               <Button variant="secondary" onClick={() => void addRedirect()}>
-                Add
+                Hinzufügen
               </Button>
             </div>
           </Card>
 
           <Card className="flex flex-col gap-3 text-sm text-pretty">
             <p>
-              What an app reads through the connector goes to whoever runs it. For Claude, that&apos;s Anthropic, with your Claude account, as anything in a chat:
-              your profile without its contact details, the postings and applications it works on, and your searches. Private notes and the letter&apos;s sender
-              and signature stay out.{" "}
+              Was eine App über den Connector liest, geht an den Betreiber der App. Bei Claude ist das Anthropic, mit deinem Claude-Konto, wie alles in einem Chat:
+              dein Profil ohne Kontaktdaten, die Anzeigen und Bewerbungen, an denen es arbeitet, und deine Suchen. Private Notizen sowie Absender und
+              Unterschrift des Anschreibens bleiben außen vor.{" "}
               <a href="https://github.com/AienTech/dossier/wiki/Connecting-Claude" target="_blank" rel="noopener noreferrer" className={LINK}>
-                Connecting Claude
+                Claude verbinden
               </a>{" "}
-              has the details.
+              erklärt die Details (englisch).
             </p>
             <p className="text-muted">
-              Without an AI model of Dossier&apos;s own, New application and Score in Find jobs hand the work to a new Claude chat, which saves it here through the
-              connector.
+              Ohne eigenes KI-Modell geben „Neue Bewerbung“ und „Bewerten“ in „Jobs finden“ die Arbeit an einen neuen Claude-Chat ab, der sie
+              über den Connector hier speichert.
             </p>
             <div>
               <Button variant="secondary" onClick={() => void track(disconnectApps({})).then(toastResult)}>
-                Disconnect all apps
+                Alle Apps trennen
               </Button>
-              <p className="mt-2 text-meta text-muted">Signs Claude and every other app out. Changing your password or DOSSIER_SECRET does too.</p>
+              <p className="mt-2 text-meta text-muted">Meldet Claude und jede andere App ab. Das passiert auch, wenn du dein Passwort oder DOSSIER_SECRET änderst.</p>
             </div>
           </Card>
         </>

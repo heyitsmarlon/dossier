@@ -109,14 +109,14 @@ export function resumeUnits(profile: ProfileData, answer: z.infer<typeof answerS
   // In the profile's order when the user set one (public issue 62), else as the model ranked them.
   const skills = keepSkillOrder ? inEditorOrder(profile.skills).filter((skill) => kept.includes(skill)) : kept;
   const units: Unit[] = [
-    { id: "summary", label: "Summary", text: answer.summary.trim() },
+    { id: "summary", label: "Zusammenfassung", text: answer.summary.trim() },
     ...profile.experience.map((entry) => {
       const bullets = (roles.get(entry.id) ?? entry.bullets.split("\n")).map((line) => line.trim()).filter(Boolean);
       return { id: `experience:${entry.id}`, label: `${entry.company || entry.role} ${entry.volunteering ? "volunteering" : "role"}`, text: bullets.join("\n") };
     }),
     ...profile.projects.map((entry) => {
       const bullets = (projects.get(entry.id) ?? entry.bullets.split("\n")).map((line) => line.trim()).filter(Boolean);
-      return { id: `project:${entry.id}`, label: `${entry.name || "Untitled"} project`, text: bullets.join("\n") };
+      return { id: `project:${entry.id}`, label: `Projekt: ${entry.name || "Ohne Titel"}`, text: bullets.join("\n") };
     }),
     // Most relevant first, a line per group where its first skill comes (#280).
     { id: "skills", label: "Skills", text: skillsText(skills) },

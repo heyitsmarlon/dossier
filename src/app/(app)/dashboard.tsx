@@ -214,7 +214,7 @@ function Welcome() {
           + Neue Bewerbung
         </Link>
         <Link href="/welcome" className="text-sm text-muted underline underline-offset-2 hover:text-ink">
-          Open the setup guide
+          Einrichtungshilfe öffnen
         </Link>
       </div>
     </Panel>

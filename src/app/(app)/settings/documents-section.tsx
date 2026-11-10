@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import { DocumentKind, type DateFormat, type PaperSize, type Tone } from "@/generated/prisma/enums";
-import { DOCUMENT_LANGUAGES } from "@/lib/document-language";
+import { DOCUMENT_LANGUAGES, languageLabel } from "@/lib/document-language";
 import { FILE_NAME_TOKENS, resolveFileName } from "@/lib/file-name";
 import { DATE_FORMATS, DOCUMENTS_TO_WRITE, DOCUMENTS_TO_WRITE_LABELS, type DocumentsToWrite } from "@/lib/settings";
 import { PAPER_SIZES } from "@/lib/themes";
@@ -89,7 +89,7 @@ export function DocumentsSection({
     }));
     setAddingLanguage(false);
     setNewLanguage("");
-    if (added) toast(`Added ${language}. Output quality depends on how well your model knows it.`);
+    if (added) toast(`${language} hinzugefügt. Die Qualität hängt davon ab, wie gut dein Modell die Sprache kann.`);
   };
 
   const languages = [...DOCUMENT_LANGUAGES.map((language) => language.name), ...settings.customLanguages];
@@ -97,23 +97,23 @@ export function DocumentsSection({
 
   return (
     <>
-      <SettingsSectionIntro title="Documents">Defaults for every new application. You can still change them per job.</SettingsSectionIntro>
+      <SettingsSectionIntro title="Unterlagen">Standards für jede neue Bewerbung. Du kannst sie pro Stelle trotzdem ändern.</SettingsSectionIntro>
       <Card padding="none" className="grid gap-x-[18px] gap-y-5 px-7 py-[26px] sm:grid-cols-2">
-        <Select label="Paper size" value={settings.paper} onChange={(event) => change({ paper: event.target.value as PaperSize })}>
+        <Select label="Papierformat" value={settings.paper} onChange={(event) => change({ paper: event.target.value as PaperSize })}>
           {Object.entries(PAPER_SIZES).map(([value, size]) => (
             <option key={value} value={value}>
               {size.label}
             </option>
           ))}
         </Select>
-        <Select label="Date format" value={settings.dateFormat} onChange={(event) => change({ dateFormat: event.target.value as DateFormat })}>
+        <Select label="Datumsformat" value={settings.dateFormat} onChange={(event) => change({ dateFormat: event.target.value as DateFormat })}>
           {DATE_FORMATS.map((format) => (
             <option key={format.value} value={format.value}>
               {format.label}
             </option>
           ))}
         </Select>
-        <Select label="Cover letter tone" value={settings.defaultTone} onChange={(event) => change({ defaultTone: event.target.value as Tone })}>
+        <Select label="Ton des Anschreibens" value={settings.defaultTone} onChange={(event) => change({ defaultTone: event.target.value as Tone })}>
           {Object.entries(TONES).map(([value, tone]) => (
             <option key={value} value={value}>
               {tone.label}
@@ -122,7 +122,7 @@ export function DocumentsSection({
         </Select>
         <div className="flex flex-col gap-2">
           <Select
-            label="Write documents in"
+            label="Unterlagen schreiben auf"
             value={addingLanguage ? OTHER_LANGUAGE : (settings.docLanguage ?? POSTING_LANGUAGE)}
             onChange={(event) => {
               const value = event.target.value;
@@ -131,19 +131,19 @@ export function DocumentsSection({
               change({ docLanguage: value === POSTING_LANGUAGE ? null : value });
             }}
           >
-            <option value={POSTING_LANGUAGE}>The posting&apos;s language</option>
+            <option value={POSTING_LANGUAGE}>Sprache der Anzeige</option>
             {languages.map((language) => (
               <option key={language} value={language}>
-                {language}
+                {languageLabel(language)}
               </option>
             ))}
-            <option value={OTHER_LANGUAGE}>Other language…</option>
+            <option value={OTHER_LANGUAGE}>Andere Sprache…</option>
           </Select>
           {addingLanguage && (
             <div className="flex gap-1.5">
               <Input
-                aria-label="Other language"
-                placeholder="e.g. Persian"
+                aria-label="Andere Sprache"
+                placeholder="z. B. Persisch"
                 // Picked on request, so the box takes focus.
                 autoFocus
                 className="min-w-0 flex-1"
@@ -158,26 +158,26 @@ export function DocumentsSection({
                 }}
               />
               <Button variant="secondary" size="sm" onClick={() => void addLanguage()}>
-                Add
+                Hinzufügen
               </Button>
             </div>
           )}
         </div>
         <Select
-          label="Base resume language"
-          hint="For its headings and dates. Tailored documents use their application's language."
-          value={settings.resumeLanguage ?? "English"}
-          onChange={(event) => change({ resumeLanguage: event.target.value === "English" ? null : event.target.value })}
+          label="Sprache des Basis-Lebenslaufs"
+          hint="Für Überschriften und Datumsangaben. Zugeschnittene Unterlagen nutzen die Sprache ihrer Bewerbung."
+          value={settings.resumeLanguage ?? "German"}
+          onChange={(event) => change({ resumeLanguage: event.target.value })}
         >
           {DOCUMENT_LANGUAGES.map(({ name }) => (
             <option key={name} value={name}>
-              {name}
+              {languageLabel(name)}
             </option>
           ))}
         </Select>
         <Select
-          label="Documents to write"
-          hint="What New application writes, unless you choose there. A skipped one can be written later from the application."
+          label="Zu schreibende Unterlagen"
+          hint="Was „Neue Bewerbung“ schreibt, sofern du dort nichts anderes wählst. Ausgelassenes kannst du später in der Bewerbung schreiben lassen."
           value={settings.documentsToWrite}
           onChange={(event) => change({ documentsToWrite: event.target.value as DocumentsToWrite })}
         >
@@ -191,7 +191,7 @@ export function DocumentsSection({
         <div className="flex flex-col gap-2.5 sm:col-span-2">
           <Input
             ref={pattern}
-            label="PDF file name"
+            label="PDF-Dateiname"
             inputClassName="font-mono text-[13.5px]"
             spellCheck={false}
             value={settings.fileNamePattern}
@@ -199,7 +199,7 @@ export function DocumentsSection({
             onBlur={flush}
           />
           <span id="file-name-tokens" className="text-label text-muted">
-            Click to insert
+            Zum Einfügen klicken
           </span>
           <div role="group" aria-labelledby="file-name-tokens" className="flex flex-wrap gap-1.5">
             {FILE_NAME_TOKENS.map(({ token, description }) => (
@@ -216,7 +216,7 @@ export function DocumentsSection({
             ))}
           </div>
           <p className="flex flex-wrap items-baseline gap-2 text-meta text-muted">
-            <span>Preview</span>
+            <span>Vorschau</span>
             <output className="font-mono text-label [overflow-wrap:anywhere] text-ink">{previewName}</output>
           </p>
         </div>
@@ -225,8 +225,8 @@ export function DocumentsSection({
       <Card padding="none" className="flex flex-col px-7 pt-1.5 pb-2.5">
         <Toggle
           className="py-4"
-          label="Include references"
-          description="Add your references to resumes when a posting asks for them. Otherwise they're left out."
+          label="Referenzen einfügen"
+          description="Füge deine Referenzen in Lebensläufe ein, wenn eine Anzeige danach fragt. Sonst bleiben sie weg."
           checked={settings.includeRefs}
           onCheckedChange={(includeRefs) => change({ includeRefs })}
         />

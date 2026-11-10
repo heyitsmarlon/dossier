@@ -24,7 +24,7 @@ export function SectionNav({ rows, current, onMove }: { rows: Row[]; current: Pr
   const { move, context } = useRowSorting({ keys, nameOf: (key) => rows.find((row) => row.id === key)?.label ?? "", onMove, announce: setAnnouncement });
 
   return (
-    <nav aria-label="Profile sections">
+    <nav aria-label="Profilbereiche">
       <DndContext {...context}>
         <SortableContext items={keys} strategy={verticalListSortingStrategy}>
           <ul className="flex flex-col gap-0.5">

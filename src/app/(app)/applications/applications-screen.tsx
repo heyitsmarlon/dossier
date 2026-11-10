@@ -33,8 +33,8 @@ export type ApplicationsScreenProps = {
 };
 
 const HINTS: Record<View, string> = {
-  board: "Drag a card to reorder it or change its status",
-  table: "Click a row to open it",
+  board: "Zieh eine Karte, um sie umzusortieren oder ihren Status zu ändern",
+  table: "Klick auf eine Zeile, um sie zu öffnen",
 };
 
 /** How long typing pauses before the search runs. */
@@ -66,7 +66,7 @@ export function ApplicationsScreen({ params, rows, counts, summary, empty, archi
       change: { kind: "status"; id: string; to: ApplicationStatus } | { kind: "reorder"; ordered: ApplicationRow[] },
     ) =>
       change.kind === "status"
-        ? current.map((row) => (row.id === change.id ? { ...row, status: change.to, boardSort: null, updated: "Today", updatedAt: Date.now() } : row))
+        ? current.map((row) => (row.id === change.id ? { ...row, status: change.to, boardSort: null, updated: "Heute", updatedAt: Date.now() } : row))
         : current.map((row) => {
             const index = change.ordered.findIndex((entry) => entry.id === row.id);
             return index < 0 ? row : { ...row, boardSort: index };
@@ -113,22 +113,22 @@ export function ApplicationsScreen({ params, rows, counts, summary, empty, archi
   return (
     <div className={cn("flex flex-col", board ? "h-panel min-h-[520px]" : "flex-1")}>
       <PageHeader
-        title="Applications"
+        title="Bewerbungen"
         description={summary}
         actions={
           <>
             <SegmentedControl<View>
-              aria-label="View"
+              aria-label="Ansicht"
               size="sm"
               options={[
                 { value: "board", label: "Board" },
-                { value: "table", label: "Table" },
+                { value: "table", label: "Tabelle" },
               ]}
               value={params.view}
               onValueChange={(view) => go({ view })}
             />
             <Link href="/new?fresh=1" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-              + New application
+              + Neue Bewerbung
             </Link>
           </>
         }
@@ -141,14 +141,14 @@ export function ApplicationsScreen({ params, rows, counts, summary, empty, archi
           <div className="flex flex-wrap items-center gap-3 px-10 pb-[18px]">
             <input
               type="search"
-              aria-label="Search applications"
-              placeholder="Search company or role"
+              aria-label="Bewerbungen durchsuchen"
+              placeholder="Firma oder Stelle suchen"
               value={query}
               onChange={(event) => search(event.target.value)}
               onKeyDown={(event) => event.key === "Enter" && go({ q: query.trim() }, { replace: true })}
               className="min-w-[180px] flex-[0_1_300px] rounded-control border border-line-input bg-input px-3 py-2.5 text-sm placeholder:text-muted focus-visible:border-primary focus-visible:outline-offset-0"
             />
-            <div role="group" aria-label="Show" className="flex flex-wrap gap-1.5">
+            <div role="group" aria-label="Anzeigen" className="flex flex-wrap gap-1.5">
               {FILTERS.map(({ value, label }) => (
                 <button
                   key={value}
@@ -172,7 +172,7 @@ export function ApplicationsScreen({ params, rows, counts, summary, empty, archi
                 onClick={() => go({ archived: !params.archived })}
                 className="rounded-control px-1 py-2 text-control text-muted underline-offset-3 hover:text-ink aria-pressed:text-ink aria-pressed:underline"
               >
-                Show archived{" "}
+                Archivierte anzeigen{" "}
                 <span className="text-xs opacity-65">{archivedCount}</span>
               </button>
             )}
@@ -181,7 +181,7 @@ export function ApplicationsScreen({ params, rows, counts, summary, empty, archi
 
           <div className={cn("flex min-h-0 flex-1 flex-col motion-safe:transition-opacity", pending && "opacity-60")} aria-busy={pending || undefined}>
             {rows.length === 0 ? (
-              <Nothing>{params.q ? `No applications match “${params.q}”.` : "Nothing in this view yet."}</Nothing>
+              <Nothing>{params.q ? `Keine Bewerbungen passen zu „${params.q}“.` : "In dieser Ansicht ist noch nichts."}</Nothing>
             ) : board ? (
               <Board rows={shown} statuses={statusesIn(params.filter)} onMove={move} onReorder={reorder} />
             ) : (
@@ -205,17 +205,17 @@ function Nothing({ children }: { children: ReactNode }) {
 function FirstApplication() {
   return (
     <div className="mx-10 mb-16 flex max-w-[640px] flex-col items-start gap-3 rounded-panel border border-line-card bg-card px-7 py-7">
-      <h2 className="font-serif text-section">Your first application</h2>
+      <h2 className="font-serif text-section">Deine erste Bewerbung</h2>
       <p className="text-sm text-muted">
-        Paste a job posting and I&apos;ll read it, check it against your profile and draft a tailored resume and cover letter. Your
-        profile is what everything is built from, so it&apos;s worth filling in first.
+        Füge eine Stellenanzeige ein, dann lese ich sie, gleiche sie mit deinem Profil ab und entwerfe einen zugeschnittenen Lebenslauf und ein Anschreiben. Aus deinem
+        Profil entsteht alles, es lohnt sich also, es zuerst auszufüllen.
       </p>
       <div className="flex flex-wrap items-center gap-4 pt-1">
         <Link href="/new?fresh=1" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-          + New application
+          + Neue Bewerbung
         </Link>
         <Link href="/profile" className="text-sm text-muted underline underline-offset-2 hover:text-ink">
-          Fill in your profile
+          Profil ausfüllen
         </Link>
       </div>
     </div>

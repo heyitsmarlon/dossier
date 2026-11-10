@@ -26,10 +26,10 @@ export const scorePostingJob = defineJob({
   async run({ posting }, { step, signal }) {
     let description = posting.description;
     if (!posting.complete) {
-      await step("Getting the whole posting");
+      await step("Hole die ganze Anzeige");
       description = (await fullText(posting)) ?? posting.description;
     }
-    await step("Scoring it against your profile");
+    await step("Bewerte sie anhand deines Profils");
     const [score, profile] = await Promise.all([loadPostingScorer(), loadProfile()]);
     const { data, scoredWith } = await score({ ...posting, description }, profile, signal);
     await saveScore(posting, data, scoredWith);
@@ -54,7 +54,7 @@ export const scorePastedPostingJob = defineJob({
   }),
   result: z.object({ score: z.number().int(), reasons: z.array(z.string()), redFlags: z.array(z.string()) }),
   async run({ posting, title, company, location, mode, salary }, { step, signal }) {
-    await step("Scoring it against your profile");
+    await step("Bewerte sie anhand deines Profils");
     const [score, profile] = await Promise.all([loadPostingScorer(), loadProfile()]);
     const remote = /\b(remote|home ?office|hybrid)\b/i.test(mode) ? true : null;
     const { data } = await score({ title, company, place: location, remote, salary, description: posting }, profile, signal);

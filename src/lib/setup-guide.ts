@@ -8,11 +8,11 @@ export type SetupStep = (typeof SETUP_STEPS)[number];
 
 /** The steps in the guide's rail; Start and Done are the ends around them. */
 export const SETUP_RAIL: readonly { step: Exclude<SetupStep, "start" | "done">; name: string }[] = [
-  { step: "ai", name: "AI" },
-  { step: "jobs", name: "Job search" },
-  { step: "scoring", name: "Scoring" },
-  { step: "google", name: "Gmail and Calendar" },
-  { step: "profile", name: "Profile" },
+  { step: "ai", name: "KI" },
+  { step: "jobs", name: "Jobsuche" },
+  { step: "scoring", name: "Bewertung" },
+  { step: "google", name: "Gmail und Kalender" },
+  { step: "profile", name: "Profil" },
 ];
 
 /** Where the guide was left, and whether it's finished or was left for good. Saved in Settings as `setupGuide`. */

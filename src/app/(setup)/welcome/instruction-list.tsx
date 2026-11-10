@@ -20,8 +20,8 @@ export function InstructionList({ steps, label }: { steps: readonly Instruction[
             <span>{withBold(step.text)}</span>
             {step.link && (
               <a href={step.link.href} target="_blank" rel="noopener noreferrer" className="self-start font-medium text-ink underline underline-offset-2">
-                Open {step.link.label} <span aria-hidden="true">↗</span>
-                <span className="sr-only">(opens in a new tab)</span>
+                {step.link.label} öffnen <span aria-hidden="true">↗</span>
+                <span className="sr-only">(öffnet in neuem Tab)</span>
               </a>
             )}
           </span>

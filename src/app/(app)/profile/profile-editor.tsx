@@ -107,16 +107,16 @@ export function ProfileEditor({ initial, section, order, sections }: { initial: 
   return (
     <TrackSaveContext value={saves.track}>
       <PageHeader
-        title="Your profile"
-        description="Everything here feeds your resumes and cover letters. Fill in what you like. You can always come back to it."
+        title="Dein Profil"
+        description="Alles hier fließt in deine Lebensläufe und Anschreiben. Füll aus, was du magst. Du kannst jederzeit zurückkommen."
         actions={
           <>
             <SavedIndicator status={saves.status} savedAt={saves.savedAt} />
             <Link href="/profile/import" className={buttonClassName("secondary")}>
-              Import from a resume
+              Aus Lebenslauf importieren
             </Link>
             <Link href="/resume" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-              See base resume →
+              Basis-Lebenslauf ansehen →
             </Link>
           </>
         }
@@ -131,7 +131,7 @@ export function ProfileEditor({ initial, section, order, sections }: { initial: 
             onMove={(rows) => void moveRows(rows)}
           />
           <p className="text-label text-pretty text-muted">
-            Drag to reorder. Resumes use this order unless one has its own, and two-column themes keep some sections in the sidebar.
+            Zum Sortieren ziehen. Lebensläufe nutzen diese Reihenfolge, außer einer hat eine eigene; zweispaltige Designs zeigen manche Abschnitte in der Seitenleiste.
           </p>
         </div>
 
@@ -139,8 +139,8 @@ export function ProfileEditor({ initial, section, order, sections }: { initial: 
           {section === "new" ? (
             <>
               <div className="flex flex-col gap-1.5">
-                <h2 className="font-serif text-section">Add a section</h2>
-                <p className="text-sm text-pretty text-muted">Awards, talks, memberships: anything the other sections don&apos;t cover. It goes on resumes as you write it.</p>
+                <h2 className="font-serif text-section">Abschnitt hinzufügen</h2>
+                <p className="text-sm text-pretty text-muted">Auszeichnungen, Vorträge, Mitgliedschaften: alles, was die anderen Abschnitte nicht abdecken. Es kommt so in den Lebenslauf, wie du es schreibst.</p>
               </div>
               <AddSectionForm
                 onAdded={(added) => {
@@ -173,11 +173,11 @@ export function ProfileEditor({ initial, section, order, sections }: { initial: 
               )}
               {next ? (
                 <Link href={sectionHref(next.id)} className={buttonClassName("secondary", "md", "bg-card")}>
-                  Next: {next.label} →
+                  Weiter: {next.label} →
                 </Link>
               ) : (
                 <Link href="/resume" className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-                  Looks good. See my resume →
+                  Sieht gut aus. Lebenslauf ansehen →
                 </Link>
               )}
             </div>

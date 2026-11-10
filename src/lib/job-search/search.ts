@@ -27,23 +27,23 @@ export const DEFAULT_RADIUS_KM: RadiusKm = 25;
 
 /** How recent the postings must be, with the days each choice allows. */
 export const POSTED_WITHIN = [
-  { value: "any", label: "Any time", days: null },
-  { value: "day", label: "Past day", days: 1 },
-  { value: "3days", label: "Past 3 days", days: 3 },
-  { value: "week", label: "Past week", days: 7 },
-  { value: "month", label: "Past month", days: 30 },
+  { value: "any", label: "Beliebig", days: null },
+  { value: "day", label: "Letzter Tag", days: 1 },
+  { value: "3days", label: "Letzte 3 Tage", days: 3 },
+  { value: "week", label: "Letzte Woche", days: 7 },
+  { value: "month", label: "Letzter Monat", days: 30 },
 ] as const;
 export type PostedWithin = (typeof POSTED_WITHIN)[number]["value"];
 const POSTED_VALUES = POSTED_WITHIN.map((option) => option.value) as [PostedWithin, ...PostedWithin[]];
 
 /** The experience level a search asks for (public issue 59); "any" or none leaves it open. */
 export const EXPERIENCE_LEVELS = [
-  { value: "any", label: "Any level" },
-  { value: "intern", label: "Internship" },
-  { value: "junior", label: "Entry level" },
-  { value: "mid", label: "Mid level" },
+  { value: "any", label: "Jedes Level" },
+  { value: "intern", label: "Praktikum" },
+  { value: "junior", label: "Berufseinstieg" },
+  { value: "mid", label: "Mit Berufserfahrung" },
   { value: "senior", label: "Senior" },
-  { value: "lead", label: "Lead or director" },
+  { value: "lead", label: "Leitung" },
 ] as const;
 export type ExperienceLevel = (typeof EXPERIENCE_LEVELS)[number]["value"];
 const LEVEL_VALUES = EXPERIENCE_LEVELS.map((option) => option.value) as [ExperienceLevel, ...ExperienceLevel[]];
@@ -97,7 +97,7 @@ export const foundPostingSchema = z.object({
   url: z
     .string()
     .max(2000)
-    .refine((url) => url === "" || safeLink(url) !== "", "Not a web address."),
+    .refine((url) => url === "" || safeLink(url) !== "", "Keine Webadresse."),
   /** Where the source found it, e.g. "LinkedIn"; empty when it's the source's own. */
   via: z.string().max(100),
   /** Plain text. */
@@ -154,7 +154,7 @@ export function describeSearch(query: SearchQuery, countryName: string, source?:
   const where = query.place ? (source && !SOURCE_INFO[source].radius ? query.place : `${query.place}, ${query.radiusKm} km`) : countryName;
   const posted = POSTED_WITHIN.find((option) => option.value === query.postedWithin);
   const level = EXPERIENCE_LEVELS.find((option) => option.value === experienceAskedFor(query));
-  return [query.keywords, where, query.remoteOnly ? "Remote only" : "", posted && posted.value !== "any" ? posted.label : "", level?.label ?? ""].filter(Boolean).join(" · ");
+  return [query.keywords, where, query.remoteOnly ? "Nur remote" : "", posted && posted.value !== "any" ? posted.label : "", level?.label ?? ""].filter(Boolean).join(" · ");
 }
 
 /** Identifies a posting across searches. */
@@ -269,11 +269,11 @@ export function postedAgo(postedAt: string | null, now: Date): string {
   if (!postedAt) return "";
   const posted = new Date(postedAt);
   const days = daysBetween(posted, now, "UTC");
-  if (days <= 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 7) return `${days} days ago`;
-  if (days < 31) return days < 14 ? "1 week ago" : `${Math.floor(days / 7)} weeks ago`;
-  return formatShortCalendarDate(posted, now);
+  if (days <= 0) return "Heute";
+  if (days === 1) return "Gestern";
+  if (days < 7) return `vor ${days} Tagen`;
+  if (days < 31) return days < 14 ? "vor 1 Woche" : `vor ${Math.floor(days / 7)} Wochen`;
+  return `am ${formatShortCalendarDate(posted, now)}`;
 }
 
 // ─── As a posting to paste ───────────────────────────────────────────────────

@@ -68,7 +68,7 @@ export function afterFailure(
 
 /** "Too many attempts. Try again in 30 seconds." (in minutes from two minutes on) */
 export function tooManyAttemptsMessage(ms: number): string {
-  return `Too many attempts. Try again in ${duration(ms)}.`;
+  return `Zu viele Versuche. Versuch es in ${duration(ms)} noch einmal.`;
 }
 
 /**
@@ -76,11 +76,11 @@ export function tooManyAttemptsMessage(ms: number): string {
  * here (#334): it isn't this browser's fault, and there are two ways round it.
  */
 export function pausedForNewBrowsersMessage(ms: number): string {
-  return `Too many wrong passwords were tried lately, so new browsers have to wait ${duration(ms)}. A browser you've signed in with before can sign in now, and restarting Dossier ends the wait.`;
+  return `In letzter Zeit wurden zu viele falsche Passwörter probiert, deshalb müssen neue Browser ${duration(ms)} warten. Ein Browser, mit dem du dich schon angemeldet hast, kommt sofort rein, und ein Neustart von Dossier beendet die Wartezeit.`;
 }
 
 /** "30 seconds", or in minutes from two minutes on. */
 function duration(ms: number): string {
   const seconds = Math.ceil(ms / SECOND);
-  return seconds < 120 ? `${seconds} ${seconds === 1 ? "second" : "seconds"}` : `${Math.ceil(seconds / 60)} minutes`;
+  return seconds < 120 ? `${seconds} ${seconds === 1 ? "Sekunde" : "Sekunden"}` : `${Math.ceil(seconds / 60)} Minuten`;
 }

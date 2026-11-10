@@ -16,7 +16,7 @@ import { retry } from "@/lib/jobs/actions";
 import type { ImportProfileResult } from "@/lib/jobs/import-profile";
 import { messages } from "@/lib/messages";
 import { citationText } from "@/lib/citation";
-import { BASICS_FIELDS, formatDateRange, formatMonthYear, languageLevelLabel, type BasicsField } from "@/lib/profile";
+import { BASICS_FIELDS, formatDateRange, formatMonthYear, languageLevelLabel, UI_DATE_OPTIONS, type BasicsField } from "@/lib/profile";
 import { BASICS_LABELS, IMPORT_PROFILE_STEPS, importCounts, type ImportedProfile, type ImportMode } from "@/lib/profile-import";
 
 import { JobProgress, jobStep } from "../../new/job-progress";
@@ -78,7 +78,7 @@ export function ProfileImport({
   };
 
   async function read() {
-    if (!file) return toast("Choose your resume file first.");
+    if (!file) return toast("Wähle zuerst deine Lebenslauf-Datei.");
     setUploading(true);
     try {
       const response = await fetch("/api/profile/import", {
@@ -108,11 +108,11 @@ export function ProfileImport({
     <>
       {!inGuide && (
         <PageHeader
-          title="Import from a resume"
-          description={`Start your profile from a resume you already have. Nothing goes into your profile until you've seen what was found. The file's text is deleted once you've chosen, or after ${keptFor} if you don't.`}
+          title="Aus Lebenslauf importieren"
+          description={`Starte dein Profil mit einem Lebenslauf, den du schon hast. Nichts landet im Profil, bevor du gesehen hast, was gefunden wurde. Der Text der Datei wird gelöscht, sobald du dich entschieden hast, spätestens nach ${keptFor}.`}
           actions={
             <Link href="/profile" className={buttonClassName("secondary")}>
-              Back to your profile
+              Zurück zu deinem Profil
             </Link>
           }
         />
@@ -122,21 +122,21 @@ export function ProfileImport({
           <Card className="flex flex-col items-start gap-5">
             {!aiReady && (
               <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-                No AI provider is set up yet, so nothing can read the resume.{" "}
+                Es ist noch kein KI-Anbieter eingerichtet, daher kann nichts den Lebenslauf lesen.{" "}
                 <Link href={inGuide ? "/welcome?step=ai" : "/settings?section=ai"} className="font-medium text-warning underline underline-offset-2">
-                  {inGuide ? "Choose one in the AI step" : "Choose one in Settings → AI provider"}
+                  {inGuide ? "Wähle einen im Schritt „KI“" : "Wähle einen unter Einstellungen → KI-Anbieter"}
                 </Link>
               </p>
             )}
             {aiReady && !providerOption(provider).local && (
               <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-                The resume&apos;s text, contact details included, is sent to {providerOption(provider).vendor ?? "your AI server"} to sort
-                it into your profile.
+                Der Text des Lebenslaufs wird samt Kontaktdaten an {providerOption(provider).vendor ?? "deinen KI-Server"} geschickt, um ihn
+                in dein Profil einzusortieren.
               </p>
             )}
             <div className="flex flex-col gap-2">
               <label htmlFor={fileId} className="text-label text-muted">
-                Your resume, as PDF, Word (.docx) or Markdown (.md)
+                Dein Lebenslauf als PDF, Word (.docx) oder Markdown (.md)
               </label>
               <input
                 id={fileId}
@@ -147,20 +147,20 @@ export function ProfileImport({
               />
             </div>
             <Button aria-disabled={!aiReady || !file || uploading || undefined} onClick={() => void (aiReady && !uploading ? read() : undefined)}>
-              {uploading ? "Sending…" : "Read my resume →"}
+              {uploading ? "Wird gesendet…" : "Lebenslauf einlesen →"}
             </Button>
           </Card>
         )}
 
         {phase === "reading" && (
           <JobProgress
-            title="Reading your resume…"
+            title="Lese deinen Lebenslauf…"
             steps={IMPORT_PROFILE_STEPS}
             current={jobStep(IMPORT_PROFILE_STEPS, job)}
             error={job?.status === "FAILED" ? job.error : null}
             onRetry={() => void retry({ id: jobId! }).then((result) => toastResult(result).ok && setRevision((count) => count + 1))}
             onBack={startOver}
-            backLabel="← Choose another file"
+            backLabel="← Andere Datei wählen"
           />
         )}
 
@@ -169,28 +169,28 @@ export function ProfileImport({
             <Preview profile={job.result.profile} />
             <Card className="flex flex-col gap-4">
               <p className="text-sm text-muted">
-                <strong className="font-medium text-ink">Merge</strong> adds all this to your profile; where your profile already has the same
-                detail, role, degree or reference, what the resume says wins. <strong className="font-medium text-ink">Replace</strong> clears your
-                profile first.
+                <strong className="font-medium text-ink">Zusammenführen</strong> fügt all das deinem Profil hinzu; wo dein Profil dieselbe Angabe,
+                Position, denselben Abschluss oder dieselbe Referenz schon hat, gewinnt der Lebenslauf. <strong className="font-medium text-ink">Ersetzen</strong> leert
+                dein Profil vorher.
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <Button aria-disabled={applying || undefined} onClick={() => void (applying ? undefined : apply("merge"))}>
-                  Merge into my profile
+                  In mein Profil zusammenführen
                 </Button>
                 <Button variant="secondary" aria-disabled={applying || undefined} onClick={() => setConfirmReplace(true)}>
-                  Replace my profile…
+                  Mein Profil ersetzen…
                 </Button>
                 <Button variant="text" onClick={startOver}>
-                  Choose another file
+                  Andere Datei wählen
                 </Button>
               </div>
             </Card>
             <ConfirmDialog
               open={confirmReplace}
               onOpenChange={setConfirmReplace}
-              title="Replace your profile?"
-              description="Your basics, skills, languages, roles, projects, education, certifications, publications and references are removed first; then your profile holds what was read from the resume. Sections you made and your facts stay. Your applications and their documents stay as they are."
-              confirmLabel="Replace my profile"
+              title="Dein Profil ersetzen?"
+              description="Deine Basisdaten, Fähigkeiten, Sprachen, Positionen, Projekte, Ausbildung, Zertifikate, Veröffentlichungen und Referenzen werden zuerst entfernt; danach enthält dein Profil, was aus dem Lebenslauf gelesen wurde. Eigene Abschnitte und deine Fakten bleiben. Deine Bewerbungen und ihre Unterlagen bleiben, wie sie sind."
+              confirmLabel="Mein Profil ersetzen"
               onConfirm={() => void apply("replace")}
             />
           </>
@@ -209,14 +209,14 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       <div className="flex flex-col gap-1">
         {/* Takes focus when the preview appears (E11-3). */}
         <h2 tabIndex={-1} className="font-serif text-section">
-          Here&apos;s what your resume says
+          Das steht in deinem Lebenslauf
         </h2>
-        <p className="text-meta text-muted">{importCounts(profile)}. Anything marked “check” isn&apos;t in the file word for word.</p>
+        <p className="text-meta text-muted">{importCounts(profile)}. Alles, was mit „prüfen“ markiert ist, steht nicht wörtlich in der Datei.</p>
       </div>
 
       {profile.leftOut.length > 0 && (
-        <Section title="Left out">
-          <p className="text-meta text-muted">The AI gave these, but the file doesn&apos;t say them, so they aren&apos;t kept:</p>
+        <Section title="Weggelassen">
+          <p className="text-meta text-muted">Das hat die KI geliefert, es steht aber nicht in der Datei, daher wird es nicht übernommen:</p>
           <ul className="flex list-disc flex-col gap-1 pl-5 text-sm">
             {profile.leftOut.map((note) => (
               <li key={note}>{note}</li>
@@ -226,7 +226,7 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {basics.length > 0 && (
-        <Section title="Basics">
+        <Section title="Basisdaten">
           <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1.5 text-sm">
             {basics.map(([field, value]) => (
               <div key={field} className="contents">
@@ -239,7 +239,7 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.skills.length > 0 && (
-        <Section title="Skills">
+        <Section title="Fähigkeiten">
           <ul className="flex flex-wrap gap-2 text-sm">
             {profile.skills.map((skill) => (
               <li key={skill.name} className="rounded-full border border-line-field bg-input px-3 py-1">
@@ -247,7 +247,7 @@ function Preview({ profile }: { profile: ImportedProfile }) {
                 {!skill.found && (
                   <>
                     {" "}
-                    <Check>not in the file</Check>
+                    <Check>nicht in der Datei</Check>
                   </>
                 )}
               </li>
@@ -257,12 +257,12 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.languages.length > 0 && (
-        <Section title="Languages">
+        <Section title="Sprachen">
           <ul className="flex flex-col gap-1 text-sm">
             {profile.languages.map((language) => (
               <li key={language.name}>
                 {language.name}: {languageLevelLabel(language.level)}
-                {!language.levelGiven && <span className="text-muted"> (no level given; change it any time)</span>}
+                {!language.levelGiven && <span className="text-muted"> (kein Niveau angegeben; jederzeit änderbar)</span>}
               </li>
             ))}
           </ul>
@@ -270,12 +270,12 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.experience.length > 0 && (
-        <Section title="Experience">
+        <Section title="Berufserfahrung">
           {profile.experience.map((entry, index) => (
             <Entry
               key={index}
               title={[entry.role, entry.company].filter(Boolean).join(" · ")}
-              meta={[entry.volunteering ? "Volunteering" : "", entry.location, formatDateRange(entry)].filter(Boolean).join(" · ")}
+              meta={[entry.volunteering ? "Ehrenamt" : "", entry.location, formatDateRange(entry)].filter(Boolean).join(" · ")}
               unverified={entry.unverified}
             >
               {entry.descriptor && <p className="text-muted italic">{entry.descriptor}</p>}
@@ -293,12 +293,12 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.projects.length > 0 && (
-        <Section title="Projects">
+        <Section title="Projekte">
           {profile.projects.map((entry, index) => (
             <Entry
               key={index}
               title={entry.name}
-              meta={[entry.link, formatDateRange(entry)].filter(Boolean).join(" · ")}
+              meta={[entry.link, formatDateRange(entry, UI_DATE_OPTIONS)].filter(Boolean).join(" · ")}
               unverified={entry.unverified}
             >
               {entry.bullets && (
@@ -315,12 +315,12 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.education.length > 0 && (
-        <Section title="Education">
+        <Section title="Ausbildung">
           {profile.education.map((entry, index) => (
             <Entry
               key={index}
               title={[entry.degree, entry.school].filter(Boolean).join(" · ")}
-              meta={formatDateRange(entry)}
+              meta={formatDateRange(entry, UI_DATE_OPTIONS)}
               unverified={entry.unverified}
             >
               {entry.notes && <p>{entry.notes}</p>}
@@ -330,7 +330,7 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.certifications.length > 0 && (
-        <Section title="Certifications">
+        <Section title="Zertifikate">
           {profile.certifications.map((entry, index) => (
             <Entry
               key={index}
@@ -345,7 +345,7 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.publications.length > 0 && (
-        <Section title="Publications">
+        <Section title="Veröffentlichungen">
           {profile.publications.map((entry, index) => (
             <Entry key={index} title={citationText(entry.citation)} meta={entry.link} unverified={entry.unverified} />
           ))}
@@ -353,7 +353,7 @@ function Preview({ profile }: { profile: ImportedProfile }) {
       )}
 
       {profile.references.length > 0 && (
-        <Section title="References">
+        <Section title="Referenzen">
           {profile.references.map((entry, index) => (
             <Entry
               key={index}
@@ -385,7 +385,7 @@ function Entry({ title, meta, unverified, children }: { title: string; meta: str
         {unverified.length > 0 && (
           <>
             {" "}
-            <Check>{unverified.map((word) => `“${word}”`).join(" and ")} not in the file</Check>
+            <Check>{unverified.map((word) => `„${word}“`).join(" und ")} nicht in der Datei</Check>
           </>
         )}
       </p>
@@ -399,7 +399,7 @@ function Entry({ title, meta, unverified, children }: { title: string; meta: str
 function Check({ children }: { children: ReactNode }) {
   return (
     <span className="ml-2 rounded-full bg-warning-surface px-2 py-0.5 text-xs font-normal text-warning">
-      check<span className="sr-only">: {children}</span>
+      prüfen<span className="sr-only">: {children}</span>
     </span>
   );
 }

@@ -22,7 +22,7 @@ export type ScorablePosting = Pick<FoundPosting, "title" | "company" | "place" |
 /** Scores one posting; `scoredWith` is kept with the score (PostingScore). */
 export type PostingScorer = (posting: ScorablePosting, profile: ProfileData, signal: AbortSignal) => Promise<{ data: PostingFit; scoredWith: string }>;
 
-export const AI_PROVIDER_MISSING = "Choose an AI provider in Settings → AI provider first.";
+export const AI_PROVIDER_MISSING = "Wähle zuerst einen KI-Anbieter (Einstellungen → KI-Anbieter).";
 
 /** Why postings can't be scored, in words, or null when the chosen scorer is set up. */
 export async function scoringProblem(config?: ScoringConfig): Promise<string | null> {

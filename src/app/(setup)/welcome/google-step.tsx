@@ -39,7 +39,7 @@ export function GoogleStep({
       await navigator.clipboard.writeText(redirectUri);
       setCopied(true);
     } catch {
-      toast("That didn't copy. Select the address and copy it yourself.");
+      toast("Kopieren hat nicht geklappt. Markiere die Adresse und kopiere sie selbst.");
     }
   };
   const message = outcome ? CALLBACK_MESSAGES[outcome] : null;
@@ -48,9 +48,9 @@ export function GoogleStep({
     return (
       <Card className="flex flex-col gap-2">
         <p className="text-sm">
-          Connected as <strong className="font-medium">{connection.email}</strong>. Settings → Google is where you choose what Dossier reads and your working hours.
+          Verbunden als <strong className="font-medium">{connection.email}</strong>. Unter Einstellungen → Google legst du fest, was Dossier liest, und deine Arbeitszeiten.
         </p>
-        <p className="text-meta text-muted">Changing your Google password disconnects Dossier: connect again in Settings → Google when that happens.</p>
+        <p className="text-meta text-muted">Änderst du dein Google-Passwort, wird Dossier getrennt: Verbinde es dann unter Einstellungen → Google neu.</p>
       </Card>
     );
   }
@@ -64,53 +64,53 @@ export function GoogleStep({
       )}
       {addressProblem ? (
         <Card className="flex flex-col gap-2 text-sm">
-          <p className="font-medium">Google won&apos;t accept this server&apos;s address yet.</p>
+          <p className="font-medium">Google akzeptiert die Adresse dieses Servers noch nicht.</p>
           <p className="text-pretty text-muted">
             {addressProblem === "ip"
-              ? "Google needs a name, such as jobs.example.com, rather than numbers such as 192.168.1.20."
-              : "Google needs an address that starts with https://, unless it's localhost."}{" "}
-            Dossier is at <span className="font-mono text-[13px] [overflow-wrap:anywhere]">{new URL(redirectUri).origin}</span>. Give it a domain name with https (the
-            wiki&apos;s install guides show how), or skip this step for now.
+              ? "Google braucht einen Namen wie jobs.example.com statt Zahlen wie 192.168.1.20."
+              : "Google braucht eine Adresse, die mit https:// beginnt, außer bei localhost."}{" "}
+            Dossier ist unter <span className="font-mono text-[13px] [overflow-wrap:anywhere]">{new URL(redirectUri).origin}</span> erreichbar. Gib ihm einen Domainnamen mit https (die
+            Installationsanleitungen im Wiki zeigen, wie), oder überspring diesen Schritt vorerst.
           </p>
           <a href={GOOGLE_HELP} target="_blank" rel="noopener noreferrer" className="self-start font-medium text-ink underline underline-offset-2">
-            More help on the wiki <span className="sr-only">(opens in a new tab)</span>
+            Mehr Hilfe im Wiki (englisch) <span className="sr-only">(öffnet in neuem Tab)</span>
           </a>
         </Card>
       ) : (
         <Card className="flex flex-col gap-6">
           <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[140px_1fr]">
-            <dt className="font-medium">What it costs</dt>
-            <dd className="text-pretty text-muted">Nothing. Google Cloud may ask for billing details for other services; Gmail and Calendar don&apos;t need it.</dd>
-            <dt className="font-medium">Your data</dt>
+            <dt className="font-medium">Was es kostet</dt>
+            <dd className="text-pretty text-muted">Nichts. Google Cloud fragt eventuell nach Zahlungsdaten für andere Dienste; Gmail und Kalender brauchen das nicht.</dd>
+            <dt className="font-medium">Deine Daten</dt>
             <dd className="text-pretty text-muted">
-              Your mail and calendar stay with Google. Dossier reads the replies to your applications, and the AI you chose reads them to draft your answers. Nothing
-              is sent without you pressing Send.
+              Deine Mails und dein Kalender bleiben bei Google. Dossier liest die Antworten auf deine Bewerbungen, und die gewählte KI liest sie, um deine Antworten zu entwerfen. Nichts
+              wird verschickt, ohne dass du auf Senden drückst.
             </dd>
           </dl>
-          <InstructionList steps={GOOGLE_STEPS} label="Setting up Google" />
+          <InstructionList steps={GOOGLE_STEPS} label="Google einrichten" />
           <div className="flex flex-col gap-2">
-            <span className="text-label font-medium">The address to paste in step 6</span>
+            <span className="text-label font-medium">Die Adresse für Schritt 6</span>
             <div className="flex flex-wrap items-center gap-2">
               <code className="rounded-control border border-line-field bg-input px-3 py-2 font-mono text-label [overflow-wrap:anywhere]">{redirectUri}</code>
               <Button variant="secondary" size="sm" onClick={() => void copy()}>
-                {copied ? "Copied" : "Copy"}
+                {copied ? "Kopiert" : "Kopieren"}
               </Button>
             </div>
-            <p className="text-label text-muted">If Google says redirect_uri_mismatch, wait a few minutes and try again: a new address can take that long to work.</p>
+            <p className="text-label text-muted">Meldet Google redirect_uri_mismatch, warte ein paar Minuten und versuch es noch einmal: Eine neue Adresse braucht manchmal so lange.</p>
           </div>
           <ClientCard initial={client} connected={false} />
           <div className="flex flex-wrap items-center gap-3">
             {connection.status === "not-configured" ? (
-              <Button aria-disabled title="Save the client ID and secret first">
-                Connect Google
+              <Button aria-disabled title="Speichere zuerst Client-ID und Secret">
+                Google verbinden
               </Button>
             ) : (
               <a href={CONNECT} className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-                Connect Google
+                Google verbinden
               </a>
             )}
             <a href={GOOGLE_HELP} target="_blank" rel="noopener noreferrer" className="text-meta text-muted underline underline-offset-2 hover:text-ink">
-              More help on the wiki <span className="sr-only">(opens in a new tab)</span>
+              Mehr Hilfe im Wiki (englisch) <span className="sr-only">(öffnet in neuem Tab)</span>
             </a>
           </div>
         </Card>

@@ -21,10 +21,10 @@ type ScanResult = { message: string };
 type DraftResult = { applicationId: string };
 
 const SETTINGS: Record<NonNullable<AgentView["setupSection"]>, { href: string; label: string }> = {
-  agent: { href: "/settings?section=agent", label: "Settings → Job agent" },
-  ai: { href: "/settings?section=ai", label: "Settings → AI provider" },
-  jobs: { href: "/settings?section=jobs", label: "Settings → Job search" },
-  scoring: { href: "/settings?section=scoring", label: "Settings → Scoring" },
+  agent: { href: "/settings?section=agent", label: "Einstellungen → Job-Agent" },
+  ai: { href: "/settings?section=ai", label: "Einstellungen → KI-Anbieter" },
+  jobs: { href: "/settings?section=jobs", label: "Einstellungen → Jobsuche" },
+  scoring: { href: "/settings?section=scoring", label: "Einstellungen → Bewertung" },
 };
 
 /**
@@ -43,7 +43,7 @@ export function AgentScreen({ view }: { view: AgentView }) {
   const run = useJob<ScanResult>(runJobId, 0, (job) => {
     if (job.status !== "DONE" && job.status !== "FAILED") return;
     setRunJobId(null);
-    toast(job.status === "DONE" ? (job.result?.message ?? "The run is done.") : (job.error ?? "The run didn't finish."));
+    toast(job.status === "DONE" ? (job.result?.message ?? "Der Durchlauf ist fertig.") : (job.error ?? "Der Durchlauf wurde nicht abgeschlossen."));
     router.refresh();
   });
   const running = Boolean(runJobId) && (!run || run.status === "QUEUED" || run.status === "RUNNING");
@@ -71,10 +71,10 @@ export function AgentScreen({ view }: { view: AgentView }) {
         return toast(result.error);
       }
       const undo = result.data.undo;
-      if (!undo) return toast("Dismissed, with its draft. It won't come back.");
-      toast("Dismissed. It won't come back.", {
+      if (!undo) return toast("Verworfen, samt Entwurf. Die Anzeige kommt nicht wieder.");
+      toast("Verworfen. Die Anzeige kommt nicht wieder.", {
         action: {
-          label: "Undo",
+          label: "Rückgängig",
           onClick: () =>
             void restoreAgentCandidate({ ...undo, reasons: stringList(undo.reasons), redFlags: stringList(undo.redFlags) }).then((restored) => {
               if (!toastResult(restored).ok) return;
@@ -94,11 +94,11 @@ export function AgentScreen({ view }: { view: AgentView }) {
   return (
     <>
       <PageHeader
-        title="Job agent"
-        description="Once a day it searches for new postings, scores them against your profile, and keeps the best here for you. Drafts wait for your review, and nothing is ever sent."
+        title="Job-Agent"
+        description="Einmal am Tag sucht er nach neuen Stellenanzeigen, bewertet sie anhand deines Profils und legt dir die besten hier ab. Entwürfe warten auf deine Prüfung, und nichts wird je verschickt."
         actions={
           <Button aria-disabled={running || pending || undefined} onClick={() => !running && !pending && runNow()}>
-            {running ? "Running…" : "Run all now"}
+            {running ? "Läuft…" : "Alle jetzt starten"}
           </Button>
         }
       />
@@ -107,63 +107,63 @@ export function AgentScreen({ view }: { view: AgentView }) {
 
         <Card padding="none" className="px-7 py-2">
           <dl>
-            <Fact label="Agent">{view.enabled ? "Enabled" : "Off"}</Fact>
-            <Fact label="Enabled searches">{view.searches.filter((search) => search.enabled).length} of {view.searches.length}</Fact>
-            <Fact label="Last run">
+            <Fact label="Agent">{view.enabled ? "An" : "Aus"}</Fact>
+            <Fact label="Aktive Suchen">{view.searches.filter((search) => search.enabled).length} von {view.searches.length}</Fact>
+            <Fact label="Letzter Durchlauf">
               {view.lastRun ? (
                 <>
                   {view.lastRun.at}
                   {view.lastRun.message && <span className="block text-muted">{view.lastRun.message}</span>}
                 </>
               ) : (
-                "Not yet"
+                "Noch nicht"
               )}
             </Fact>
-            <Fact label="Next run">{view.nextRun ?? "Off"}</Fact>
-            <Fact label="Source requests available">{Math.max(0, AGENT_MAX_SOURCE_REQUESTS_PER_DAY - view.sourceRequestsUsed)} of {AGENT_MAX_SOURCE_REQUESTS_PER_DAY} in the rolling 24-hour budget</Fact>
-            <Fact label="Whole-batch quota eligibility">{view.nextEligibility} ({view.timeZone})</Fact>
+            <Fact label="Nächster Durchlauf">{view.nextRun ?? "Aus"}</Fact>
+            <Fact label="Verfügbare Quellenabfragen">{Math.max(0, AGENT_MAX_SOURCE_REQUESTS_PER_DAY - view.sourceRequestsUsed)} von {AGENT_MAX_SOURCE_REQUESTS_PER_DAY} in den letzten 24 Stunden</Fact>
+            <Fact label="Nächster kompletter Durchlauf möglich">{view.nextEligibility} ({view.timeZone})</Fact>
           </dl>
           {running && (
             <p role="status" className="border-t border-line py-3.5 text-sm text-muted">
-              {run?.step ?? "Starting the run…"}
+              {run?.step ?? "Durchlauf startet…"}
             </p>
           )}
         </Card>
 
         <Card padding="none" className="flex flex-col gap-4 px-7 py-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-serif text-section">Recurring searches</h2>
-            <Link href="/settings?section=agent" className="text-meta text-muted underline underline-offset-2">Manage searches and shared schedule</Link>
+            <h2 className="font-serif text-section">Wiederkehrende Suchen</h2>
+            <Link href="/settings?section=agent" className="text-meta text-muted underline underline-offset-2">Suchen und Zeitplan verwalten</Link>
           </div>
-          {view.searches.length === 0 ? <p className="text-meta text-muted">No saved searches yet.</p> : <ol className="flex flex-col gap-3">
+          {view.searches.length === 0 ? <p className="text-meta text-muted">Noch keine gespeicherten Suchen.</p> : <ol className="flex flex-col gap-3">
             {view.searches.map((search) => {
               const last = view.searchHistory.find((result) => result.searchId === search.id);
               return <li key={search.id} className="border-t border-line pt-3 text-sm">
-                <p className="break-words font-medium">{search.name} · {search.enabled ? "Enabled" : "Disabled"}</p>
-                <p className="text-meta text-muted break-words">{search.query.keywords}{search.query.place ? ` · ${search.query.place}` : ""} · {search.query.country.toUpperCase() || "No country selected"}</p>
-                <p className="text-meta text-muted">{last ? `${last.error ? "Last source request failed" : "Last source request completed"}: ${last.at} · ${last.found} found · ${last.fresh} new to agent` : "Not run yet (no retained result)."}</p>
-                {last && <p className="text-xs text-muted">{last.batchMessage ? `Batch outcome: ${last.batchMessage}` : "Batch pending or still processing; discovery counts may be incomplete."}</p>}
-                {last?.searchName !== undefined && last.searchName !== search.name && <p className="text-xs text-muted">Run as “{last.searchName}”</p>}
+                <p className="break-words font-medium">{search.name} · {search.enabled ? "Aktiv" : "Pausiert"}</p>
+                <p className="text-meta text-muted break-words">{search.query.keywords}{search.query.place ? ` · ${search.query.place}` : ""} · {search.query.country.toUpperCase() || "Kein Land gewählt"}</p>
+                <p className="text-meta text-muted">{last ? `${last.error ? "Letzte Abfrage fehlgeschlagen" : "Letzte Abfrage abgeschlossen"}: ${last.at} · ${last.found} gefunden · ${last.fresh} neu für den Agenten` : "Noch nicht gelaufen."}</p>
+                {last && <p className="text-xs text-muted">{last.batchMessage ? `Ergebnis des Durchlaufs: ${last.batchMessage}` : "Durchlauf läuft noch; die Zahlen sind eventuell unvollständig."}</p>}
+                {last?.searchName !== undefined && last.searchName !== search.name && <p className="text-xs text-muted">Gelaufen als „{last.searchName}“</p>}
                 {last?.error && <p className="text-meta text-error">{last.error}</p>}
               </li>;
             })}
           </ol>}
           {view.searchResults.length > 0 && <div className="border-t border-line pt-3">
-            <h3 className="text-field font-medium">Last batch discovery results</h3>
+            <h3 className="text-field font-medium">Ergebnisse des letzten Durchlaufs</h3>
             <ul className="mt-2 flex flex-col gap-2 text-meta text-muted">{view.searchResults.map((result) => <li key={result.searchId} className="break-words">
-              {result.searchName}{!view.searches.some((search) => search.id === result.searchId) ? " (deleted search)" : ""}: {result.found} found · {result.fresh} new to agent{result.error ? ` · Source request failed: ${result.error}` : " · Source request completed"}
+              {result.searchName}{!view.searches.some((search) => search.id === result.searchId) ? " (gelöschte Suche)" : ""}: {result.found} gefunden · {result.fresh} neu für den Agenten{result.error ? ` · Abfrage fehlgeschlagen: ${result.error}` : " · Abfrage abgeschlossen"}
             </li>)}</ul>
           </div>}
-          <p className="text-meta text-muted">Found counts may overlap between searches; do not add them up as unique postings. New to agent is counted at each search, before the shared batch is deduplicated and scored. Candidates retain the search names used when found, even after renaming or deletion.</p>
-          <p className="text-meta text-muted">One first-page source request per enabled search, sequentially. The shared limit is {AGENT_MAX_SOURCE_REQUESTS_PER_DAY} requests in a rolling 24 hours, including failed attempts. All-run waits until the whole batch fits; manual runs also wait at least an hour after the previous run. Each run shares a limit of {view.maxScores} AI scores{view.autoDraft ? ` and ${view.maxDrafts} automatic drafts` : "; automatic drafts are off"} across all searches.</p>
+          <p className="text-meta text-muted">Die Trefferzahlen können sich zwischen Suchen überschneiden, zähl sie also nicht zusammen. „Neu für den Agenten“ wird pro Suche gezählt, bevor doppelte Anzeigen entfernt und bewertet werden. Anzeigen behalten den Namen der Suche, mit der sie gefunden wurden, auch nach Umbenennen oder Löschen.</p>
+          <p className="text-meta text-muted">Eine Abfrage (erste Ergebnisseite) pro aktiver Suche, nacheinander. Insgesamt sind {AGENT_MAX_SOURCE_REQUESTS_PER_DAY} Abfragen in 24 Stunden erlaubt, fehlgeschlagene mitgezählt. „Alle starten“ wartet, bis der ganze Durchlauf hineinpasst; manuelle Durchläufe warten außerdem mindestens eine Stunde nach dem letzten. Jeder Durchlauf teilt sich höchstens {view.maxScores} KI-Bewertungen{view.autoDraft ? ` und ${view.maxDrafts} automatische Entwürfe` : "; automatische Entwürfe sind aus"} über alle Suchen.</p>
         </Card>
 
-        <Section title="Drafts to review" count={drafts.length}>
+        <Section title="Entwürfe zur Prüfung" count={drafts.length}>
           {drafts.length === 0 ? (
             <Empty>
               {view.autoDraft
-                ? "No drafts yet. After a run, the best new postings get a draft here."
-                : "No drafts yet. Prepare one from a scored posting, or let the agent prepare them in Settings → Job agent."}
+                ? "Noch keine Entwürfe. Nach einem Durchlauf bekommen die besten neuen Anzeigen hier einen Entwurf."
+                : "Noch keine Entwürfe. Bereite einen aus einer bewerteten Anzeige vor, oder lass den Agenten das tun (Einstellungen → Job-Agent)."}
             </Empty>
           ) : (
             <ul className="flex flex-col gap-3">
@@ -171,7 +171,7 @@ export function AgentScreen({ view }: { view: AgentView }) {
                 <li key={candidate.id}>
                   <CandidateCard candidate={candidate}>
                     <Link href={`/applications/${candidate.applicationId}`} className={buttonClassName("primary", "sm", "hover:text-on-primary")}>
-                      Review draft
+                      Entwurf prüfen
                     </Link>
                     <Button
                       variant="secondary"
@@ -182,11 +182,11 @@ export function AgentScreen({ view }: { view: AgentView }) {
                         })
                       }
                     >
-                      Approve
+                      Übernehmen
                     </Button>
                     <OpenPosting url={candidate.url} />
                     <Button variant="danger-text" size="sm" className="ml-auto" onClick={() => setConfirming(candidate)}>
-                      Dismiss
+                      Verwerfen
                     </Button>
                   </CandidateCard>
                 </li>
@@ -195,9 +195,9 @@ export function AgentScreen({ view }: { view: AgentView }) {
           )}
         </Section>
 
-        <Section title="Scored postings" count={scored.length}>
+        <Section title="Bewertete Anzeigen" count={scored.length}>
           {scored.length === 0 ? (
-            <Empty>{empty ? "Nothing waiting yet. A run puts the postings that fit you best here." : "No postings waiting for a draft."}</Empty>
+            <Empty>{empty ? "Noch nichts da. Ein Durchlauf legt die passendsten Anzeigen hier ab." : "Keine Anzeigen, die auf einen Entwurf warten."}</Empty>
           ) : (
             <ul className="flex flex-col gap-3">
               {scored.map((candidate) => (
@@ -210,7 +210,7 @@ export function AgentScreen({ view }: { view: AgentView }) {
           {below.length > 0 && (
             <div className="flex flex-col gap-3">
               <button type="button" aria-expanded={showBelow} onClick={() => setShowBelow(!showBelow)} className="w-fit text-meta text-muted underline underline-offset-2 hover:text-ink">
-                {below.length} below your minimum score of {view.minScore} · {showBelow ? "Hide" : "Show"}
+                {below.length} unter deiner Mindestpunktzahl von {view.minScore} · {showBelow ? "Ausblenden" : "Anzeigen"}
               </button>
               {showBelow && (
                 <ul className="flex flex-col gap-3">
@@ -229,9 +229,9 @@ export function AgentScreen({ view }: { view: AgentView }) {
       <ConfirmDialog
         open={confirming !== null}
         onOpenChange={(open) => !open && setConfirming(null)}
-        title="Dismiss this draft?"
-        description="Its resume, cover letter and chat are deleted, and the posting won't come back."
-        confirmLabel="Dismiss draft"
+        title="Diesen Entwurf verwerfen?"
+        description="Lebenslauf, Anschreiben und Chat werden gelöscht, und die Anzeige kommt nicht wieder."
+        confirmLabel="Entwurf verwerfen"
         onConfirm={() => {
           if (confirming) dismiss(confirming);
           setConfirming(null);
@@ -253,25 +253,25 @@ function Notices({ view }: { view: AgentView }) {
   if (!view.enabled) {
     return note(
       <>
-        The job agent is off.{" "}
+        Der Job-Agent ist aus.{" "}
         <Link href={SETTINGS.agent.href} className="font-medium text-warning underline underline-offset-2">
-          Turn it on in Settings → Job agent
+          Einschalten unter Einstellungen → Job-Agent
         </Link>
-        {view.drafts.length + view.scored.length > 0 && ". What it found before is still here."}
+        {view.drafts.length + view.scored.length > 0 && ". Was er vorher gefunden hat, ist noch da."}
       </>,
     );
   }
   if (view.setupProblem && view.setupSection) {
     return note(
       <>
-        {view.setupProblem.replace(/ in Settings → [^.]+ first\.$/, ".")}{" "}
+        {view.setupProblem.replace(/ \(Einstellungen → [^)]+\)\.$/, ".")}{" "}
         <Link href={SETTINGS[view.setupSection].href} className="font-medium text-warning underline underline-offset-2">
-          Go to {SETTINGS[view.setupSection].label}
+          Zu {SETTINGS[view.setupSection].label}
         </Link>
       </>,
     );
   }
-  if (view.limitReached) return note(`The whole batch needs more source requests than are available. Quota is next available ${view.nextEligibility} (${view.timeZone}).`);
+  if (view.limitReached) return note(`Der ganze Durchlauf braucht mehr Abfragen, als gerade verfügbar sind. Wieder möglich ab ${view.nextEligibility} (${view.timeZone}).`);
   return null;
 }
 
@@ -292,7 +292,7 @@ function Section({ title, count, children }: { title: string; count: number; chi
         <h2 id={id} className="font-serif text-section">
           {title}
         </h2>
-        <p className="text-meta text-muted">{count} waiting</p>
+        <p className="text-meta text-muted">{count} offen</p>
       </div>
       {children}
     </section>
@@ -307,7 +307,7 @@ function OpenPosting({ url }: { url: string }) {
   if (!url) return null;
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className={buttonClassName("secondary", "sm")}>
-      Open posting <span className="sr-only">(opens in a new tab)</span>
+      Anzeige öffnen <span className="sr-only">(öffnet in neuem Tab)</span>
     </a>
   );
 }
@@ -322,14 +322,14 @@ function CandidateCard({ candidate, children }: { candidate: AgentCandidateView;
           {candidate.company && <p className="text-sm text-ink">{candidate.company}</p>}
           {candidate.facts && <p className="text-meta text-muted">{candidate.facts}</p>}
           {candidate.origin && <p className="text-xs text-muted">{candidate.origin}</p>}
-          {candidate.searches.length > 0 && <p className="text-xs text-muted break-words">Found by: {candidate.searches.map((search) => `${search.searchName}${search.searchId === null ? " (deleted search)" : ""}`).join(" · ")}</p>}
+          {candidate.searches.length > 0 && <p className="text-xs text-muted break-words">Gefunden von: {candidate.searches.map((search) => `${search.searchName}${search.searchId === null ? " (gelöschte Suche)" : ""}`).join(" · ")}</p>}
           {/* As the source's terms ask (E14-2); the origin names the others. */}
           {linksAttribution(candidate.source) && <SourceAttribution source={candidate.source} url={candidate.url} className="mt-1.5 self-start" />}
         </div>
         <ScoreBadge score={candidate.score} />
       </div>
       {candidate.reasons.length > 0 && (
-        <ul aria-label="Why it fits" className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted">
+        <ul aria-label="Warum es passt" className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted">
           {candidate.reasons.map((reason, index) => (
             <li key={index}>{reason}</li>
           ))}
@@ -337,7 +337,7 @@ function CandidateCard({ candidate, children }: { candidate: AgentCandidateView;
       )}
       {candidate.redFlags.length > 0 && (
         <div className="rounded-card bg-warning-surface px-3.5 py-2.5 text-meta text-warning">
-          <p className="font-medium">Worth knowing</p>
+          <p className="font-medium">Gut zu wissen</p>
           <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-4">
             {candidate.redFlags.map((flag, index) => (
               <li key={index}>{flag}</li>
@@ -363,11 +363,11 @@ function ScoredCard({ candidate, onDismiss }: { candidate: AgentCandidateView; o
   const job = useJob<DraftResult>(jobId, 0, (update) => {
     if (update.status === "DONE") {
       setJobId(null);
-      toast("The draft is ready for your review.");
+      toast("Der Entwurf ist bereit zur Prüfung.");
       router.refresh();
     } else if (update.status === "FAILED") {
       setJobId(null);
-      toast(update.error ?? "The draft couldn't be prepared.");
+      toast(update.error ?? "Der Entwurf konnte nicht vorbereitet werden.");
       router.refresh();
     }
   });
@@ -384,7 +384,7 @@ function ScoredCard({ candidate, onDismiss }: { candidate: AgentCandidateView; o
   return (
     <CandidateCard candidate={candidate}>
       <Button size="sm" aria-disabled={preparing || undefined} onClick={() => !preparing && prepare()}>
-        {preparing ? "Preparing draft…" : "Prepare draft"}
+        {preparing ? "Entwurf wird vorbereitet…" : "Entwurf vorbereiten"}
       </Button>
       <OpenPosting url={candidate.url} />
       {preparing && job?.step && (
@@ -393,7 +393,7 @@ function ScoredCard({ candidate, onDismiss }: { candidate: AgentCandidateView; o
         </span>
       )}
       <Button variant="danger-text" size="sm" className="ml-auto" onClick={onDismiss}>
-        Dismiss
+        Verwerfen
       </Button>
     </CandidateCard>
   );

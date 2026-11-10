@@ -79,8 +79,8 @@ export function SearchFields({
         ))}
       </Select>
       <Select
-        label="Level"
-        hint="Read from each posting's title and the years it asks for"
+        label="Erfahrungsstufe"
+        hint="Ermittelt aus dem Titel jeder Anzeige und der verlangten Berufserfahrung"
         value={value.experience ?? "any"}
         onChange={(event) => onChange({ experience: event.target.value as SearchQuery["experience"] })}
       >

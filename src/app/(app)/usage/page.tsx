@@ -6,7 +6,7 @@ import { loadUsage } from "@/lib/usage-data";
 
 import { UsageScreen } from "./usage-screen";
 
-export const metadata: Metadata = { title: "Usage" };
+export const metadata: Metadata = { title: "Verbrauch" };
 
 /** Tokens used per AI task (#290). `?period=` picks the time filter, the last 30 days unless it says otherwise. */
 export default async function UsagePage({ searchParams }: PageProps<"/usage">) {

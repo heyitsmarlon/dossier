@@ -12,7 +12,7 @@ export function FitDetails({ fit }: { fit: PostingFit }) {
           {fitBand(fit.score)} · {fit.score} of 100
         </p>
         {fit.reasons.length > 0 && (
-          <ul aria-label="Why it fits" className="flex list-disc flex-col gap-0.5 pl-5 text-muted">
+          <ul aria-label="Warum es passt" className="flex list-disc flex-col gap-0.5 pl-5 text-muted">
             {fit.reasons.map((reason, index) => (
               <li key={index}>{reason}</li>
             ))}

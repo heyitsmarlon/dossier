@@ -61,9 +61,9 @@ async function setupProblemFor(searches: readonly SavedAgentSearch[], config: Jo
   // Scoring is what a run does; drafts ask the AI provider when there are any.
   const scoring = await scoringProblem();
   if (scoring) return scoring;
-  if (!config.source) return "Choose a job source in Settings → Job search first.";
+  if (!config.source) return "Wähle zuerst eine Jobquelle (Einstellungen → Jobsuche).";
   // It searches on its own, which the BA's terms forbid most clearly (#223).
-  if (config.source === "ARBEITSAGENTUR") return "The job agent doesn't search the Bundesagentur für Arbeit. Choose JSearch, Adzuna or FreeHire in Settings → Job search for it.";
+  if (config.source === "ARBEITSAGENTUR") return "Der Job-Agent durchsucht nicht die Bundesagentur für Arbeit. Wähle dafür JSearch, Adzuna oder FreeHire (Einstellungen → Jobsuche).";
   try {
     credentialsFor(config, config.source);
   } catch (error) {
@@ -111,17 +111,17 @@ export async function runAgentScan({ manual }: { manual: boolean }, context: Job
     await reconcileInterruptedRuns();
     return scan(manual, { ...context, signal: AbortSignal.any([context.signal, signal]) }, now, requestNow);
   });
-  return result ?? stopped("An agent scan is already running.");
+  return result ?? stopped("Der Agent sucht gerade schon.");
 }
 
 async function scan(manual: boolean, context: JobContext, now: Date, requestNow: () => Date): Promise<AgentScanResult> {
   const settings = await loadSettings();
-  if (!settings.agentEnabled && !manual) return stopped("The job agent is off.");
+  if (!settings.agentEnabled && !manual) return stopped("Der Job-Agent ist aus.");
   // Two scheduler checks can queue work before either starts (and the local
   // AI runner may serialize those jobs). Recheck the day under scan ownership.
   if (!manual) {
     const timeZone = await lastKnownTimeZone();
-    if (settings.agentRuns.some((run) => dayOf(new Date(run.at), timeZone) === dayOf(now, timeZone))) return stopped("The agent already ran today.");
+    if (settings.agentRuns.some((run) => dayOf(new Date(run.at), timeZone) === dayOf(now, timeZone))) return stopped("Der Agent ist heute schon gelaufen.");
   }
   // Validate and execute one configuration snapshot. Concurrent source/key
   // edits apply to the next run, not to slots already admitted for this one.
@@ -131,7 +131,7 @@ async function scan(manual: boolean, context: JobContext, now: Date, requestNow:
   const searches = allSearches.filter((search) => search.enabled);
   const source = config.source;
   // Keep this explicit server-side guard before admission as well as setup.
-  if (!source || source === "ARBEITSAGENTUR") return stopped("Choose JSearch, Adzuna or FreeHire in Settings → Job search for the job agent.");
+  if (!source || source === "ARBEITSAGENTUR") return stopped("Wähle für den Job-Agenten JSearch, Adzuna oder FreeHire (Einstellungen → Jobsuche).");
   const credentials = credentialsFor(config, source);
   const run = await reserveRun(now, manual, searches.length, await lastKnownTimeZone());
   if (typeof run === "string") return stopped(run);
@@ -140,7 +140,7 @@ async function scan(manual: boolean, context: JobContext, now: Date, requestNow:
   try {
     for (const search of searches) {
       if (context.signal.aborted) break;
-      await context.step(searches.length === 1 ? "Searching for new postings" : `Searching ${search.name}`);
+      await context.step(searches.length === 1 ? "Suche nach neuen Anzeigen" : `Suche „${search.name}“`);
       if (context.signal.aborted) break;
       await recordSourceRequest(run, results.length, requestNow());
       let postings: FoundPosting[] = [];
@@ -149,7 +149,7 @@ async function scan(manual: boolean, context: JobContext, now: Date, requestNow:
         // Sequential, first page only. Global credentials are never copied to searches.
         postings = (await searchPostings(source, credentials, search.query, null, requestContext(source))).postings;
       } catch (error) {
-        errorMessage = error instanceof JobSearchError ? error.message : "The job source couldn't be reached. Try again.";
+        errorMessage = error instanceof JobSearchError ? error.message : "Die Jobquelle war nicht erreichbar. Versuch es noch einmal.";
         if (!(error instanceof JobSearchError)) logServerError("job agent search", error);
       }
       pages.push(postings);
@@ -169,7 +169,7 @@ async function scan(manual: boolean, context: JobContext, now: Date, requestNow:
     const result = await evaluateAgentPostings(ordered, context, settings);
     result.found = pages.reduce((sum, page) => sum + page.length, 0);
     result.skipped = result.found - result.fresh;
-    if (!result.fresh && result.found) result.message = "No new postings this time.";
+    if (!result.fresh && result.found) result.message = "Diesmal keine neuen Anzeigen.";
     // Pass two links newly created candidates to EVERY matching search,
     // including overlaps whose duplicate posting was never scored separately.
     for (let i = 0; i < pages.length; i++) await attributeAgentCandidates(searches[i], pages[i]);
@@ -178,7 +178,7 @@ async function scan(manual: boolean, context: JobContext, now: Date, requestNow:
     await recordRunEnd(run, result.message, results);
     return result;
   } catch (error) {
-    await recordRunEnd(run, "The agent scan was interrupted. Try again.", results);
+    await recordRunEnd(run, "Die Suche des Agenten wurde unterbrochen. Versuch es noch einmal.", results);
     throw error;
   }
 }
@@ -208,10 +208,10 @@ export function roundRobinPostings(pages: readonly (readonly FoundPosting[])[]):
 export async function evaluateAgentPostings(postings: readonly FoundPosting[], context: JobContext, settings: SettingsData): Promise<AgentScanResult> {
   const fresh = await newPostings(postings);
   const counts = { found: postings.length, fresh: fresh.length, skipped: postings.length - fresh.length, drafted: 0 };
-  if (fresh.length === 0) return { ...counts, scored: 0, message: postings.length === 0 ? "The search found no postings this time." : "No new postings this time." };
+  if (fresh.length === 0) return { ...counts, scored: 0, message: postings.length === 0 ? "Die Suche hat diesmal keine Anzeigen gefunden." : "Diesmal keine neuen Anzeigen." };
 
   const toScore = fresh.slice(0, settings.agentMaxScores);
-  await context.step(`Scoring ${toScore.length} ${toScore.length === 1 ? "posting" : "postings"}`);
+  await context.step(`Bewerte ${toScore.length} ${toScore.length === 1 ? "Anzeige" : "Anzeigen"}`);
   const [score, profile] = await Promise.all([loadPostingScorer(), loadProfile()]);
   let scored = 0;
   let queued = 0;
@@ -253,14 +253,14 @@ export async function evaluateAgentPostings(postings: readonly FoundPosting[], c
     drafted = best.length;
   }
 
-  const waiting = `${queued} new ${queued === 1 ? "posting is" : "postings are"} waiting for a look.`;
+  const waiting = `${queued} ${queued === 1 ? "neue Anzeige wartet" : "neue Anzeigen warten"} auf einen Blick.`;
   const message =
     scored === 0
-      ? (problem ?? "No postings could be scored this time.")
+      ? (problem ?? "Diesmal konnten keine Anzeigen bewertet werden.")
       : queued === 0
-        ? `Scored ${scored} new ${scored === 1 ? "posting" : "postings"}; none reached your minimum score of ${settings.agentMinScore}.`
+        ? `${scored} ${scored === 1 ? "neue Anzeige" : "neue Anzeigen"} bewertet; keine erreichte deine Mindestpunktzahl von ${settings.agentMinScore}.`
         : drafted > 0
-          ? `${waiting} Preparing ${drafted === 1 ? "a draft for the best one" : `drafts for the best ${drafted}`}.`
+          ? `${waiting} Bereite ${drafted === 1 ? "einen Entwurf für die beste vor" : `Entwürfe für die besten ${drafted} vor`}.`
           : waiting;
   return { ...counts, scored, drafted, message };
 }

@@ -42,7 +42,7 @@ export function SectionsPanel({
     return {
       key,
       name,
-      hint: custom && (withContent.includes(key) ? format : `${format} · nothing to show yet`),
+      hint: custom && (withContent.includes(key) ? format : `${format} · noch leer`),
       // A section the user made is renamed on its page, for every resume.
       usual: custom ? undefined : usual,
       inSidebar: inSidebar(key, customSections),
@@ -62,13 +62,13 @@ export function SectionsPanel({
   return (
     <div className="flex flex-col gap-6">
       <p className="text-sm text-pretty text-muted">
-        Drag sections into the order you want: it&apos;s the same order as on your{" "}
+        Zieh die Abschnitte in die gewünschte Reihenfolge: Es ist dieselbe wie in deinem{" "}
         <Link href="/profile" className="font-medium text-ink underline underline-offset-2">
-          Profile
+          Profil
         </Link>
-        . Remove takes one off your resumes and keeps what&apos;s in it. New applications start like this, and resumes you&apos;ve sent stay as they were sent.
+        . „Entfernen“ nimmt einen Abschnitt aus deinen Lebensläufen, behält aber den Inhalt. Neue Bewerbungen starten so, gesendete Lebensläufe bleiben, wie sie gesendet wurden.
       </p>
-      {on.length === 0 && off.length === 0 && <p className="text-sm text-muted">Sections show up here as you fill in your profile.</p>}
+      {on.length === 0 && off.length === 0 && <p className="text-sm text-muted">Abschnitte erscheinen hier, sobald du dein Profil ausfüllst.</p>}
       <SectionOrderList
         rows={on}
         sidebar={sidebar}
@@ -78,11 +78,11 @@ export function SectionsPanel({
         actions={(entry) => editLink(entry) || null}
       />
       <Link href={sectionHref("new")} className={buttonClassName("secondary", "sm", "self-start")}>
-        Add a section on your Profile
+        Abschnitt im Profil hinzufügen
       </Link>
       {off.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <p className="text-label text-muted">Not on your resumes</p>
+          <p className="text-label text-muted">Nicht in deinen Lebensläufen</p>
           <ul className="flex flex-col gap-1.5">
             {off.map((entry) => (
               <li key={entry.key} className="flex flex-col rounded-control border border-dashed border-line-card py-1 pr-1.5 pl-3">

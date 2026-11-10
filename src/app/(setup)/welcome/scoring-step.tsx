@@ -19,15 +19,15 @@ type Status = { state: "idle" } | { state: "checking" } | { state: "connected" }
 const OPTIONS: readonly { value: Scorer; name: string; description: string; tag: string }[] = [
   {
     value: "AI",
-    name: "Your AI",
-    description: "The AI you chose scores each posting and says in its own words why it fits. Nothing more to set up.",
-    tag: "Recommended",
+    name: "Deine KI",
+    description: "Die KI, die du gewählt hast, bewertet jede Anzeige und begründet in eigenen Worten, warum sie passt. Nichts weiter einzurichten.",
+    tag: "Empfohlen",
   },
   {
     value: "JEV",
-    name: "Jev by TypeSafe",
-    description: "A model made for quick yes-or-no judgments. Dossier builds the score from its answers, and the reasons quote the posting's own lines.",
-    tag: "Needs a TypeSafe key · in early access",
+    name: "Jev von TypeSafe",
+    description: "Ein Modell für schnelle Ja-oder-Nein-Urteile. Dossier baut die Bewertung aus seinen Antworten, und die Begründungen zitieren Zeilen aus der Anzeige.",
+    tag: "Braucht einen TypeSafe-Schlüssel · Early Access",
   },
 ];
 
@@ -60,23 +60,23 @@ export function ScoringStep({ initial }: { initial: ScoringView }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <ChoiceCards label="Score postings with" options={OPTIONS} value={scorer} onChange={(next) => void choose(next)} />
+      <ChoiceCards label="Anzeigen bewerten mit" options={OPTIONS} value={scorer} onChange={(next) => void choose(next)} />
       {scorer === "JEV" && (
         <Card className="flex flex-col gap-6">
           <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[140px_1fr]">
-            <dt className="font-medium">What it costs</dt>
-            <dd className="text-pretty text-muted">You pay TypeSafe for each posting it reads. It&apos;s in early access, so a new account may have to wait for a key.</dd>
-            <dt className="font-medium">Your data</dt>
+            <dt className="font-medium">Was es kostet</dt>
+            <dd className="text-pretty text-muted">Du zahlst TypeSafe für jede Anzeige, die es liest. Es ist im Early Access, ein neues Konto muss eventuell auf einen Schlüssel warten.</dd>
+            <dt className="font-medium">Deine Daten</dt>
             <dd className="text-pretty text-muted">
-              Each posting you score goes to TypeSafe with your profile, without your name, contact details or references. TypeSafe doesn&apos;t train on it. Jev
-              reads English best.
+              Jede Anzeige, die du bewerten lässt, geht mit deinem Profil an TypeSafe, ohne Namen, Kontaktdaten und Referenzen. TypeSafe trainiert nicht damit. Jev
+              versteht Englisch am besten.
             </dd>
           </dl>
           <InstructionList
-            label="Setting up Jev"
+            label="Jev einrichten"
             steps={[
-              { text: "Sign up for TypeSafe, then open the console's keys and create one.", link: { href: TYPESAFE_KEY_URL, label: "the TypeSafe console" } },
-              { text: "Copy the key and paste it below." },
+              { text: "Registriere dich bei TypeSafe, öffne in der Konsole die Schlüssel und erstelle einen.", link: { href: TYPESAFE_KEY_URL, label: "TypeSafe-Konsole" } },
+              { text: "Kopier den Schlüssel und füge ihn unten ein." },
             ]}
           />
           <form
@@ -87,24 +87,24 @@ export function ScoringStep({ initial }: { initial: ScoringView }) {
             }}
           >
             <Input
-              label="TypeSafe key"
+              label="TypeSafe-Schlüssel"
               type="password"
               autoComplete="off"
-              placeholder={initial.keyState === "set" ? "Saved · paste a new one to replace it" : "Paste it here"}
-              hint="Stored encrypted on your server, and never shown again."
+              placeholder={initial.keyState === "set" ? "Gespeichert · neuen einfügen, um ihn zu ersetzen" : "Hier einfügen"}
+              hint="Wird verschlüsselt auf deinem Server gespeichert und nie wieder angezeigt."
               value={key}
               onChange={(event) => setKey(event.target.value)}
             />
             <Button type="submit" className="self-start" aria-disabled={status.state === "checking" || undefined}>
-              {status.state === "checking" ? "Checking…" : "Check it"}
+              {status.state === "checking" ? "Prüfe…" : "Prüfen"}
             </Button>
           </form>
           <div role="status" className="text-sm empty:hidden">
-            {status.state === "connected" && <p className="text-success">It works: Jev answered.</p>}
+            {status.state === "connected" && <p className="text-success">Es klappt: Jev hat geantwortet.</p>}
             {status.state === "failed" && <p className="rounded-card bg-warning-surface px-4 py-3 font-medium text-warning">{status.message}</p>}
           </div>
           <a href={`${WIKI}/Choosing-an-AI-provider#scoring-with-jev`} target="_blank" rel="noopener noreferrer" className="self-start text-meta text-muted underline underline-offset-2 hover:text-ink">
-            More help on the wiki <span className="sr-only">(opens in a new tab)</span>
+            Mehr Hilfe im Wiki (englisch) <span className="sr-only">(öffnet in neuem Tab)</span>
           </a>
         </Card>
       )}

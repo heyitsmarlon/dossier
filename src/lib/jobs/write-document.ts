@@ -36,7 +36,7 @@ export const writeDocumentJob = defineJob({
   input: z.object({ applicationId: z.string().min(1), kind: z.enum(WRITABLE) }),
   result: z.object({ applicationId: z.string() }),
   async run({ applicationId, kind }, { step, signal }) {
-    await step(kind === DocumentKind.RESUME ? "Tailoring your resume" : "Writing your cover letter");
+    await step(kind === DocumentKind.RESUME ? "Passe deinen Lebenslauf an" : "Schreibe dein Anschreiben");
     const application = await prisma.application.findUniqueOrThrow({ where: { id: applicationId }, include: { documents: { select: { kind: true } } } });
     if (application.documents.some((document) => document.kind === kind)) return { applicationId };
 

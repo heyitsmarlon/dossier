@@ -24,7 +24,7 @@ export default async function PrintBaseResumePage({ searchParams }: PageProps<"/
   return (
     <>
       <style>{printCss(theme, settings.paper, fit)}</style>
-      <ResumeDocument theme={theme} profile={profile} paper={settings.paper} includeReferences={settings.includeRefs} sections={settings.resumeSections} language={settings.resumeLanguage} fit={fit} />
+      <ResumeDocument theme={theme} profile={profile} paper={settings.paper} includeReferences={settings.includeRefs} sections={settings.resumeSections} language={settings.resumeLanguage ?? "German"} fit={fit} />
     </>
   );
 }

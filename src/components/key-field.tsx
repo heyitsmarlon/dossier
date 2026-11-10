@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 /** Saved here, from an environment variable, missing, or saved under another DOSSIER_SECRET. */
 export type KeyState = "none" | "set" | "unreadable" | "env";
 
-export const KEY_UNREADABLE = "Your saved key can't be read. Please enter it again.";
+export const KEY_UNREADABLE = "Dein gespeicherter Schlüssel ist nicht lesbar. Bitte gib ihn neu ein.";
 
 /**
  * A write-only key (Settings → Job search, Scoring): saved when you leave
@@ -40,13 +40,13 @@ export function KeyField({
         autoComplete="off"
         value={value}
         placeholder={
-          keyState === "set" ? "Saved · type a new key to replace it" : keyState === "env" ? `Using ${envName} · type one to save it here` : "Stored encrypted on your server"
+          keyState === "set" ? "Gespeichert · neuen Schlüssel eingeben, um ihn zu ersetzen" : keyState === "env" ? `Nutzt ${envName} · gib einen ein, um ihn hier zu speichern` : "Wird verschlüsselt auf deinem Server gespeichert"
         }
         error={keyState === "unreadable" ? KEY_UNREADABLE : undefined}
         hint={
           keyState === "none" ? (
             <>
-              Get one from{" "}
+              Hol dir einen bei{" "}
               <a href={getKey.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">
                 {getKey.text}
               </a>
@@ -65,7 +65,7 @@ export function KeyField({
       />
       {(keyState === "set" || keyState === "unreadable") && (
         <Button variant="text" size="sm" className="self-start" onClick={() => void onSave({ action: "clear" })}>
-          Remove saved key
+          Gespeicherten Schlüssel entfernen
         </Button>
       )}
     </div>

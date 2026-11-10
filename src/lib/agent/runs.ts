@@ -22,7 +22,7 @@ export const sourceRequestsInPastDay = (runs: readonly AgentRun[], now: Date) =>
 
 export function interruptedRunMessage(run: AgentRun): string {
   const requests = run.sourceRequests ?? 1;
-  return `The agent scan was interrupted. All ${requests} reserved source ${requests === 1 ? "request still counts" : "requests still count"} toward the 24-hour limit, including any not sent.`;
+  return `Die Suche des Agenten wurde unterbrochen. ${requests === 1 ? "Die reservierte Anfrage an die Quelle zählt" : `Alle ${requests} reservierten Anfragen an die Quelle zählen`} trotzdem zum 24-Stunden-Limit, auch nicht gesendete.`;
 }
 
 /** Whole-run admission: wait until all enabled searches fit, never run a subset. */
@@ -59,11 +59,11 @@ export async function reconcileInterruptedRuns(): Promise<void> {
 
 export function runLimitProblem(runs: readonly AgentRun[], now: Date, { manual, requests = 1, timeZone = "UTC" }: { manual: boolean; requests?: number; timeZone?: string }): string | null {
   const free = nextSourceBudgetAt(runs, now, requests);
-  if (free > now) return `The agent needs ${requests} source ${requests === 1 ? "request" : "requests"}, but may use only ${AGENT_MAX_SOURCE_REQUESTS_PER_DAY} in 24 hours. Next eligible: ${formatDateTime(free, timeZone, now)} (${timeZone}).`;
+  if (free > now) return `Der Agent braucht ${requests} ${requests === 1 ? "Anfrage" : "Anfragen"} an die Quelle, darf aber nur ${AGENT_MAX_SOURCE_REQUESTS_PER_DAY} in 24 Stunden stellen. Wieder möglich: ${formatDateTime(free, timeZone, now)} (${timeZone}).`;
   const last = runs[0];
   if (manual && last && Date.parse(last.at) + AGENT_MANUAL_INTERVAL_MS > now.getTime()) {
     const minutes = Math.ceil((Date.parse(last.at) + AGENT_MANUAL_INTERVAL_MS - now.getTime()) / 60_000);
-    return `The agent ran less than an hour ago. Try again in ${minutes} ${minutes === 1 ? "minute" : "minutes"}.`;
+    return `Der Agent ist vor weniger als einer Stunde gelaufen. Versuch es in ${minutes} ${minutes === 1 ? "Minute" : "Minuten"} noch einmal.`;
   }
   return null;
 }

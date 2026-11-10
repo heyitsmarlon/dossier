@@ -4,7 +4,7 @@ import { useId } from "react";
 
 import { paidRoles, profileStrength, type ProfileData } from "@/lib/profile";
 
-/** "Profile strength" with a progress bar and an encouraging hint (PRO-9). */
+/** "Profilstärke" with a progress bar and an encouraging hint (PRO-9). */
 export function StrengthMeter({ profile }: { profile: ProfileData }) {
   const labelId = useId();
   const hintId = useId();

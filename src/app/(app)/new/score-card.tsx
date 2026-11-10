@@ -15,16 +15,16 @@ export function ScoreCard({ fit, scoring, step, onScore }: { fit: PostingFit | n
     <Card padding="none" className="flex flex-col gap-3 px-7 py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col gap-0.5">
-          <h3 className="text-field font-medium">How well it fits</h3>
-          <p className="text-meta text-muted">A score from 0 to 100 with the reasons, as Find jobs gives, from the scorer in Settings → Scoring.</p>
+          <h3 className="text-field font-medium">Wie gut es passt</h3>
+          <p className="text-meta text-muted">Eine Bewertung von 0 bis 100 mit Begründung, wie in „Jobs finden“, vom Bewerter aus Einstellungen → Bewertung.</p>
         </div>
         <Button variant="secondary" size="sm" aria-disabled={scoring || undefined} onClick={() => !scoring && onScore()}>
-          {scoring ? "Scoring…" : fit ? "Score it again" : "Score it"}
+          {scoring ? "Bewerte…" : fit ? "Neu bewerten" : "Bewerten"}
         </Button>
       </div>
       {scoring && (
         <p role="status" className="text-meta text-muted">
-          {step ?? "Starting…"}
+          {step ?? "Startet…"}
         </p>
       )}
       {fit && !scoring && <FitDetails fit={fit} />}

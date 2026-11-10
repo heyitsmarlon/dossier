@@ -26,12 +26,12 @@ export function ResumeScore({ applicationId, fit, scoring }: { applicationId: st
       router.refresh();
     }
     if (update.status === "FAILED") {
-      toast(update.error ?? "Scoring didn't work. Try again.");
+      toast(update.error ?? "Die Bewertung hat nicht geklappt. Versuch es noch einmal.");
       setJobId(null);
     }
   });
   const busy = starting || (jobId !== null && job?.status !== "DONE" && job?.status !== "FAILED");
-  const reasons = fit ? [...fit.reasons, ...fit.redFlags.map((flag) => `Watch out: ${flag}`)] : [];
+  const reasons = fit ? [...fit.reasons, ...fit.redFlags.map((flag) => `Achtung: ${flag}`)] : [];
 
   const score = () =>
     startTransition(async () => {
@@ -50,7 +50,7 @@ export function ResumeScore({ applicationId, fit, scoring }: { applicationId: st
         </span>
       )}
       <button type="button" className="text-meta text-muted underline underline-offset-2 hover:text-ink disabled:no-underline" disabled={busy} onClick={score}>
-        {busy ? "Scoring…" : fit ? "Score again" : "Score"}
+        {busy ? "Bewerte…" : fit ? "Neu bewerten" : "Bewerten"}
       </button>
     </span>
   );

@@ -19,17 +19,17 @@ const unverified = z.array(z.string());
 
 /** The Basics fields as the import's review names them. */
 export const BASICS_LABELS: Record<BasicsField, string> = {
-  name: "Full name",
-  headline: "Headline",
-  email: "Email",
-  phone: "Phone",
-  dob: "Date of birth",
+  name: "Vollständiger Name",
+  headline: "Überschrift",
+  email: "E-Mail",
+  phone: "Telefon",
+  dob: "Geburtsdatum",
   website: "Website",
-  address: "Street address",
-  city: "City",
-  country: "Country",
+  address: "Straße und Hausnummer",
+  city: "Ort",
+  country: "Land",
   linkedin: "LinkedIn",
-  summary: "About you",
+  summary: "Über dich",
 };
 
 export const importedProfileSchema = z.object({
@@ -85,20 +85,20 @@ export type ImportedProfile = z.infer<typeof importedProfileSchema>;
 export type ImportMode = "merge" | "replace";
 
 /** The steps of reading a resume, as the progress shows them. */
-export const IMPORT_PROFILE_STEPS = ["Reading your resume", "Sorting it into your profile"] as const;
+export const IMPORT_PROFILE_STEPS = ["Lese deinen Lebenslauf", "Sortiere ihn in dein Profil"] as const;
 
 /** "3 roles, 1 project, 12 skills…": what a preview holds, for the page and the toast. */
 export function importCounts(profile: ImportedProfile): string {
   const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
   return [
-    plural(profile.experience.length, "role", "roles"),
-    plural(profile.projects.length, "project", "projects"),
-    plural(profile.education.length, "degree", "degrees"),
+    plural(profile.experience.length, "Position", "Positionen"),
+    plural(profile.projects.length, "Projekt", "Projekte"),
+    plural(profile.education.length, "Abschluss", "Abschlüsse"),
     // Optional and rare: only said when there are some (#293, #218).
     ...(profile.certifications.length > 0 ? [plural(profile.certifications.length, "certification", "certifications")] : []),
-    ...(profile.publications.length > 0 ? [plural(profile.publications.length, "publication", "publications")] : []),
-    plural(profile.skills.length, "skill", "skills"),
-    plural(profile.languages.length, "language", "languages"),
-    plural(profile.references.length, "reference", "references"),
+    ...(profile.publications.length > 0 ? [plural(profile.publications.length, "Veröffentlichung", "Veröffentlichungen")] : []),
+    plural(profile.skills.length, "Fähigkeit", "Fähigkeiten"),
+    plural(profile.languages.length, "Sprache", "Sprachen"),
+    plural(profile.references.length, "Referenz", "Referenzen"),
   ].join(", ");
 }

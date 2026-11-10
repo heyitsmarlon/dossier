@@ -146,7 +146,7 @@ export function GoogleSection({
                   {connection.signInProblem} Until then, Dossier doesn&apos;t check your mail or calendar.
                 </p>
                 <a href="/api/google/connect" className={buttonClassName("secondary", "sm")}>
-                  Connect again
+                  Neu verbinden
                 </a>
               </div>
             )}
@@ -167,9 +167,9 @@ export function GoogleSection({
             </a>
             {inDesktopApp && (
               <p className="flex flex-wrap items-center gap-x-2 text-meta text-muted">
-                Google&apos;s sign-in opens in your browser. Once it says Connected, come back here.
+                Die Google-Anmeldung öffnet sich in deinem Browser. Sobald dort „Verbunden“ steht, komm hierher zurück.
                 <button type="button" className="underline underline-offset-2 hover:text-ink" onClick={() => router.refresh()}>
-                  Check again
+                  Erneut prüfen
                 </button>
               </p>
             )}

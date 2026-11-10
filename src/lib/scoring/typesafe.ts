@@ -37,14 +37,14 @@ export type Answer = z.infer<typeof answerSchema>;
 export type SystemOneResult = z.infer<typeof resultSchema>;
 
 const MESSAGES = {
-  auth: "TypeSafe didn't accept the key. Check it in Settings → Scoring.",
-  "rate-limited": "TypeSafe is limiting requests right now. Wait a minute and try again.",
-  busy: "TypeSafe is overloaded right now. Try again in a moment.",
-  "too-long": "The posting and your profile are more than Jev can read at once. Try a shorter posting.",
-  unreachable: "Couldn't reach TypeSafe. Check that the server can reach the internet.",
-  timeout: "TypeSafe took too long to answer. Try again.",
-  "invalid-output": "TypeSafe's answer didn't come back in the expected shape. Try again.",
-  provider: "TypeSafe couldn't score this posting. Try again in a moment.",
+  auth: "TypeSafe hat den Schlüssel nicht akzeptiert. Prüf ihn (Einstellungen → Bewertung).",
+  "rate-limited": "TypeSafe begrenzt gerade die Anfragen. Warte eine Minute und versuch es noch einmal.",
+  busy: "TypeSafe ist gerade überlastet. Versuch es gleich noch einmal.",
+  "too-long": "Anzeige und Profil sind zusammen mehr, als Jev auf einmal lesen kann. Versuch es mit einer kürzeren Anzeige.",
+  unreachable: "TypeSafe war nicht erreichbar. Prüf, ob der Server ins Internet kommt.",
+  timeout: "TypeSafe hat zu lange gebraucht. Versuch es noch einmal.",
+  "invalid-output": "Die Antwort von TypeSafe hatte nicht die erwartete Form. Versuch es noch einmal.",
+  provider: "TypeSafe konnte diese Anzeige nicht bewerten. Versuch es gleich noch einmal.",
 } as const;
 
 /** A TypeSafe failure, in words people can act on. */

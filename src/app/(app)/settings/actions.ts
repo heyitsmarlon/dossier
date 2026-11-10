@@ -165,7 +165,7 @@ export const saveJobSourceKey = action(
 /** "Test connection": the smallest request the chosen source takes, timed. */
 export const testJobSource = action(z.object({}), async () => {
   const config = await loadJobSearchConfig();
-  if (!config.source) return { connected: false as const, message: "Choose a source first." };
+  if (!config.source) return { connected: false as const, message: "Wähle zuerst eine Quelle." };
   const started = performance.now();
   try {
     await testSource(config.source, credentialsFor(config, config.source), requestContext(config.source));
@@ -235,7 +235,7 @@ export const updateSettings = action(
     /** One of the built-in languages, or null for English. */
     resumeLanguage: z
       .string()
-      .refine((name) => DOCUMENT_LANGUAGES.some((language) => language.name === name), "Pick a language from the list.")
+      .refine((name) => DOCUMENT_LANGUAGES.some((language) => language.name === name), "Wähle eine Sprache aus der Liste.")
       .nullable()
       .optional(),
     fileNamePattern: z.string().max(200).optional(),
@@ -256,7 +256,7 @@ export const updateSettings = action(
  * documents in it. A name already in the list, in any case, is just picked.
  */
 export const addDocumentLanguage = action(
-  z.object({ name: z.string().trim().min(1, "Type a language first.").max(60) }),
+  z.object({ name: z.string().trim().min(1, "Gib zuerst eine Sprache ein.").max(60) }),
   async ({ name }) => {
     const { customLanguages } = await loadSettings();
     const known = [...DOCUMENT_LANGUAGES.map((language) => language.name), ...customLanguages];
@@ -269,7 +269,7 @@ export const addDocumentLanguage = action(
 /** "Download all PDFs" (E10-5): zips every tailored document in the background. */
 export const startZippingPdfs = action(z.object({}), async () => {
   const documents = await countTailoredDocuments();
-  if (documents === 0) throw new ActionError("There are no tailored documents to download yet.");
+  if (documents === 0) throw new ActionError("Es gibt noch keine zugeschnittenen Unterlagen zum Herunterladen.");
   return { jobId: await startJob(zipPdfsJob, {}), documents };
 });
 
@@ -346,9 +346,9 @@ export const setConnector = action(z.object({ on: z.boolean() }), async ({ on })
 
 /** "Disconnect all apps": the connector stays on, but Claude and every other app have to connect again. */
 export const disconnectApps = action(z.object({}), async (_input, { toast }) => {
-  if (!(await loadSettings()).connectorEnabledAt) throw new ActionError("The MCP connector is off already.");
+  if (!(await loadSettings()).connectorEnabledAt) throw new ActionError("Der MCP-Connector ist schon aus.");
   await saveSettings({ connectorEnabledAt: new Date().toISOString() });
-  toast("Every app is disconnected. Connect again from an app to use Dossier there.");
+  toast("Alle Apps sind getrennt. Verbinde dich aus einer App neu, um Dossier dort zu nutzen.");
   return null;
 });
 
@@ -356,13 +356,13 @@ const MAX_REDIRECTS = 10;
 
 /** Lets another MCP app sign in, by the address it comes back to (#281). */
 export const addConnectorRedirect = action(
-  z.object({ uri: z.string().trim().min(1, "Paste the app's callback address first.").max(2000) }),
+  z.object({ uri: z.string().trim().min(1, "Füge zuerst die Callback-Adresse der App ein.").max(2000) }),
   async ({ uri }) => {
     const problem = redirectProblem(uri);
     if (problem) throw new ActionError(problem);
     const { connectorRedirects } = await loadSettings();
     if (connectorRedirects.includes(uri)) return { redirects: connectorRedirects };
-    if (connectorRedirects.length >= MAX_REDIRECTS) throw new ActionError(`That's ${MAX_REDIRECTS} apps already. Remove one first.`);
+    if (connectorRedirects.length >= MAX_REDIRECTS) throw new ActionError(`Das sind schon ${MAX_REDIRECTS} Apps. Entferne zuerst eine.`);
     const redirects = [...connectorRedirects, uri];
     await saveSettings({ connectorRedirects: redirects });
     return { redirects };

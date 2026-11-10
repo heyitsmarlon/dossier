@@ -55,9 +55,9 @@ export function SectionsMenu({
     <Popover.Root>
       <Popover.Trigger asChild>
         <Button variant="text" size="sm" className="data-[state=open]:text-ink">
-          Sections
+          Abschnitte
           {(fresh.length > 0 || canUpdate) && (
-            <span className="text-meta text-muted">{[fresh.length > 0 && `${fresh.length} to add`, canUpdate && "update"].filter(Boolean).join(" · ")}</span>
+            <span className="text-meta text-muted">{[fresh.length > 0 && `${fresh.length} neu`, canUpdate && "aktualisieren"].filter(Boolean).join(" · ")}</span>
           )}
           <span aria-hidden="true" className="text-[10px]">
             ▼
@@ -71,17 +71,17 @@ export function SectionsMenu({
           collisionPadding={8}
           className="z-30 flex max-h-(--radix-popover-content-available-height) w-[min(380px,calc(100vw-16px))] flex-col gap-4 overflow-y-auto rounded-card border border-line-popover bg-card p-4 shadow-menu"
         >
-          <p className="text-label text-muted">Sections on this resume</p>
-          {sent && <p className="text-label text-pretty text-muted">This resume was sent, so changes to your profile don&apos;t reach it. Anything you change here does.</p>}
+          <p className="text-label text-muted">Abschnitte in diesem Lebenslauf</p>
+          {sent && <p className="text-label text-pretty text-muted">Dieser Lebenslauf wurde gesendet, Änderungen an deinem Profil kommen hier nicht mehr an. Was du hier änderst, schon.</p>}
           {canUpdate && (
             <div className="flex flex-col items-start gap-1.5 rounded-control bg-paper p-3">
               <p className="text-label text-pretty text-muted">
                 {sent
-                  ? "Your profile has changed since. Updating brings in titles, dates, contact details and new items in these sections. The text on this resume stays, and nothing leaves it."
-                  : "Your profile has new items for these sections. Updating adds them in your profile's own words."}
+                  ? "Dein Profil hat sich seitdem geändert. Aktualisieren übernimmt Titel, Daten, Kontaktdaten und neue Einträge in diesen Abschnitten. Der Text dieses Lebenslaufs bleibt, und nichts fällt weg."
+                  : "Dein Profil hat neue Einträge für diese Abschnitte. Aktualisieren fügt sie mit den Worten aus deinem Profil hinzu."}
               </p>
               <Button variant="secondary" size="sm" onClick={onUpdate}>
-                Update from profile
+                Aus Profil aktualisieren
               </Button>
             </div>
           )}
@@ -99,13 +99,13 @@ export function SectionsMenu({
           />
           {(fresh.length > 0 || removed.length > 0) && (
             <div className="flex flex-col gap-1.5">
-              <p className="text-label text-muted">Add from your profile</p>
+              <p className="text-label text-muted">Aus deinem Profil hinzufügen</p>
               <ul className="flex flex-col gap-1.5">
                 {[...fresh, ...removed].map((key) => (
                   <li key={key} className="flex items-center justify-between gap-2 rounded-control border border-dashed border-line-card py-1 pr-1.5 pl-3">
                     <span className="flex min-w-0 flex-col">
                       <span className="truncate text-sm">{nameOf(key)}</span>
-                      <span className="text-xs text-muted">{fresh.includes(key) ? "Not on this resume yet" : "Removed from this resume"}</span>
+                      <span className="text-xs text-muted">{fresh.includes(key) ? "Noch nicht in diesem Lebenslauf" : "Aus diesem Lebenslauf entfernt"}</span>
                     </span>
                     <Button variant="text" size="sm" onClick={() => onAdd(key)}>
                       Add <span className="sr-only">{nameOf(key)}</span>
@@ -117,7 +117,7 @@ export function SectionsMenu({
           )}
           {own && onFollowBase && (
             <Button variant="text" size="sm" className="self-start" onClick={onFollowBase}>
-              Use the base resume&apos;s order
+              Reihenfolge des Basis-Lebenslaufs übernehmen
             </Button>
           )}
         </Popover.Content>

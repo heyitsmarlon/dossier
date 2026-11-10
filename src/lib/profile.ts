@@ -172,9 +172,9 @@ export type ReferenceItem = {
 export type CustomItem = DateSpan & { id: string; title: string; subtitle: string; details: string; link: string; onResumes: boolean };
 /** The formats a custom section can have, as the screens that pick one call them. */
 export const CUSTOM_SECTION_FORMATS = [
-  { value: "ENTRIES", label: "Entries", hint: "Each item has a title, where or with whom, dates, bullets and a link, like a role." },
-  { value: "LINES", label: "Lines", hint: "Each item is free text with an optional link, like a publication. One long line makes a paragraph." },
-  { value: "INLINE", label: "Inline", hint: "Items share one line, like “Climbing · Chess · Film photography”." },
+  { value: "ENTRIES", label: "Einträge", hint: "Jeder Eintrag hat Titel, Ort oder Organisation, Zeitraum, Stichpunkte und Link, wie eine Position." },
+  { value: "LINES", label: "Zeilen", hint: "Jeder Eintrag ist freier Text mit optionalem Link, wie eine Veröffentlichung. Eine lange Zeile wird ein Absatz." },
+  { value: "INLINE", label: "In einer Zeile", hint: "Einträge teilen sich eine Zeile, etwa „Klettern · Schach · Analogfotografie“." },
 ] as const satisfies readonly { value: CustomSectionFormat; label: string; hint: string }[];
 
 /** A section the user made (#298), such as Awards. */

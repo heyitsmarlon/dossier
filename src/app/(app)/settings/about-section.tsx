@@ -108,11 +108,11 @@ export function AboutSection({ facts, usagePing, updates }: { facts: AboutFacts;
       </Card>
       <Card padding="none" className="flex flex-wrap items-center justify-between gap-3 px-7 py-4">
         <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium">Setup guide</span>
-          <span className="text-meta text-muted">Walks through the AI, job search, scoring, Gmail and Calendar, and your profile, one step at a time.</span>
+          <span className="text-sm font-medium">Einrichtungshilfe</span>
+          <span className="text-meta text-muted">Führt Schritt für Schritt durch KI, Jobsuche, Bewertung, Gmail und Kalender sowie dein Profil.</span>
         </div>
         <Link href="/welcome?step=start" className={buttonClassName("secondary", "sm")}>
-          Open the setup guide
+          Einrichtungshilfe öffnen
         </Link>
       </Card>
       <Card padding="none" className="px-7 py-4">

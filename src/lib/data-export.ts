@@ -417,7 +417,7 @@ export const exportSchema = z.object({
   searches: z.array(postingSearch).default([]),
   /** The job agent's candidates (E16); absent in older files. */
   agentCandidates: z.array(agentCandidate).default([]),
-  agentSearches: z.array(agentSearch).max(MAX_AGENT_SEARCHES, "Keep at most three Agent searches.").default([]),
+  agentSearches: z.array(agentSearch).max(MAX_AGENT_SEARCHES, "Höchstens drei Agent-Suchen.").default([]),
   agentCandidateSearches: z.array(agentCandidateSearch).default([]),
   /** Startups (#222), and hashes of the ones removed for good; absent in older files. */
   startups: z.array(startup).default([]),

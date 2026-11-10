@@ -162,12 +162,12 @@ export function ResumeWorkspace({
     saveFile(new Blob([JSON.stringify(themeFile(base), null, 2)], { type: "application/json" }), themeFileName(base));
 
   const importFile = async (file: File) => {
-    if (file.size > 100_000) return toast("That file is too big to be a Dossier theme.");
+    if (file.size > 100_000) return toast("Diese Datei ist zu groß für ein Dossier-Design.");
     let json: unknown;
     try {
       json = JSON.parse(await file.text());
     } catch {
-      return toast("That file isn't a Dossier theme.");
+      return toast("Diese Datei ist kein Dossier-Design.");
     }
     // Checked here for a quick answer, and again on the server.
     const read = parseThemeFile(json);
@@ -206,29 +206,29 @@ export function ResumeWorkspace({
   return (
     <>
       <PageHeader
-        title="Base resume"
-        description="Built straight from your profile. Every new application starts from this one, then gets tailored to the job."
+        title="Basis-Lebenslauf"
+        description="Direkt aus deinem Profil erstellt. Jede neue Bewerbung startet mit diesem und wird dann auf die Stelle zugeschnitten."
         actions={
           <>
             <Link href="/profile" className={buttonClassName("secondary")}>
-              Edit profile
+              Profil bearbeiten
             </Link>
-            <DownloadPdfButton href="/api/pdf?doc=base">Download PDF</DownloadPdfButton>
+            <DownloadPdfButton href="/api/pdf?doc=base">PDF herunterladen</DownloadPdfButton>
           </>
         }
       />
       <div className="@container flex flex-1 flex-wrap border-t border-line">
         <DocumentPreview
           label={theme.name}
-          meta={(pages) => `${PAPER_SIZES[paper].label} · ${pages} ${pages === 1 ? "page" : "pages"}${fit > 0 ? " · squeezed to fit" : ""}`}
+          meta={(pages) => `${PAPER_SIZES[paper].label} · ${pages} ${pages === 1 ? "Seite" : "Seiten"}${fit > 0 ? " · eingepasst" : ""}`}
           onPages={onPages}
           notice={() =>
             empty ? (
               // E11-4: an empty page needs a way forward.
               <p role="note" className="rounded-card bg-card px-4 py-2.5 text-meta text-muted">
-                Your resume fills in from your profile. Add your name and a role or two, and it takes shape here.{" "}
+                Dein Lebenslauf füllt sich aus deinem Profil. Trag deinen Namen und ein, zwei Positionen ein, dann nimmt er hier Gestalt an.{" "}
                 <Link href="/profile" className="text-ink underline underline-offset-2">
-                  Go to your profile
+                  Zu deinem Profil
                 </Link>
               </p>
             ) : null
@@ -238,34 +238,34 @@ export function ResumeWorkspace({
         </DocumentPreview>
         <aside
           ref={panelArea}
-          aria-label="Theme and sections"
+          aria-label="Design und Abschnitte"
           className="flex flex-[1_0_300px] flex-col gap-6 border-t border-line bg-paper px-7 pt-7 pb-12 @min-[780px]:border-t-0 @min-[780px]:border-l"
         >
           <Toggle
-            label="Fit to one page"
+            label="Auf eine Seite einpassen"
             description={
               !fitToPage
-                ? "Off. The resume takes the pages it needs."
+                ? "Aus. Der Lebenslauf nimmt so viele Seiten, wie er braucht."
                 : fit === 0
-                  ? "On. It fits as it is."
+                  ? "An. Er passt so, wie er ist."
                   : pages > 1
-                    ? "On, but it runs over one page even at its tightest. Shorten it, or leave a section out under Sections."
-                    : `On. Tighter spacing${fit >= 3 ? " and smaller type" : fit >= 2 ? " and lines" : ""}, so it fits; the PDF does the same.`
+                    ? "An, aber er ist selbst eng gesetzt länger als eine Seite. Kürze ihn oder lass unter „Abschnitte“ einen Abschnitt weg."
+                    : `An. Engere Abstände${fit >= 3 ? " und kleinere Schrift" : fit >= 2 ? " und Zeilen" : ""}, damit er passt; das PDF ebenso.`
             }
             checked={fitToPage}
             onCheckedChange={(next) => void toggleFit(next)}
           />
           <Tabs value={panel} onValueChange={(value) => openPanel(value as Panel)} className="flex flex-col gap-6">
             <TabsList variant="segmented">
-              <TabsTrigger value="themes">Themes</TabsTrigger>
-              <TabsTrigger value="customize">Customize</TabsTrigger>
-              <TabsTrigger value="sections">Sections</TabsTrigger>
+              <TabsTrigger value="themes">Designs</TabsTrigger>
+              <TabsTrigger value="customize">Anpassen</TabsTrigger>
+              <TabsTrigger value="sections">Abschnitte</TabsTrigger>
             </TabsList>
             <TabsContent value="themes">
               <ThemePicker
                 themes={themes}
                 activeId={theme.id}
-                userName={profile.basics.name.trim() || "Your name"}
+                userName={profile.basics.name.trim() || "Dein Name"}
                 onSelect={selectTheme}
                 onCustomize={() => openPanel("customize", true)}
                 actions={{
@@ -302,9 +302,9 @@ export function ResumeWorkspace({
       <ConfirmDialog
         open={deleting !== null}
         onOpenChange={(open) => !open && setDeleting(null)}
-        title={`Delete “${deleting?.name ?? ""}”?`}
+        title={`„${deleting?.name ?? ""}“ löschen?`}
         description={deleteDescription(deleting ? (usage[deleting.id] ?? 0) : 0)}
-        confirmLabel="Delete theme"
+        confirmLabel="Design löschen"
         onConfirm={() => deleting && void remove(deleting)}
       />
     </>
@@ -315,8 +315,8 @@ export function ResumeWorkspace({
 function deleteDescription(applications: number): string {
   const used =
     applications === 0
-      ? "No application uses it."
-      : `${applications === 1 ? "One application uses" : `${applications} applications use`} it; their documents will use your base theme instead.`;
-  return `${used} Editorial becomes your base theme. This can't be undone, but you can export the theme first.`;
+      ? "Keine Bewerbung nutzt es."
+      : `${applications === 1 ? "Eine Bewerbung nutzt" : `${applications} Bewerbungen nutzen`} es; ihre Unterlagen verwenden dann stattdessen dein Basis-Design.`;
+  return `${used} Editorial wird dein Basis-Design. Das lässt sich nicht rückgängig machen, aber du kannst das Design vorher exportieren.`;
 }
 

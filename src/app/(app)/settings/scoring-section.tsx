@@ -58,12 +58,12 @@ export function ScoringSection({ initial }: { initial: ScoringView }) {
 
   return (
     <>
-      <SettingsSectionIntro title="Scoring">
-        How Score in Find jobs and the job agent judge how well a posting fits your profile. Drafts are always written by your AI model.
+      <SettingsSectionIntro title="Bewertung">
+        Womit „Bewerten“ in „Jobs finden“ und der Job-Agent beurteilen, wie gut eine Anzeige zu deinem Profil passt. Entwürfe schreibt immer dein KI-Modell.
       </SettingsSectionIntro>
 
       <RadioGroup.Root
-        aria-label="Score postings with"
+        aria-label="Anzeigen bewerten mit"
         value={view.scorer}
         onValueChange={(value) => void choose(value as Scorer)}
         className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3"
@@ -96,30 +96,30 @@ export function ScoringSection({ initial }: { initial: ScoringView }) {
       {view.scorer === "JEV" && (
         <>
           <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-            Each posting you score goes to TypeSafe with your profile, without your name or contact details. Jev reads English best: postings in other languages are
-            judged less well.
+            Jede Anzeige, die du bewerten lässt, geht mit deinem Profil an TypeSafe, ohne Namen und Kontaktdaten. Jev versteht Englisch am besten: Anzeigen in anderen Sprachen
+            werden weniger genau bewertet.
           </p>
 
           <Card className="flex flex-col gap-5">
             <KeyField
-              label="TypeSafe key"
+              label="TypeSafe-Schlüssel"
               keyState={view.keyState}
               envName="DOSSIER_TYPESAFE_KEY"
-              getKey={{ href: TYPESAFE_KEY_URL, text: "the TypeSafe console" }}
+              getKey={{ href: TYPESAFE_KEY_URL, text: "der TypeSafe-Konsole" }}
               onSave={saveKey}
             />
             <div className="flex flex-wrap items-center gap-3.5 pt-1">
               <Button variant="secondary" onClick={() => void test()} disabled={connection.status === "testing"}>
-                {connection.status === "testing" ? "Testing…" : "Test connection"}
+                {connection.status === "testing" ? "Teste…" : "Verbindung testen"}
               </Button>
               <ConnectionStatus connection={connection} />
             </div>
           </Card>
 
           <p className="text-sm text-muted">
-            Jev&apos;s scores and your AI model&apos;s aren&apos;t on the same scale. If the job agent queues too many postings or too few, change its minimum score in{" "}
+            Die Bewertungen von Jev und deinem KI-Modell haben nicht dieselbe Skala. Legt der Job-Agent zu viele oder zu wenige Anzeigen ab, ändere seine Mindestpunktzahl unter{" "}
             <Link href="/settings?section=agent" className="underline underline-offset-2 hover:text-ink">
-              Settings → Job agent
+              Einstellungen → Job-Agent
             </Link>
             .
           </p>
@@ -132,12 +132,12 @@ export function ScoringSection({ initial }: { initial: ScoringView }) {
 function ConnectionStatus({ connection }: { connection: Connection }) {
   const [dot, text, message] =
     connection.status === "connected"
-      ? ["bg-success", "text-success", `Connected · ${connection.model} answered in ${connection.seconds.toLocaleString("en-US")} s`]
+      ? ["bg-success", "text-success", `Verbunden · ${connection.model} hat in ${connection.seconds.toLocaleString("de-DE")} s geantwortet`]
       : connection.status === "failed"
         ? ["bg-error", "text-error", connection.message]
         : connection.status === "testing"
-          ? ["bg-status-offer", "text-muted", "Asking Jev one short question…"]
-          : ["bg-faint", "text-muted", "Not tested since your last change · a test costs a few dozen tokens"];
+          ? ["bg-status-offer", "text-muted", "Stelle Jev eine kurze Frage…"]
+          : ["bg-faint", "text-muted", "Seit deiner letzten Änderung nicht getestet · ein Test kostet ein paar Dutzend Tokens"];
   return (
     <p role="status" className={cn("flex items-center gap-2 text-control", text)}>
       <span aria-hidden className={cn("size-2 flex-none rounded-full", dot)} />

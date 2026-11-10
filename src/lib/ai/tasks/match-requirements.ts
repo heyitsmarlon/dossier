@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { matchSchema, type Extracted, type Match } from "@/lib/application-data";
-import { experienceMonths, formatMonthYear, languageLevelLabel, paidRoles, sameName, type CertificationItem, type ProfileData } from "@/lib/profile";
+import { experienceMonths, formatMonthYear, languageLevelLabel, paidRoles, sameName, UI_DATE_OPTIONS, type CertificationItem, type ProfileData } from "@/lib/profile";
 
 import { system, UNTRUSTED_POSTING, type Task } from "./prompt-parts";
 
@@ -84,17 +84,17 @@ function classify(
     // Years of experience are paid roles' (#294).
     const paid = paidRoles(profile.experience);
     const dated = paid.filter((entry) => entry.startYear !== null);
-    if (dated.length === 0) return { ...base, result: "gap", note: "Add your experience to check this" };
+    if (dated.length === 0) return { ...base, result: "gap", note: "Trag deine Berufserfahrung ein, um das zu prüfen" };
     const first = dated.reduce(
       (earliest, entry) => (entry.startYear! * 12 + (entry.startMonth ?? 1) < earliest.startYear! * 12 + (earliest.startMonth ?? 1) ? entry : earliest),
       dated[0],
     );
     const count = paid.length;
-    const roles = `${count} ${count === 1 ? "role" : "roles"} in your profile, since ${formatMonthYear(first.startYear, first.startMonth)}`;
+    const roles = `${count} ${count === 1 ? "Position" : "Positionen"} in deinem Profil, seit ${formatMonthYear(first.startYear, first.startMonth, UI_DATE_OPTIONS)}`;
     const years = Math.floor(experienceMonths(profile, today) / 12);
     return years >= (requirement.years ?? 0)
       ? { ...base, result: "covered", note: roles }
-      : { ...base, result: "gap", note: `${roles} (about ${years} ${years === 1 ? "year" : "years"})` };
+      : { ...base, result: "gap", note: `${roles} (etwa ${years} ${years === 1 ? "Jahr" : "Jahre"})` };
   }
 
   // Names must be the profile's own: a model can't add a skill by misspelling one.
@@ -104,7 +104,7 @@ function classify(
   if (requirement.kind === "language" || (language && !mapped?.skill)) {
     return language
       ? { ...base, result: "covered", skill: language.name, note: `${language.name}: ${languageLevelLabel(language.level)}` }
-      : { ...base, result: "gap", note: "Not in your profile" };
+      : { ...base, result: "gap", note: "Nicht in deinem Profil" };
   }
 
   // A certification the profile has, by its own name: a model can't add one by misspelling it (#364).
@@ -129,9 +129,9 @@ function classify(
         result: "covered",
         skill: skill.name,
         experienceIds: roles.map((entry) => entry.id),
-        note: `Used at ${[...new Set(roles.map((entry) => entry.company || entry.role))].join(", ")}`,
+        note: `Eingesetzt bei ${[...new Set(roles.map((entry) => entry.company || entry.role))].join(", ")}`,
       }
-    : { ...base, result: "partial", skill: skill.name, note: "In your skills, but not linked to a role yet" };
+    : { ...base, result: "partial", skill: skill.name, note: "In deinen Fähigkeiten, aber noch keiner Position zugeordnet" };
 }
 
 /** Certifications with a name, whether or not they're shown on resumes: all are the user's own. */

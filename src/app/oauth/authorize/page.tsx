@@ -6,7 +6,7 @@ import { verifySession } from "@/lib/auth/session";
 import { Consent } from "./consent";
 import { checkAuthorizeRequest } from "./request";
 
-export const metadata: Metadata = { title: "Connect an app" };
+export const metadata: Metadata = { title: "App verbinden" };
 
 /**
  * Claude, or another MCP app (#281), asks to use Dossier through the connector (#221, src/app/api/mcp).
@@ -24,7 +24,7 @@ export default async function AuthorizePage({ searchParams }: PageProps<"/oauth/
         <div className="flex items-center gap-3">
           <BrandMark className="size-10" />
           <h1 className="font-serif text-[26px] font-medium tracking-[-0.01em]">
-            Connect {"error" in checked ? "an app" : checked.clientName} to Dossier
+            {"error" in checked ? "Eine App" : checked.clientName} mit Dossier verbinden
           </h1>
         </div>
         {"error" in checked ? (
@@ -35,17 +35,17 @@ export default async function AuthorizePage({ searchParams }: PageProps<"/oauth/
           <>
             <div className="flex flex-col gap-3 text-sm leading-[1.6] text-pretty">
               <p>
-                <strong>{checked.clientName}</strong> wants to use your Dossier. Once you allow it, it can:
+                <strong>{checked.clientName}</strong> möchte dein Dossier nutzen. Wenn du es erlaubst, kann es:
               </p>
               <ul className="list-disc pl-5 text-muted">
-                <li>search for jobs with your job source, and score postings against your profile</li>
-                <li>read your profile and your applications, with their resumes and cover letters, but not your contact details or notes</li>
-                <li>save applications it writes for you as drafts, and change their status</li>
+                <li>mit deiner Jobquelle nach Jobs suchen und Anzeigen anhand deines Profils bewerten</li>
+                <li>dein Profil und deine Bewerbungen samt Lebensläufen und Anschreiben lesen, aber nicht deine Kontaktdaten oder Notizen</li>
+                <li>Bewerbungen, die es für dich schreibt, als Entwürfe speichern und ihren Status ändern</li>
               </ul>
               <p className="text-muted">
-                It can never send an application or an email, or delete anything. Allow it only if you&apos;ve just added Dossier to{" "}
-                {checked.clientName} yourself: it sends you back to <strong className="text-ink">{new URL(checked.redirectUri).host}</strong>.
-                Disconnect every app in Settings → MCP connector at any time.
+                Es kann nie eine Bewerbung oder E-Mail verschicken oder etwas löschen. Erlaube es nur, wenn du Dossier gerade selbst zu{" "}
+                {checked.clientName} hinzugefügt hast: Es schickt dich zurück zu <strong className="text-ink">{new URL(checked.redirectUri).host}</strong>.
+                Unter Einstellungen → MCP-Connector kannst du jede App jederzeit trennen.
               </p>
             </div>
             <Consent

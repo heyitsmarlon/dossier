@@ -16,8 +16,8 @@ export function SummarySection({ basics, onChange }: { basics: Basics; onChange:
   return (
     <Card>
       <Textarea
-        label="A few lines about you"
-        placeholder="What you do, what you're good at, what you're looking for."
+        label="Ein paar Zeilen über dich"
+        placeholder="Was du machst, worin du gut bist, wonach du suchst."
         rows={6}
         value={basics.summary}
         onChange={(event) => onChange({ ...basics, summary: event.target.value })}

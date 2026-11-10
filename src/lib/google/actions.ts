@@ -63,13 +63,13 @@ export const saveGoogleSettings = action(
         } catch {
           return false;
         }
-      }, "That isn't a time zone.")
+      }, "Das ist keine Zeitzone.")
       .optional(),
     slotMinutes: z.number().int().min(15).max(240).optional(),
     bufferMinutes: z.number().int().min(0).max(120).optional(),
   }),
   async ({ workTimeZone, workDays, ...changes }) => {
-    if (changes.workStart && changes.workEnd && changes.workStart >= changes.workEnd) throw new ActionError("The working day has to end after it starts.");
+    if (changes.workStart && changes.workEnd && changes.workStart >= changes.workEnd) throw new ActionError("Der Arbeitstag muss nach seinem Beginn enden.");
     await saveSettings({
       ...changes,
       ...(workDays ? { workDays: [...new Set(workDays)].sort((a, b) => a - b) } : {}),
@@ -116,7 +116,7 @@ export const saveGoogleClient = action(
 export const disconnectGoogleAccount = action(z.object({}), async (_, { toast }) => {
   await google(disconnectGoogle);
   revalidatePath("/settings");
-  toast("Disconnected from Google.");
+  toast("Von Google getrennt.");
   return null;
 });
 
@@ -124,10 +124,10 @@ export const disconnectGoogleAccount = action(z.object({}), async (_, { toast })
 export const checkInbox = action(z.object({}), async (_, { toast }) => {
   const result = await google(checkInboxNow);
   refreshEverything();
-  if (!result) toast("Already checking. It'll be done in a moment.");
+  if (!result) toast("Prüfung läuft schon. Gleich fertig.");
   else {
-    const news = result.kept === 0 ? "Nothing new about your applications." : `${result.kept} new ${result.kept === 1 ? "email" : "emails"} about your applications.`;
-    toast(result.unread ? `${news} ${result.unread} couldn't be read from Gmail; the next check tries again.` : news);
+    const news = result.kept === 0 ? "Nichts Neues zu deinen Bewerbungen." : `${result.kept} ${result.kept === 1 ? "neue E-Mail" : "neue E-Mails"} zu deinen Bewerbungen.`;
+    toast(result.unread ? `${news} ${result.unread} konnte${result.unread === 1 ? "" : "n"} nicht aus Gmail gelesen werden; die nächste Prüfung versucht es erneut.` : news);
   }
   return result;
 });
@@ -136,7 +136,7 @@ export const checkInbox = action(z.object({}), async (_, { toast }) => {
 export const sendWithGmail = action(z.object({ id: z.string().min(1) }), async ({ id }, { toast }) => {
   const sent = await google(() => sendApplicationEmail(id));
   refreshEverything();
-  toast(sent.eventId ? `Sent. ${statusInfo(ApplicationStatus.SENT).toast}` : "Sent. I'll watch for replies.");
+  toast(sent.eventId ? `Gesendet. ${statusInfo(ApplicationStatus.SENT).toast}` : "Gesendet. Ich halte nach Antworten Ausschau.");
   return { eventId: sent.eventId };
 });
 
@@ -145,8 +145,8 @@ export const startDraftingReply = action(
   z.object({ emailId: z.string().min(1), note: z.string().max(2000).default(""), slots: z.array(z.iso.datetime({ offset: true })).max(8).nullable().default(null) }),
   async ({ emailId, note, slots }) => {
     const email = await prisma.emailMessage.findUnique({ where: { id: emailId }, select: { applicationId: true } });
-    if (!email) throw new ActionError("That email is no longer in Dossier.");
-    if (!(await isAiConfigured())) throw new ActionError("That needs an AI provider. Choose one in Settings → AI provider.");
+    if (!email) throw new ActionError("Diese E-Mail ist nicht mehr in Dossier.");
+    if (!(await isAiConfigured())) throw new ActionError("Dafür brauchst du einen KI-Anbieter. Wähle einen unter Einstellungen → KI-Anbieter.");
     const [running] = await findUnfinishedJobs(replyJobKey(emailId));
     // Linked to its application, so deleting that deletes the job too.
     return running?.id ?? startJob(draftReplyJob, { emailId, note, slots }, { key: replyJobKey(emailId), applicationId: email.applicationId ?? undefined });
@@ -156,7 +156,7 @@ export const startDraftingReply = action(
 /** Saves the answer as edited by hand. */
 export const saveReplyDraft = action(z.object({ emailId: z.string().min(1), body: z.string().max(20_000) }), async ({ emailId, body }) => {
   const { count } = await prisma.emailMessage.updateMany({ where: { id: emailId }, data: { replyDraft: body } });
-  if (count === 0) throw new ActionError("That email is no longer in Dossier.");
+  if (count === 0) throw new ActionError("Diese E-Mail ist nicht mehr in Dossier.");
   return null;
 });
 
@@ -178,12 +178,12 @@ export const markHandled = action(z.object({ emailId: z.string().min(1), handled
 /** Links a mail to an application ("Needs a look"), with the rest of its thread. Null unlinks. */
 export const linkEmail = action(z.object({ emailId: z.string().min(1), applicationId: z.string().min(1).nullable() }), async ({ emailId, applicationId }, { toast }) => {
   const email = await prisma.emailMessage.findUnique({ where: { id: emailId }, select: { threadId: true } });
-  if (!email) throw new ActionError("That email is no longer in Dossier.");
-  if (applicationId && !(await prisma.application.count({ where: { id: applicationId } }))) throw new ActionError("That application no longer exists.");
+  if (!email) throw new ActionError("Diese E-Mail ist nicht mehr in Dossier.");
+  if (applicationId && !(await prisma.application.count({ where: { id: applicationId } }))) throw new ActionError("Diese Bewerbung gibt es nicht mehr.");
   // Mail dismissed before has nothing left to show, so it stays dismissed.
   await prisma.emailMessage.updateMany({ where: { threadId: email.threadId, dismissedAt: null }, data: { applicationId } });
   refreshEverything();
-  toast(applicationId ? "Linked. Replies in this thread will go there too." : "Unlinked.");
+  toast(applicationId ? "Verknüpft. Antworten in diesem Verlauf landen ebenfalls dort." : "Verknüpfung gelöst.");
   return null;
 });
 
@@ -216,13 +216,13 @@ export const dismissEmail = action(z.object({ emailId: z.string().min(1) }), asy
     },
   });
   refreshEverything();
-  toast("Hidden from your inbox.");
+  toast("Aus deinem Posteingang ausgeblendet.");
   return null;
 });
 
 /** "Read again": the AI reads a mail it couldn't before. */
 export const rereadEmail = action(z.object({ emailId: z.string().min(1) }), async ({ emailId }) => {
-  if (!(await isAiConfigured())) throw new ActionError("That needs an AI provider. Choose one in Settings → AI provider.");
+  if (!(await isAiConfigured())) throw new ActionError("Dafür brauchst du einen KI-Anbieter. Wähle einen unter Einstellungen → KI-Anbieter.");
   await readReply(emailId);
   refreshEverything();
   return null;
@@ -234,7 +234,7 @@ export const applySuggestedStatus = action(z.object({ emailId: z.string().min(1)
     where: { id: emailId },
     select: { applicationId: true, suggestedStatus: true, application: { select: { status: true } } },
   });
-  if (!email) throw new ActionError("That email is no longer in Dossier.");
+  if (!email) throw new ActionError("Diese E-Mail ist nicht mehr in Dossier.");
   await prisma.emailMessage.update({ where: { id: emailId }, data: { suggestedStatus: null } });
   // Checked again against where the application is now, so a suggestion made
   // before it moved on never takes it backwards (#141).
@@ -260,7 +260,7 @@ export const confirmInterview = action(
   z.object({ emailId: z.string().min(1), start: z.iso.datetime({ offset: true }), moveToInterview: z.boolean() }),
   async ({ emailId, start, moveToInterview }, { toast }) => {
     const email = await prisma.emailMessage.findUnique({ where: { id: emailId }, select: { applicationId: true } });
-    if (!email?.applicationId) throw new ActionError("Link this email to an application first.");
+    if (!email?.applicationId) throw new ActionError("Verknüpfe diese E-Mail zuerst mit einer Bewerbung.");
     const { eventLink } = await google(() => scheduleInterview(email.applicationId!, new Date(start)));
     let eventId: string | null = null;
     if (moveToInterview) {
@@ -269,7 +269,7 @@ export const confirmInterview = action(
     }
     await prisma.emailMessage.update({ where: { id: emailId }, data: { confirmedAt: null, suggestedStatus: null } });
     refreshEverything();
-    toast(eventLink ? "Interview added to your calendar and dashboard." : "Interview added to your dashboard.");
+    toast(eventLink ? "Gespräch in Kalender und Übersicht eingetragen." : "Gespräch in deiner Übersicht eingetragen.");
     return { eventLink, eventId };
   },
 );

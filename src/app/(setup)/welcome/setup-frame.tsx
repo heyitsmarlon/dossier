@@ -51,13 +51,13 @@ export function SetupFrame({
         </div>
         {step !== "done" && (
           <Button variant="text" size="sm" onClick={() => void leave()}>
-            Leave setup
+            Einrichtung verlassen
           </Button>
         )}
       </header>
 
       {step !== "start" && step !== "done" && (
-        <nav aria-label="Setup steps">
+        <nav aria-label="Schritte der Einrichtung">
           <ol className="flex flex-wrap gap-x-1 gap-y-2">
             {SETUP_RAIL.map((entry, index) => {
               const position = SETUP_STEPS.indexOf(entry.step);
@@ -101,15 +101,15 @@ export function SetupFrame({
       {step !== "start" && step !== "done" && (
         <footer className="flex items-center justify-between gap-3 border-t border-line pt-5">
           <Link href={setupHref(previousSetupStep(step))} className={buttonClassName("text")}>
-            ← Back
+            ← Zurück
           </Link>
           {complete ? (
             <Link href={setupHref(next)} className={buttonClassName("primary", "md", "hover:text-on-primary")}>
-              Continue →
+              Weiter →
             </Link>
           ) : (
             <Link href={setupHref(next)} className={buttonClassName("secondary")}>
-              Skip this step →
+              Schritt überspringen →
             </Link>
           )}
         </footer>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useAutosave } from "@/hooks/use-autosave";
-import { formatDateRange, type EntryOrder, type ExperienceItem, type ProfileData } from "@/lib/profile";
+import { formatDateRange, UI_DATE_OPTIONS, type EntryOrder, type ExperienceItem, type ProfileData } from "@/lib/profile";
 
 import {
   attachNewSkill,
@@ -51,57 +51,57 @@ function ExperienceForm({
     <div className="grid grid-cols-2 gap-[18px]" onBlur={flush}>
       <Input
         className="col-span-2"
-        label="Role"
-        placeholder="Product Designer"
+        label="Position"
+        placeholder="Webdesigner"
         value={entry.role}
         onChange={(event) => set({ role: event.target.value })}
         autoFocus={autoFocus}
       />
       <Input
-        label={entry.volunteering ? "Organisation" : "Company"}
-        placeholder={entry.volunteering ? "Food Bank Springfield" : "Acme Inc."}
+        label={entry.volunteering ? "Organisation" : "Firma"}
+        placeholder={entry.volunteering ? "Tafel Köln e. V." : "Muster GmbH"}
         value={entry.company}
         onChange={(event) => set({ company: event.target.value })}
       />
       <Input
-        label="Location"
-        placeholder="Springfield"
+        label="Ort"
+        placeholder="Köln"
         value={entry.location}
         onChange={(event) => set({ location: event.target.value })}
       />
       <Input
         className="col-span-2"
-        label="About the company or role"
-        placeholder="A 40-person fintech, building card payments"
-        hint="Optional. One line, in italics under the role on your resume."
+        label="Über die Firma oder Stelle"
+        placeholder="Agentur mit 40 Leuten, Schwerpunkt E-Commerce"
+        hint="Optional. Eine Zeile, kursiv unter der Position im Lebenslauf."
         maxLength={300}
         value={entry.descriptor}
         onChange={(event) => set({ descriptor: event.target.value })}
       />
       <MonthYearField
-        label="Started"
+        label="Beginn"
         value={{ month: entry.startMonth, year: entry.startYear }}
         onChange={({ month, year }) => set({ startMonth: month, startYear: year })}
       />
       <div className="flex flex-col gap-2.5">
         <MonthYearField
-          label="Ended"
+          label="Ende"
           value={{ month: entry.endMonth, year: entry.endYear }}
           onChange={({ month, year }) => set({ endMonth: month, endYear: year })}
           disabled={entry.current}
         />
         <Checkbox
-          label={entry.volunteering ? "I still volunteer here" : "I still work here"}
+          label={entry.volunteering ? "Ich engagiere mich hier noch" : "Ich arbeite noch hier"}
           checked={entry.current}
           onChange={(event) => set({ current: event.target.checked })}
         />
       </div>
-      <BulletsField placeholder="One point per line. Rough is fine." value={entry.bullets} onChange={(bullets) => set({ bullets })} />
+      <BulletsField placeholder="Ein Punkt pro Zeile. Stichworte reichen." value={entry.bullets} onChange={(bullets) => set({ bullets })} />
     </div>
   );
 }
 
-const roleTitle = (entry: ExperienceItem) => entry.role.trim() || "New role";
+const roleTitle = (entry: ExperienceItem) => entry.role.trim() || "Neue Position";
 
 /**
  * Work experience (PRO-5) or Volunteering (#294), which resumes print under
@@ -141,7 +141,7 @@ export function ExperienceSection({
           return { ...current, experience: [...change(current.experience.filter(isHere)), ...current.experience.filter((entry) => !isHere(entry))] };
         })
       }
-      addLabel={volunteering ? "Add volunteering" : "Add a role"}
+      addLabel={volunteering ? "Ehrenamt hinzufügen" : "Position hinzufügen"}
       ordering={{
         mode: order,
         save: (ids) => reorderEntries({ section: "experience", ids: [...ids, ...others.map((entry) => entry.id)] }),
@@ -150,7 +150,7 @@ export function ExperienceSection({
       summary={(entry) => ({
         title: roleTitle(entry),
         subtitle: [entry.company, entry.location].filter((part) => part.trim()).join(" · "),
-        meta: formatDateRange(entry),
+        meta: formatDateRange(entry, UI_DATE_OPTIONS),
         footnote: skillNames(entry).join(" · ") || undefined,
       })}
       create={() => createExperience({ volunteering })}
@@ -161,7 +161,7 @@ export function ExperienceSection({
           <ExperienceForm entry={entry} onChange={onChange} autoFocus={autoFocus} />
           <SkillsUsed
             entry={entry}
-            noun="role"
+            noun="Position"
             skills={profile.skills}
             update={update}
             setLinks={(change) =>
@@ -174,7 +174,7 @@ export function ExperienceSection({
             attachNew={(name) => attachNewSkill({ experienceId: entry.id, name })}
           />
           <Button variant="text" size="sm" className="self-start" onClick={() => void moveAcross(entry)}>
-            Move to {volunteering ? "Experience" : "Volunteering"}
+            Verschieben nach {volunteering ? "Berufserfahrung" : "Ehrenamt"}
           </Button>
         </>
       )}

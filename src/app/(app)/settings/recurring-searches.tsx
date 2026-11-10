@@ -39,7 +39,7 @@ export function RecurringSearches({ initial, suggestedQuery, source, countries }
     setSearches(initial);
   }
   const controlName = (search: SavedAgentSearch, index: number) => searches.filter((row) => row.name === search.name).length > 1
-    ? `${search.name} (search ${index + 1})`
+    ? `${search.name} (Suche ${index + 1})`
     : search.name;
 
   const update = (saved: SavedAgentSearch) => {
@@ -60,10 +60,10 @@ export function RecurringSearches({ initial, suggestedQuery, source, countries }
   return (
     <Card padding="none" className="flex flex-col gap-4 px-7 py-[26px]">
     <div>
-      <h3 className="text-field font-medium">Recurring searches ({searches.length}/{MAX_AGENT_SEARCHES})</h3>
+      <h3 className="text-field font-medium">Wiederkehrende Suchen ({searches.length}/{MAX_AGENT_SEARCHES})</h3>
       <p className="text-meta text-muted">
-        Up to {MAX_AGENT_SEARCHES} named searches, including disabled ones. Enabled searches run in this order through the shared source in Settings → Job search.
-        Saved, dismissed and applied-for postings stay out of the review queue.
+        Bis zu {MAX_AGENT_SEARCHES} benannte Suchen, pausierte mitgezählt. Aktive Suchen laufen in dieser Reihenfolge über die Quelle aus Einstellungen → Jobsuche.
+        Gemerkte, verworfene und bereits beworbene Anzeigen bleiben aus der Prüfliste raus.
       </p>
     </div>
     <ol className="flex flex-col gap-4">
@@ -72,7 +72,7 @@ export function RecurringSearches({ initial, suggestedQuery, source, countries }
           <Toggle
             label={<span className="[overflow-wrap:anywhere]">{search.name}</span>}
             aria-label={controlName(search, index)}
-            description={search.enabled ? "Enabled" : "Disabled"}
+            description={search.enabled ? "Aktiv" : "Pausiert"}
             checked={search.enabled}
             disabled={pending || editing !== null}
             onCheckedChange={(enabled) => toggle(search, enabled)}
@@ -81,26 +81,26 @@ export function RecurringSearches({ initial, suggestedQuery, source, countries }
             Preview {controlName(search, index)} in Find jobs
           </Link>
           <p className="text-meta text-muted break-words">
-            {search.query.keywords}{search.query.place ? ` · ${search.query.place}` : ""} · {search.query.country.toUpperCase() || "Choose a country"}
+            {search.query.keywords}{search.query.place ? ` · ${search.query.place}` : ""} · {search.query.country.toUpperCase() || "Land wählen"}
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" size="sm" aria-label={`Edit ${controlName(search, index)}`} disabled={pending || editing !== null} onClick={() => setEditing(search)}>
-              Edit
+            <Button variant="secondary" size="sm" aria-label={`${controlName(search, index)} bearbeiten`} disabled={pending || editing !== null} onClick={() => setEditing(search)}>
+              Bearbeiten
             </Button>
             {(["up", "down"] as const).map((direction) => (
               <Button
                 key={direction}
                 variant="secondary"
                 size="sm"
-                aria-label={`Move ${direction}: ${controlName(search, index)}`}
+                aria-label={`${direction === "up" ? "Nach oben" : "Nach unten"}: ${controlName(search, index)}`}
                 disabled={pending || editing !== null || (direction === "up" ? index === 0 : index === searches.length - 1)}
                 onClick={() => move(search.id, direction)}
               >
-                Move {direction}
+                {direction === "up" ? "Nach oben" : "Nach unten"}
               </Button>
             ))}
-            <Button variant="danger-text" size="sm" aria-label={`Delete ${controlName(search, index)}`} disabled={pending || editing !== null} onClick={() => setDeleting(search)}>
-              Delete
+            <Button variant="danger-text" size="sm" aria-label={`${controlName(search, index)} löschen`} disabled={pending || editing !== null} onClick={() => setDeleting(search)}>
+              Löschen
             </Button>
           </div>
         </li>
@@ -122,15 +122,15 @@ export function RecurringSearches({ initial, suggestedQuery, source, countries }
       />
     ) : (
       <Button variant="secondary" disabled={pending || searches.length >= MAX_AGENT_SEARCHES} onClick={() => setEditing("new")}>
-        Add search
+        Suche hinzufügen
       </Button>
     )}
     <ConfirmDialog
       open={deleting !== null}
       onOpenChange={(open) => !open && setDeleting(null)}
-      title={`Delete “${deleting?.name ?? "search"}”?`}
-      description="Existing candidates and their historical search labels stay in the review queue. This does not delete saved postings or applications."
-      confirmLabel="Delete search"
+      title={`„${deleting?.name ?? "Suche"}“ löschen?`}
+      description="Bereits gefundene Anzeigen bleiben mit dem Namen dieser Suche in der Prüfliste. Gemerkte Anzeigen und Bewerbungen werden nicht gelöscht."
+      confirmLabel="Suche löschen"
       onConfirm={() => {
         if (!deleting) return;
         const id = deleting.id;
@@ -163,7 +163,7 @@ function SearchEditor({ search, suggestedQuery, sort, source, countries, onCance
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const patch = (change: Partial<SearchQuery>) => setQuery((current) => ({ ...current, ...change }));
-  return <form aria-label={search ? `Edit ${search.name}` : "New recurring search"} className="flex flex-col gap-4 border-t border-line pt-4" onSubmit={(event) => {
+  return <form aria-label={search ? `${search.name} bearbeiten` : "Neue wiederkehrende Suche"} className="flex flex-col gap-4 border-t border-line pt-4" onSubmit={(event) => {
     event.preventDefault();
     const input = { name, query, enabled, sort: search?.sort ?? sort };
     const parsed = agentSearchInputSchema.safeParse(input);
@@ -172,7 +172,7 @@ function SearchEditor({ search, suggestedQuery, sort, source, countries, onCance
       return;
     }
     if (enabled && !query.country) {
-      setError("Choose a country for an enabled search.");
+      setError("Wähle ein Land für eine aktive Suche.");
       return;
     }
     setError(null);
@@ -183,17 +183,17 @@ function SearchEditor({ search, suggestedQuery, sort, source, countries, onCance
     });
   }}>
     <fieldset disabled={pending} className="flex min-w-0 flex-col gap-4">
-      <legend className="mb-3 text-field font-medium">{search ? "Edit search" : "Add recurring search"}</legend>
-       <Input label="Search name" value={name} maxLength={100} autoFocus onChange={(event) => setName(event.target.value)} />
+      <legend className="mb-3 text-field font-medium">{search ? "Suche bearbeiten" : "Wiederkehrende Suche hinzufügen"}</legend>
+       <Input label="Name der Suche" value={name} maxLength={100} autoFocus onChange={(event) => setName(event.target.value)} />
        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
          <SearchFields value={query} onChange={patch} source={source} countries={countries} />
        </div>
       <RemoteOnlyField value={query} onChange={patch} source={source} />
-      <Toggle label="Enable this search" checked={enabled} onCheckedChange={setEnabled} />
+      <Toggle label="Diese Suche aktivieren" checked={enabled} onCheckedChange={setEnabled} />
        {error && <p role="alert" className="text-meta text-error">{error}</p>}
        <div className="flex flex-wrap gap-2">
-         <Button type="submit">{pending ? "Saving…" : "Save search"}</Button>
-         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
+         <Button type="submit">{pending ? "Speichert…" : "Suche speichern"}</Button>
+         <Button type="button" variant="secondary" onClick={onCancel}>Abbrechen</Button>
        </div>
     </fieldset>
   </form>;

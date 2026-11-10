@@ -7,9 +7,9 @@ import { WIKI, type Instruction } from "./instructions";
 export type JobKind = "tech" | "any" | "none";
 
 export const JOB_KINDS: readonly { value: JobKind; name: string; description: string }[] = [
-  { value: "tech", name: "Mostly tech", description: "Software, design, data and other roles at tech companies. No key needed." },
-  { value: "any", name: "Any kind of job", description: "Every field, from the big job sites. Needs a free key, which takes a few minutes to get." },
-  { value: "none", name: "None for now", description: "You'll paste the postings you find yourself. Find jobs stays off until you choose a source in Settings." },
+  { value: "tech", name: "Vor allem Tech", description: "Software, Design, Daten und andere Rollen bei Tech-Firmen. Kein Schlüssel nötig." },
+  { value: "any", name: "Jede Art von Job", description: "Alle Branchen, von den großen Jobbörsen. Braucht einen kostenlosen Schlüssel, das dauert ein paar Minuten." },
+  { value: "none", name: "Vorerst keine", description: "Du fügst Anzeigen ein, die du selbst findest. „Jobs finden“ bleibt aus, bis du in den Einstellungen eine Quelle wählst." },
 ];
 
 export type JobChoice = {
@@ -26,33 +26,33 @@ export const JOB_CHOICES: readonly JobChoice[] = [
     source: "FREEHIRE",
     kind: "tech",
     name: "FreeHire",
-    about: "Postings read straight from companies' own career pages, mostly tech, in most countries, with their whole text.",
-    cost: "Free for personal use, with no key.",
-    steps: [{ text: "Press **Use FreeHire** below. That's all." }],
+    about: "Anzeigen direkt von den Karriereseiten der Firmen, vor allem Tech, in den meisten Ländern, mit vollem Text.",
+    cost: "Kostenlos für private Nutzung, ohne Schlüssel.",
+    steps: [{ text: "Drück unten **FreeHire verwenden**. Das war’s." }],
   },
   {
     source: "ADZUNA",
     kind: "any",
     name: "Adzuna",
-    about: "Adzuna's own job index in 19 countries. It shares the start of each posting, and Dossier reads the rest from the posting's page.",
-    cost: "A free key, with no card. Your account shows how many searches it allows.",
+    about: "Adzunas eigener Jobindex in 19 Ländern. Er liefert den Anfang jeder Anzeige, den Rest liest Dossier von der Seite der Anzeige.",
+    cost: "Ein kostenloser Schlüssel, ohne Kreditkarte. Dein Konto zeigt, wie viele Suchen er erlaubt.",
     steps: [
       {
-        text: "Sign up as an Adzuna developer. The form asks for an organisation and a website: pick **Personal job search** as what you'll use it for, and enter a page of your own, such as your LinkedIn profile.",
-        link: { href: "https://developer.adzuna.com/signup", label: "Adzuna's sign-up" },
+        text: "Registriere dich als Adzuna-Developer. Das Formular fragt nach Organisation und Website: Wähle **Personal job search** als Verwendungszweck und gib eine eigene Seite an, etwa dein LinkedIn-Profil.",
+        link: { href: "https://developer.adzuna.com/signup", label: "Adzuna-Registrierung" },
       },
-      { text: "Your account shows an application ID and a key. Copy both below." },
+      { text: "Dein Konto zeigt eine Application ID und einen Key. Kopier beide unten hinein." },
     ],
   },
   {
     source: "JSEARCH",
     kind: "any",
     name: "JSearch",
-    about: "Postings from LinkedIn, Indeed, Glassdoor and company sites, through Google for Jobs, in most countries.",
-    cost: "A free plan with a small number of searches each month, and no card. Its page shows how many.",
+    about: "Anzeigen von LinkedIn, Indeed, Glassdoor und Firmenseiten, über Google for Jobs, in den meisten Ländern.",
+    cost: "Ein kostenloser Tarif mit wenigen Suchen pro Monat, ohne Kreditkarte. Die Seite zeigt, wie viele.",
     steps: [
-      { text: "Sign up on OpenWeb Ninja's developer portal and choose JSearch's free plan.", link: { href: "https://app.openwebninja.com", label: "OpenWeb Ninja" } },
-      { text: "Copy your API key and paste it below." },
+      { text: "Registriere dich im Developer-Portal von OpenWeb Ninja und wähle den kostenlosen JSearch-Tarif.", link: { href: "https://app.openwebninja.com", label: "OpenWeb Ninja" } },
+      { text: "Kopier deinen API-Schlüssel und füge ihn unten ein." },
     ],
   },
 ];

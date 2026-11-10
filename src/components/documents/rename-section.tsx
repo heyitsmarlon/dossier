@@ -16,12 +16,12 @@ export function RenameForm({ name, usual, onSave, onCancel }: { name: string; us
 
   return (
     <form onSubmit={submit} className="flex w-full flex-wrap items-center gap-1.5 py-1 pl-8">
-      <Input className="min-w-0 flex-1" aria-label={`New heading for ${usual}`} value={title} onChange={(event) => setTitle(event.target.value)} maxLength={100} autoFocus />
+      <Input className="min-w-0 flex-1" aria-label={`Neue Überschrift für ${usual}`} value={title} onChange={(event) => setTitle(event.target.value)} maxLength={100} autoFocus />
       <Button type="submit" size="sm">
-        Save
+        Speichern
       </Button>
       <Button variant="text" size="sm" onClick={onCancel}>
-        Cancel
+        Abbrechen
       </Button>
     </form>
   );

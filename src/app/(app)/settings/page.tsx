@@ -40,7 +40,7 @@ import { ConnectorSection } from "./connector-section";
 import { settingsSectionFromParam } from "./sections";
 import { SettingsScreen } from "./settings-screen";
 
-export const metadata: Metadata = { title: "Settings" };
+export const metadata: Metadata = { title: "Einstellungen" };
 
 /** Settings (PRD §6.8); the section is in `?section=` (E10-1). */
 export default async function SettingsPage({ searchParams }: PageProps<"/settings">) {
@@ -165,9 +165,9 @@ async function filePreview() {
     prisma.application.findFirst({ where: { awaitingReview: false }, orderBy: { createdAt: "desc" }, select: { company: true, role: true } }),
   ]);
   return {
-    name: name.trim() || "Jane Doe",
+    name: name.trim() || "Max Mustermann",
     company: latest?.company.trim() || "Ledgerly",
-    role: latest?.role.trim() || "Senior Product Designer",
+    role: latest?.role.trim() || "Senior Webdesigner",
   };
 }
 
@@ -187,7 +187,7 @@ function formatBytes(bytes: number): string {
 /** The About rows (SET-12). */
 async function aboutFacts(): Promise<AboutFacts> {
   const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host")?.split(",")[0]?.trim() || requestHeaders.get("host") || "Unknown";
+  const host = requestHeaders.get("x-forwarded-host")?.split(",")[0]?.trim() || requestHeaders.get("host") || "Unbekannt";
   const sqlite = isSqliteUrl(env.DATABASE_URL);
   const [[database], ai, applications] = await Promise.all([
     sqlite
@@ -199,10 +199,10 @@ async function aboutFacts(): Promise<AboutFacts> {
   return [
     { label: "Version", value: appVersion },
     { label: "Server", value: host },
-    { label: "Database", value: `${sqlite ? "SQLite" : "PostgreSQL"} · ${formatBytes(Number(database.size))}` },
-    { label: "Sign-in", value: isDesktopApp() ? "none, on this computer" : "set via DOSSIER_PASSWORD" },
-    { label: "AI", value: [providerOption(ai.provider).name, ai.model].filter(Boolean).join(" · ") },
-    { label: "Applications", value: String(applications) },
+    { label: "Datenbank", value: `${sqlite ? "SQLite" : "PostgreSQL"} · ${formatBytes(Number(database.size))}` },
+    { label: "Anmeldung", value: isDesktopApp() ? "keine, auf diesem Rechner" : "über DOSSIER_PASSWORD gesetzt" },
+    { label: "KI", value: [providerOption(ai.provider).name, ai.model].filter(Boolean).join(" · ") },
+    { label: "Bewerbungen", value: String(applications) },
   ];
 }
 

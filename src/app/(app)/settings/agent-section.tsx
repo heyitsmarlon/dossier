@@ -74,36 +74,36 @@ export function AgentSection({
 
   return (
     <>
-      <SettingsSectionIntro title="Job agent">
-        Once a day it runs all enabled searches, scores the new postings against your profile, and keeps the best on the Agent screen. It never sends or applies.
+      <SettingsSectionIntro title="Job-Agent">
+        Einmal am Tag führt er alle aktiven Suchen aus, bewertet die neuen Anzeigen anhand deines Profils und legt die besten auf der Agent-Seite ab. Er verschickt nie etwas und bewirbt sich nie.
       </SettingsSectionIntro>
 
       {source === "ARBEITSAGENTUR" ? (
         // It searches on its own, which the BA's terms forbid most clearly (#223).
         <p role="note" className="rounded-card bg-warning-surface px-4 py-3 text-meta text-warning">
-          The agent doesn&apos;t search the Bundesagentur für Arbeit. Choose JSearch, Adzuna or FreeHire in{" "}
+          Der Agent durchsucht nicht die Bundesagentur für Arbeit. Wähle dafür JSearch, Adzuna oder FreeHire unter{" "}
           <Link href="/settings?section=jobs" className="font-medium text-warning underline underline-offset-2">
-            Settings → Job search
-          </Link>{" "}
-          for it. Manual Find jobs searches are unaffected.
+            Einstellungen → Jobsuche
+          </Link>
+          . Manuelle Suchen unter „Jobs finden“ sind nicht betroffen.
         </p>
       ) : !source ? (
-        <SetupNote before="The agent searches the source you choose in " section="jobs" after=", which is off. Choose one first." />
+        <SetupNote before="Der Agent durchsucht die Quelle, die du wählst unter " section="jobs" after=". Dort ist noch keine gewählt." />
       ) : scoring.ready ? null : scoring.scorer === "JEV" ? (
-        <SetupNote before="The agent scores postings with Jev, which needs your TypeSafe key in " section="scoring" after="." />
+        <SetupNote before="Der Agent bewertet Anzeigen mit Jev, dafür braucht es deinen TypeSafe-Schlüssel unter " section="scoring" after="." />
       ) : (
-        <SetupNote before="The agent scores postings with the AI provider in " section="ai" after=", which isn't set up yet. Choose one first." />
+        <SetupNote before="Der Agent bewertet Anzeigen mit dem KI-Anbieter unter " section="ai" after=". Dort ist noch keiner eingerichtet." />
       )}
 
       <Card padding="none" className="px-7 py-4">
         <Toggle
-          label="Run the job agent"
+          label="Job-Agent ausführen"
           description={
             settings.enabled
-              ? `On. It runs once a day after ${clock(settings.hour)} your time (${timeZone}), and you can run it now and then on the Agent screen.${
-                  onlyWhileOpen ? " On this computer, only while Dossier is open: when it's closed at that hour, the run starts once you open it, the same day." : ""
+              ? `An. Er läuft einmal am Tag nach ${clock(settings.hour)} deiner Zeit (${timeZone}), und du kannst ihn zwischendurch auf der Agent-Seite starten.${
+                  onlyWhileOpen ? " Auf diesem Rechner nur, solange Dossier offen ist: Ist es zu der Zeit geschlossen, startet der Durchlauf, sobald du es am selben Tag öffnest." : ""
                 }`
-              : "Off. Nothing is searched or scored until it's on."
+              : "Aus. Es wird nichts gesucht oder bewertet, bis er an ist."
           }
           checked={settings.enabled}
           onCheckedChange={(enabled) => change({ enabled })}
@@ -113,7 +113,7 @@ export function AgentSection({
       <RecurringSearches initial={searches} suggestedQuery={suggestedQuery} source={source} countries={countries} />
 
       <Card padding="none" className="grid gap-x-[18px] gap-y-5 px-7 py-[26px] sm:grid-cols-2">
-        <Select label="Runs after" hint={`Your time (${timeZone})`} value={String(settings.hour)} onChange={(event) => change({ hour: Number(event.target.value) })}>
+        <Select label="Läuft nach" hint={`Deine Zeit (${timeZone})`} value={String(settings.hour)} onChange={(event) => change({ hour: Number(event.target.value) })}>
           {HOURS.map((hour) => (
             <option key={hour} value={hour}>
               {clock(hour)}
@@ -121,18 +121,18 @@ export function AgentSection({
           ))}
         </Select>
         <Select
-          label="Minimum score"
-          hint="Postings scored lower stay out of the queue."
+          label="Mindestpunktzahl"
+          hint="Niedriger bewertete Anzeigen kommen nicht in die Liste."
           value={String(settings.minScore)}
           onChange={(event) => change({ minScore: Number(event.target.value) })}
         >
           {[...new Set([...MIN_SCORES, settings.minScore])].sort((a, b) => a - b).map((score) => (
             <option key={score} value={score}>
-              {score} of 100
+              {score} von 100
             </option>
           ))}
         </Select>
-        <Select label="Postings scored per run" value={String(settings.maxScores)} onChange={(event) => change({ maxScores: Number(event.target.value) })}>
+        <Select label="Bewertete Anzeigen pro Durchlauf" value={String(settings.maxScores)} onChange={(event) => change({ maxScores: Number(event.target.value) })}>
           {SCORE_COUNTS.map((count) => (
             <option key={count} value={count}>
               {count}
@@ -140,10 +140,10 @@ export function AgentSection({
           ))}
         </Select>
         <Select
-          label="Drafts per run, at most"
+          label="Entwürfe pro Durchlauf, höchstens"
           value={String(settings.maxDrafts)}
           disabled={!settings.autoDraft}
-          hint={settings.autoDraft ? undefined : "Turn on Prepare drafts on its own first"}
+          hint={settings.autoDraft ? undefined : "Schalte zuerst „Entwürfe selbst vorbereiten“ ein"}
           onChange={(event) => change({ maxDrafts: Number(event.target.value) })}
         >
           {DRAFT_COUNTS.map((count) => (
@@ -154,11 +154,11 @@ export function AgentSection({
         </Select>
         <Toggle
           className="sm:col-span-2"
-          label="Prepare drafts on its own"
+          label="Entwürfe selbst vorbereiten"
           description={
             settings.autoDraft
-              ? `For the best new postings of each run, up to ${plural(settings.maxDrafts, "draft", "drafts")}: a tailored resume and cover letter, waiting for your review.`
-              : "Off. You choose which postings get a draft with Prepare draft."
+              ? `Für die besten neuen Anzeigen jedes Durchlaufs, bis zu ${plural(settings.maxDrafts, "Entwurf", "Entwürfe")}: zugeschnittener Lebenslauf und Anschreiben, zur Prüfung bereit.`
+              : "Aus. Du wählst mit „Entwurf vorbereiten“, welche Anzeigen einen Entwurf bekommen."
           }
           checked={settings.autoDraft}
           onCheckedChange={(autoDraft) => change({ autoDraft })}
@@ -166,8 +166,8 @@ export function AgentSection({
       </Card>
 
       <p className="text-meta text-muted">
-        One shared daily schedule for all enabled searches, in {timeZone}. Each search requests only the first page, sequentially. At most {AGENT_MAX_SOURCE_REQUESTS_PER_DAY} source requests in any rolling 24 hours, including failed attempts. A run waits until the whole batch fits. Across all searches, each run scores up to {plural(settings.maxScores, "posting", "postings")}
-        {settings.autoDraft ? ` and prepares up to ${plural(settings.maxDrafts, "draft", "drafts")}` : ""}. Scoring uses the provider in Settings → Scoring; drafts use your AI provider. Both receive your profile; the job source only gets the search.
+        Ein gemeinsamer Tagesplan für alle aktiven Suchen, in {timeZone}. Jede Suche fragt nur die erste Ergebnisseite ab, nacheinander. Höchstens {AGENT_MAX_SOURCE_REQUESTS_PER_DAY} Abfragen in 24 Stunden, fehlgeschlagene mitgezählt. Ein Durchlauf wartet, bis er komplett hineinpasst. Über alle Suchen bewertet jeder Durchlauf bis zu {plural(settings.maxScores, "Anzeige", "Anzeigen")}
+        {settings.autoDraft ? ` und bereitet bis zu ${plural(settings.maxDrafts, "Entwurf", "Entwürfe")} vor` : ""}. Bewertet wird mit dem Anbieter aus Einstellungen → Bewertung, Entwürfe schreibt dein KI-Anbieter. Beide bekommen dein Profil; die Jobquelle bekommt nur die Suche.
       </p>
     </>
   );

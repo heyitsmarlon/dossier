@@ -43,8 +43,8 @@ export function useRowSorting({
       accessibility: {
         announcements: {
           onDragStart: ({ active }: { active: { id: unknown } }) => `Picked up “${name(active.id)}”.`,
-          onDragOver: ({ over }: { over: { id: unknown } | null }) => (over ? `Over position ${indexOf(over.id) + 1} of ${keys.length}.` : "Not over the list."),
-          onDragEnd: ({ over }: { over: { id: unknown } | null }) => (over ? `Dropped at position ${indexOf(over.id) + 1} of ${keys.length}.` : "Dropped back where it was."),
+          onDragOver: ({ over }: { over: { id: unknown } | null }) => (over ? `Über Position ${indexOf(over.id) + 1} von ${keys.length}.` : "Nicht über der Liste."),
+          onDragEnd: ({ over }: { over: { id: unknown } | null }) => (over ? `Abgelegt an Position ${indexOf(over.id) + 1} von ${keys.length}.` : "An den alten Platz zurückgelegt."),
           onDragCancel: () => "Moving cancelled.",
         },
       },
@@ -59,7 +59,7 @@ export function DragHandle({ ref, ...props }: ComponentProps<"span">) {
       ref={ref}
       {...props}
       aria-hidden="true"
-      title="Drag to reorder"
+      title="Ziehen zum Umsortieren"
       className="flex w-7 flex-none cursor-grab touch-none items-center justify-end text-base text-faint select-none hover:text-muted active:cursor-grabbing"
     >
       ⠿

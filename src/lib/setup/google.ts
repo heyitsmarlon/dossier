@@ -6,32 +6,32 @@ import { WIKI, type Instruction } from "./instructions";
 
 export const GOOGLE_STEPS: readonly Instruction[] = [
   {
-    text: "Sign in to Google Cloud with your Google account and create a project. Name it **Dossier** and press **Create**.",
+    text: "Melde dich mit deinem Google-Konto bei Google Cloud an und erstelle ein Projekt. Nenn es **Dossier** und drück **Create** (Erstellen).",
     link: { href: "https://console.cloud.google.com/projectcreate", label: "Google Cloud" },
   },
   {
-    text: "Turn on the Gmail API: check that your new project is chosen at the top of the page, then press **Enable**.",
-    link: { href: "https://console.cloud.google.com/apis/enableflow;apiid=gmail.googleapis.com", label: "the Gmail API" },
+    text: "Schalte die Gmail API ein: Prüf, ob oben auf der Seite dein neues Projekt ausgewählt ist, und drück dann **Enable** (Aktivieren).",
+    link: { href: "https://console.cloud.google.com/apis/enableflow;apiid=gmail.googleapis.com", label: "Gmail API" },
   },
   {
-    text: "Turn on the Google Calendar API the same way.",
-    link: { href: "https://console.cloud.google.com/apis/enableflow;apiid=calendar-json.googleapis.com", label: "the Google Calendar API" },
+    text: "Schalte die Google Calendar API genauso ein.",
+    link: { href: "https://console.cloud.google.com/apis/enableflow;apiid=calendar-json.googleapis.com", label: "Google Calendar API" },
   },
   {
-    text: "Set up the sign-in screen: press **Get started**, enter **Dossier** as the app name and your email, choose **External**, enter your email again, agree to the policy and press **Create**.",
+    text: "Richte den Anmeldebildschirm ein: Drück **Get started** (Jetzt starten), gib **Dossier** als App-Namen und deine E-Mail ein, wähle **External** (Extern), gib deine E-Mail noch einmal ein, stimm der Richtlinie zu und drück **Create** (Erstellen).",
     link: { href: "https://console.developers.google.com/auth/branding", label: "Branding" },
   },
   {
-    text: "Open **Audience**, press **Publish app** and confirm. Until you do, Google ends the connection every 7 days.",
+    text: "Öffne **Audience** (Zielgruppe), drück **Publish app** (App veröffentlichen) und bestätige. Bis dahin beendet Google die Verbindung alle 7 Tage.",
     link: { href: "https://console.developers.google.com/auth/audience", label: "Audience" },
   },
   {
-    text: "Open **Clients** and press **Create client**. Choose **Web application** and name it Dossier. Under **Authorized redirect URIs**, press **Add URI** and paste the address below. Leave **Use this client for an AI-powered agent** unticked, and press **Create**.",
+    text: "Öffne **Clients** und drück **Create client** (Client erstellen). Wähle **Web application** (Webanwendung) und nenn ihn Dossier. Drück unter **Authorized redirect URIs** (Autorisierte Weiterleitungs-URIs) auf **Add URI** (URI hinzufügen) und füge die Adresse unten ein. Lass **Use this client for an AI-powered agent** frei und drück **Create** (Erstellen).",
     link: { href: "https://console.developers.google.com/auth/clients", label: "Clients" },
   },
-  { text: "Copy the **Client ID** and the **Client secret** into the fields below. Google shows the secret only once, so copy it before you close that window." },
+  { text: "Kopier die **Client ID** und das **Client secret** in die Felder unten. Google zeigt das Secret nur einmal, kopier es also, bevor du das Fenster schließt." },
   {
-    text: "Press **Connect Google**. Google warns that the app isn't verified: it's your own, so press **Advanced**, then **Go to Dossier (unsafe)**, and allow what it asks for.",
+    text: "Drück **Google verbinden**. Google warnt, dass die App nicht verifiziert ist: Es ist deine eigene, also drück **Advanced** (Erweitert), dann **Go to Dossier (unsafe)** (Weiter zu Dossier (unsicher)) und erlaube, worum es bittet.",
   },
 ];
 

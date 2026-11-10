@@ -27,14 +27,14 @@ export const scoreResumeJob = defineJob({
   input: z.object({ applicationId: z.string().min(1) }),
   result: resumeFitSchema,
   async run({ applicationId }, { step, signal }) {
-    await step("Scoring the resume");
+    await step("Bewerte den Lebenslauf");
     const application = await prisma.application.findUniqueOrThrow({
       where: { id: applicationId },
       include: { documents: { where: { kind: DocumentKind.RESUME }, select: { units: true } } },
     });
     const units = unitsSchema.safeParse(application.documents[0]?.units);
     // Said as it is, like an AI provider that isn't set up.
-    if (!units.success) throw AiError.config("This application has no tailored resume to score. Write it first.");
+    if (!units.success) throw AiError.config("Diese Bewerbung hat keinen angepassten Lebenslauf zum Bewerten. Schreib ihn zuerst.");
 
     const [fullProfile, settings, score] = await Promise.all([loadProfile(), loadSettings(), loadPostingScorer()]);
     const sections = sectionLayoutSchema.safeParse(application.sections);
