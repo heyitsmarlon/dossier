@@ -7,7 +7,7 @@ import { fetchPosting } from "@/lib/posting-fetch";
 import type { JobSourceAdapter, RequestContext, SourceCredentials } from "./adapter";
 import { jobSearchError } from "./errors";
 import { requestJson } from "./http";
-import { POSTED_WITHIN, safeLink, type FoundPosting, type SearchPage, type SearchQuery } from "./search";
+import { employmentAskedFor, POSTED_WITHIN, safeLink, type FoundPosting, type SearchPage, type SearchQuery } from "./search";
 import { plainText } from "./text";
 
 // Adzuna (E14-2): its own job index in 19 countries, free with an app ID
@@ -75,6 +75,10 @@ function searchUrl(query: SearchQuery, { appId, key }: SourceCredentials["ADZUNA
   url.searchParams.set("app_id", appId);
   url.searchParams.set("app_key", key);
   url.searchParams.set("results_per_page", String(PAGE_SIZE));
+  // Adzuna filters full or part time, one at a time; anything else is read from the postings.
+  const kinds = employmentAskedFor(query);
+  if (kinds.length === 1 && kinds[0] === "fulltime") url.searchParams.set("full_time", "1");
+  if (kinds.length === 1 && kinds[0] === "parttime") url.searchParams.set("part_time", "1");
   // Adzuna has no remote filter: the word does what it can.
   url.searchParams.set("what", query.remoteOnly ? `${query.keywords} remote` : query.keywords);
   if (query.place) {

@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { Country } from "@/lib/job-search/countries";
-import { EXPERIENCE_LEVELS, POSTED_WITHIN, RADII_KM, type JobSource, type RadiusKm, type SearchQuery } from "@/lib/job-search/search";
+import { EMPLOYMENT_TYPES, employmentAskedFor, EXPERIENCE_LEVELS, POSTED_WITHIN, RADII_KM, type JobSource, type RadiusKm, type SearchQuery } from "@/lib/job-search/search";
 import { SOURCE_INFO, sourceCovers } from "@/lib/job-search/sources";
 
 // A search's fields, as Find jobs asks them (E14-6) and Settings → Job agent
@@ -91,6 +91,24 @@ export function SearchFields({
         ))}
       </Select>
     </>
+  );
+}
+
+/** Anstellungsart: several kinds at once, none ticked for any. */
+export function EmploymentField({ value, onChange }: { value: SearchQuery; onChange: (patch: Partial<SearchQuery>) => void }) {
+  const asked = employmentAskedFor(value);
+  const toggle = (kind: (typeof EMPLOYMENT_TYPES)[number]["value"], on: boolean) =>
+    onChange({ employment: EMPLOYMENT_TYPES.map((option) => option.value).filter((option) => (option === kind ? on : asked.includes(option))) });
+  return (
+    <fieldset className="flex min-w-0 flex-col gap-2">
+      <legend className="mb-2 text-label font-medium text-ink">Anstellungsart</legend>
+      <div className="flex flex-wrap gap-x-5 gap-y-2">
+        {EMPLOYMENT_TYPES.map((option) => (
+          <Checkbox key={option.value} label={option.label} checked={asked.includes(option.value)} onChange={(event) => toggle(option.value, event.target.checked)} />
+        ))}
+      </div>
+      <p className="text-meta text-muted">Nichts angehakt heißt: alle. Anzeigen, die nichts dazu sagen, bleiben drin.</p>
+    </fieldset>
   );
 }
 

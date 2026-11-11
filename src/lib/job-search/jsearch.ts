@@ -6,7 +6,7 @@ import type { JobSourceAdapter, JSearchHost, RequestContext, SourceCredentials }
 import { countryName } from "./countries";
 import { jobSearchError } from "./errors";
 import { requestJson } from "./http";
-import { experienceAskedFor, safeLink, type FoundPosting, type PostedWithin, type SearchPage, type SearchQuery } from "./search";
+import { employmentAskedFor, experienceAskedFor, safeLink, type FoundPosting, type PostedWithin, type SearchPage, type SearchQuery } from "./search";
 
 // JSearch (E14-1): Google for Jobs through OpenWeb Ninja, or the same API on
 // RapidAPI. One search page is one request from the plan (200 a month free).
@@ -151,8 +151,13 @@ function searchUrl(query: SearchQuery, host: JSearchHost, next: string | null, b
   if (query.remoteOnly) url.searchParams.set("work_from_home", "true");
   // The level as far as JSearch can filter it (public issue 59); the rest is read from the postings.
   const level = experienceAskedFor(query);
-  if (level === "intern") url.searchParams.set("employment_types", "INTERN");
-  else if (level === "junior") url.searchParams.set("job_requirements", "under_3_years_experience");
+  // Kinds of employment as JSearch knows them; a minijob or Werkstudent job is part-time there.
+  const kinds = new Set<string>(
+    employmentAskedFor(query).map((kind) => (kind === "fulltime" ? "FULLTIME" : kind === "freelance" ? "CONTRACTOR" : "PARTTIME")),
+  );
+  if (level === "intern") kinds.add("INTERN");
+  if (kinds.size > 0) url.searchParams.set("employment_types", [...kinds].join(","));
+  if (level === "junior") url.searchParams.set("job_requirements", "under_3_years_experience");
   else if (level === "senior" || level === "lead") url.searchParams.set("job_requirements", "more_than_3_years_experience");
   // A page number kept in a past search from RapidAPI's old /search starts
   // over; Show more leaves out the postings it already has.

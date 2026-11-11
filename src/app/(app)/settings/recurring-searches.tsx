@@ -16,7 +16,7 @@ import type { Country } from "@/lib/job-search/countries";
 import { EMPTY_QUERY, searchHref, type JobSource, type SearchQuery } from "@/lib/job-search/search";
 
 import { deleteRecurringSearch, moveRecurringSearch, saveRecurringSearch, setRecurringSearchEnabled } from "../agent/actions";
-import { RemoteOnlyField, SearchFields } from "../jobs/search-fields";
+import { EmploymentField, RemoteOnlyField, SearchFields } from "../jobs/search-fields";
 
 export function RecurringSearches({ initial, suggestedQuery, source, countries }: {
   initial: SavedAgentSearch[];
@@ -188,6 +188,7 @@ function SearchEditor({ search, suggestedQuery, sort, source, countries, onCance
        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
          <SearchFields value={query} onChange={patch} source={source} countries={countries} />
        </div>
+      <EmploymentField value={query} onChange={patch} />
       <RemoteOnlyField value={query} onChange={patch} source={source} />
       <Toggle label="Diese Suche aktivieren" checked={enabled} onCheckedChange={setEnabled} />
        {error && <p role="alert" className="text-meta text-error">{error}</p>}

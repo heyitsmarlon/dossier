@@ -46,6 +46,17 @@ export const EXPERIENCE_LEVELS = [
   { value: "lead", label: "Leitung" },
 ] as const;
 export type ExperienceLevel = (typeof EXPERIENCE_LEVELS)[number]["value"];
+
+/** Kinds of employment a search may ask for, several at once; none leaves it open. */
+export const EMPLOYMENT_TYPES = [
+  { value: "fulltime", label: "Vollzeit" },
+  { value: "parttime", label: "Teilzeit" },
+  { value: "minijob", label: "Minijob" },
+  { value: "student", label: "Werkstudent" },
+  { value: "freelance", label: "Freiberuflich" },
+] as const;
+export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number]["value"];
+const EMPLOYMENT_VALUES = EMPLOYMENT_TYPES.map((option) => option.value) as [EmploymentType, ...EmploymentType[]];
 const LEVEL_VALUES = EXPERIENCE_LEVELS.map((option) => option.value) as [ExperienceLevel, ...ExperienceLevel[]];
 
 /** One search, as every source gets it. */
@@ -64,12 +75,18 @@ export const searchQuerySchema = z.object({
   postedWithin: z.enum(POSTED_VALUES),
   /** Missing in searches from before 1.12.0, which means any. */
   experience: z.enum(LEVEL_VALUES).optional(),
+  /** Missing or empty means any kind of employment. */
+  employment: z.array(z.enum(EMPLOYMENT_VALUES)).max(EMPLOYMENT_VALUES.length).optional(),
 });
 export type SearchQuery = z.output<typeof searchQuerySchema>;
 
 /** The level a search asks for, or null for any. */
 export const experienceAskedFor = (query: Pick<SearchQuery, "experience">): Exclude<ExperienceLevel, "any"> | null =>
   query.experience && query.experience !== "any" ? query.experience : null;
+
+/** The kinds of employment a search asks for, in the list's order; empty for any. */
+export const employmentAskedFor = (query: Pick<SearchQuery, "employment">): EmploymentType[] =>
+  EMPLOYMENT_VALUES.filter((value) => query.employment?.includes(value));
 
 export const EMPTY_QUERY: SearchQuery = {
   keywords: "",
@@ -154,7 +171,12 @@ export function describeSearch(query: SearchQuery, countryName: string, source?:
   const where = query.place ? (source && !SOURCE_INFO[source].radius ? query.place : `${query.place}, ${query.radiusKm} km`) : countryName;
   const posted = POSTED_WITHIN.find((option) => option.value === query.postedWithin);
   const level = EXPERIENCE_LEVELS.find((option) => option.value === experienceAskedFor(query));
-  return [query.keywords, where, query.remoteOnly ? "Nur remote" : "", posted && posted.value !== "any" ? posted.label : "", level?.label ?? ""].filter(Boolean).join(" · ");
+  const employment = EMPLOYMENT_TYPES.filter((option) => employmentAskedFor(query).includes(option.value))
+    .map((option) => option.label)
+    .join(" / ");
+  return [query.keywords, where, query.remoteOnly ? "Nur remote" : "", posted && posted.value !== "any" ? posted.label : "", level?.label ?? "", employment]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 /** Identifies a posting across searches. */
@@ -204,6 +226,7 @@ export function queryFromParams(params: Record<string, string | string[] | undef
   const posted = POSTED_VALUES.find((value) => value === one(params.posted));
   const level = LEVEL_VALUES.find((value) => value === one(params.level));
   const country = one(params.country).trim().toLowerCase();
+  const employment = EMPLOYMENT_VALUES.filter((value) => one(params.type).split(",").includes(value));
   return {
     keywords: keywords.slice(0, 200),
     place: one(params.where).trim().slice(0, 200),
@@ -212,6 +235,7 @@ export function queryFromParams(params: Record<string, string | string[] | undef
     remoteOnly: one(params.remote) === "1",
     postedWithin: posted ?? "any",
     ...(level && level !== "any" ? { experience: level } : {}),
+    ...(employment.length > 0 ? { employment } : {}),
   };
 }
 
@@ -238,6 +262,8 @@ export function searchHref(query: SearchQuery): string {
   if (query.postedWithin !== "any") params.set("posted", query.postedWithin);
   const level = experienceAskedFor(query);
   if (level) params.set("level", level);
+  const employment = employmentAskedFor(query);
+  if (employment.length > 0) params.set("type", employment.join(","));
   return `/jobs?${params.toString()}`;
 }
 

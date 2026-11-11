@@ -7,7 +7,7 @@ import { fetchPosting } from "@/lib/posting-fetch";
 import type { JobSourceAdapter, RequestContext } from "./adapter";
 import { JobSearchError, jobSearchError } from "./errors";
 import { requestJson } from "./http";
-import { experienceAskedFor, POSTED_WITHIN, safeLink, type FoundPosting, type SearchPage, type SearchQuery } from "./search";
+import { employmentAskedFor, experienceAskedFor, POSTED_WITHIN, safeLink, type FoundPosting, type SearchPage, type SearchQuery } from "./search";
 import { arbeitsagenturPage } from "./sources";
 import { fromMarkdown } from "./text";
 
@@ -104,7 +104,13 @@ function searchUrl(query: SearchQuery, page: number, baseUrl?: string): URL {
   }
   const days = POSTED_WITHIN.find((option) => option.value === query.postedWithin)?.days;
   if (days) url.searchParams.set("veroeffentlichtseit", String(days));
+  // The agency's working-time filter: Vollzeit, Teilzeit, Minijob, or home office.
+  // Several values widen the search, so with Remote only it stays home office
+  // and the kinds are read from the postings instead.
+  const times = employmentAskedFor(query).flatMap((kind) => (kind === "fulltime" ? ["vz"] : kind === "parttime" ? ["tz"] : kind === "minijob" ? ["mj"] : []));
+  const onlyTimes = times.length > 0 && times.length === employmentAskedFor(query).length;
   if (query.remoteOnly) url.searchParams.set("arbeitszeit", "ho");
+  else if (onlyTimes) url.searchParams.set("arbeitszeit", times.join(";"));
   return url;
 }
 

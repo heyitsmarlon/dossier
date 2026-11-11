@@ -5,6 +5,7 @@ import { logServerError } from "@/lib/log";
 import type { JobSourceAdapter, RequestContext, SourceCredentials } from "./adapter";
 import { cached, remember } from "./cache";
 import { JobSearchError, jobSearchError } from "./errors";
+import { fitsEmployment } from "./employment";
 import { fitsExperience } from "./experience";
 import { adzuna } from "./adzuna";
 import { arbeitsagentur } from "./arbeitsagentur";
@@ -56,8 +57,8 @@ export async function searchPostings<S extends JobSource>(
   const hit = cached<SearchPage>(key);
   if (hit) return hit;
   const found = await logged(() => adapter.search(query, credentials, next, context));
-  // Postings clearly for another level go (public issue 59); ones that don't say stay.
-  const page = { ...found, postings: found.postings.filter((posting) => fitsExperience(posting, query)) };
+  // Postings clearly for another level or kind of employment go (public issue 59); ones that don't say stay.
+  const page = { ...found, postings: found.postings.filter((posting) => fitsExperience(posting, query) && fitsEmployment(posting, query)) };
   remember(key, page);
   return page;
 }
