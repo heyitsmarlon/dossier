@@ -72,15 +72,30 @@ export const MAX_ZOOM = 4;
 export const cropScale = (image: Size, frame: Size, zoom: number) =>
   Math.max(frame.width / image.width, frame.height / image.height) * zoom;
 
-/** The crop with the zoom in range and the frame covered: the image can't move past its edges. */
+/**
+ * The smallest zoom: the image still covers the circle (a square as wide as
+ * the frame), so a square or landscape photo fits into it whole. Below 1 the
+ * frame's top and bottom may show white, which only portrait designs use.
+ */
+export const minZoom = (image: Size, frame: Size) =>
+  Math.min(1, Math.max(frame.width / image.width, frame.width / image.height) / cropScale(image, frame, 1));
+
+/**
+ * The crop with the zoom in range and the frame covered: the image can't move
+ * past its edges. Zoomed out below 1, it only has to cover the circle.
+ */
 export function clampCrop(crop: Crop, image: Size, frame: Size): Crop {
-  const zoom = Math.min(Math.max(crop.zoom, 1), MAX_ZOOM);
+  const zoom = Math.min(Math.max(crop.zoom, minZoom(image, frame)), MAX_ZOOM);
   const scale = cropScale(image, frame, zoom);
-  const clamp = (value: number, min: number) => Math.min(0, Math.max(min, value));
+  const clamp = (value: number, length: number, side: number) => {
+    // The span the image must cover: the whole frame, or the circle's when the image is shorter.
+    const inset = length >= side ? 0 : (side - Math.min(frame.width, frame.height)) / 2;
+    return Math.min(inset, Math.max(side - inset - length, value));
+  };
   return {
     zoom,
-    x: clamp(crop.x, frame.width - image.width * scale),
-    y: clamp(crop.y, frame.height - image.height * scale),
+    x: clamp(crop.x, image.width * scale, frame.width),
+    y: clamp(crop.y, image.height * scale, frame.height),
   };
 }
 

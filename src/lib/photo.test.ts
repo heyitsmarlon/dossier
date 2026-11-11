@@ -9,6 +9,7 @@ import {
   PHOTO_MAX_LENGTH,
   photoFromFields,
   zoomCrop,
+  minZoom,
 } from "./photo";
 
 const PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
@@ -60,7 +61,16 @@ describe("cropping (#224)", () => {
     expect(clampCrop({ zoom: 1, x: 50, y: 50 }, landscape, frame)).toEqual({ zoom: 1, x: 0, y: 0 });
     expect(clampCrop({ zoom: 1, x: -500, y: -10 }, landscape, frame)).toEqual({ zoom: 1, x: -240, y: 0 });
     expect(clampCrop({ zoom: 9, x: 0, y: 0 }, landscape, frame).zoom).toBe(MAX_ZOOM);
-    expect(clampCrop({ zoom: 0.2, x: 0, y: 0 }, landscape, frame).zoom).toBe(1);
+    expect(clampCrop({ zoom: 0.2, x: 0, y: 0 }, landscape, frame).zoom).toBeCloseTo(0.75);
+  });
+
+  it("lets a square photo zoom out until it fills the circle whole", () => {
+    const square = { width: 1000, height: 1000 };
+    expect(minZoom(square, frame)).toBeCloseTo(0.75);
+    expect(minZoom({ width: 300, height: 400 }, frame)).toBe(1);
+    // At 0.75 the square is 240×240: it may sit anywhere the circle (y 40 to 280) stays covered.
+    expect(clampCrop({ zoom: 0.75, x: 5, y: 0 }, square, frame)).toEqual({ zoom: 0.75, x: 0, y: 40 });
+    expect(clampCrop({ zoom: 0.75, x: 0, y: 200 }, square, frame).y).toBe(40);
   });
 
   it("zooms around the frame's middle", () => {

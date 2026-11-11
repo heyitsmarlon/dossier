@@ -13,6 +13,7 @@ import {
   clampCrop,
   cropSource,
   MAX_ZOOM,
+  minZoom,
   PHOTO_HEIGHT,
   PHOTO_MAX_LENGTH,
   PHOTO_WIDTH,
@@ -206,7 +207,7 @@ function CropDialog({ image, onCancel, onUse }: { image: HTMLImageElement; onCan
             role="group"
             tabIndex={0}
             aria-label="Foto zuschneiden: Pfeiltasten verschieben, Plus und Minus zoomen"
-            className="relative mx-auto cursor-grab touch-none overflow-hidden rounded-control bg-paper select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:cursor-grabbing"
+            className="relative mx-auto cursor-grab touch-none overflow-hidden rounded-control bg-white select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:cursor-grabbing"
             style={{ width: FRAME.width, height: FRAME.height }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
@@ -232,7 +233,7 @@ function CropDialog({ image, onCancel, onUse }: { image: HTMLImageElement; onCan
             Zoom
             <input
               type="range"
-              min={1}
+              min={minZoom(size, FRAME)}
               max={MAX_ZOOM}
               step={0.01}
               value={crop.zoom}
